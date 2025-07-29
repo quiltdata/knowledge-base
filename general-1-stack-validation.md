@@ -16,7 +16,7 @@ End-to-end validation checklist for a new Quilt Catalog stack installation, focu
 
 - Just installed a new Quilt stack, and want to ensure everything works
 - Modified your stack or network/security configurations, and want to verify nothing broke
-- Users report interimittent errors, and want to identify potential root causes
+- Users report intermittent errors, and want to identify potential root causes
 
 ## Recommendation
 
@@ -52,7 +52,7 @@ Requires an existing S3 bucket in the same account (and ideally region), prefera
     - Verify it shows the Overview package
     - Click through the top-level tabs
 
-> If the Packages tab is empty, even though there are packages in the bucket, it could be because the index is still being created. This may takes tens of minutes if there are many package revisions.
+> If the Packages tab is empty, even though there are packages in the bucket, it could be because the index is still being created. This may take tens of minutes if there are many package revisions.
 
 1. **Upload and Annotate**
 
@@ -76,11 +76,11 @@ Use the "Get Package -> Download Zip" to get all the files separately (instead o
     - Click "Configure Summary" at the bottom
     - Add a couple files
     - Click Save
-    - Add a commmit message and "Push" the new revision
+    - Add a commit message and "Push" the new revision
     - Verify the additional files show up in the home page preview
     - Click on the hash or "v" to see prior versions
 
-> If some file types do not previews, see the [related Kbase Article](https://kb.quilt.bio/why-are-previews-not-rendering-for-certain-file-types-e.g.-.txt-.png-in-quilt).
+> If some file types do not preview, see the [related Kbase Article](https://kb.quilt.bio/why-are-previews-not-rendering-for-certain-file-types-e.g.-.txt-.png-in-quilt).
 
 1. **Search and Discover**
 
