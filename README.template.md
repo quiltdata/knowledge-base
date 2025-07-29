@@ -12,7 +12,7 @@
 
 **Examples:**  
 
-- `sso`, `aws`, `ecs`, `preview`, `mime`, `access`, `quilt`
+- `sso`, `aws`, `ecs`, `preview`, `mime`, `access`
 
 ## Summary
 
