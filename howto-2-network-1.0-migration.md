@@ -80,13 +80,65 @@ You should verify that you can still a) login, and b) view packages in the Packa
 
 ### B. Reconfigure services to use the new subnets
 
+We recommend doing this via the AWS console, though you can perform some steps using the `aws` cli.
+
+**Important**: Network 1.5 has already created the new Network 2.0 subnets. We're simply reconfiguring existing resources to use them.
+
 #### RDS Database
 
-TBD
+**⚠️ Warning**: This process requires a maintenance window and will cause downtime.
 
-#### Elastic Search
+1. **Identify the existing Network 2.0 DB Subnet Group**:
+   - Navigate to **RDS** → **Subnet groups** in the AWS Console
+   - Look for a subnet group that includes the new Network 2.0 intra subnets
+   - This should have been created automatically by the Network 1.5 deployment
 
-TBD
+2. **Modify the RDS Instance to use Network 2.0 subnets**:
+   - Navigate to **RDS** → **Databases**
+   - Select your existing Quilt database instance  
+   - Click **Modify**
+   - Scroll to **Network & Security**
+   - **DB subnet group**: Change to the Network 2.0 subnet group
+   - **Apply immediately**: Check this box (or schedule for maintenance window)
+   - Click **Continue** → **Modify DB instance**
+
+3. **Monitor the modification**:
+   - The instance will show "Modifying" status
+   - This process typically takes 5-15 minutes
+   - The database will be briefly unavailable during the subnet change
+
+#### Elasticsearch
+
+> INTERNAL NOTE: Can existing Elasticsearch domains be reconfigured to use different subnets within the same VPC?
+
+**If subnet reconfiguration is possible**:
+
+1. Navigate to **Amazon Elasticsearch Service** → **Domains**
+2. Select your existing Quilt Elasticsearch domain
+3. Look for options to modify VPC/subnet configuration
+4. Update to use Network 2.0 intra subnets
+
+**If subnet reconfiguration is NOT possible**:
+
+- Elasticsearch domains may be locked to their original subnets
+- This would require data migration to a new domain
+- **Need to test/verify** which approach is required
+
+#### Security Groups
+
+Update security groups to allow communication from Network 2.0 subnets:
+
+1. **Navigate to EC2** → **Security Groups**
+2. **Find your RDS security group**:
+   - Add inbound rules allowing access from Network 2.0 private/intra subnets
+   - Port: 5432 (PostgreSQL) or 3306 (MySQL)
+   - Source: Network 2.0 subnet CIDRs
+3. **Find your Elasticsearch security group**:
+   - Add inbound rules allowing access from Network 2.0 private/intra subnets
+   - Port: 443 (HTTPS)
+   - Source: Network 2.0 subnet CIDRs
+
+**Note**: You may want to keep the old Network 1.0 security group rules temporarily until you verify everything works, then remove them.
 
 ### C. Test the stack to verify everything works
 
@@ -96,5 +148,23 @@ You may also want to run through a complete 'stack validation' to ensure there a
 
 ### D. Upgrade to a standard 2.0 stack
 
-For your next regular update, Quilt will provide you with a standard network 2.0 template.  This is a lower risk update,
-but we still encourage you to a) first test on a dev stack, and b) carefully validate functionality after upgrading.
+For your next regular update, Quilt will provide you with a standard network 2.0 template. This is a lower risk update, but we still encourage you to a) first test on a dev stack, and b) carefully validate functionality after upgrading.
+
+1. **Update application configuration**:
+
+   - Update your Quilt stack configuration to point to the new Elasticsearch endpoint
+   - This typically involves updating environment variables or configuration files
+   - **Do not delete the old domain yet** - keep it as backup until migration is verified
+
+2. **Verify the migration**:
+
+   - Test search functionality in the Quilt web interface
+   - Verify all indices are present and searchable
+   - Check that document counts match between old and new domains
+
+### E. Retest the stack to verify everything still works
+
+Once everything has been updated, verify that you can a) login (via the database), and b) view packages in the Packages tab (via ElasticSearch).
+
+You may also want to run through a complete 'stack validation' to ensure there aren't any other difficulties.
+You may also want to run through a complete 'stack validation' to ensure there aren't any other difficulties.
