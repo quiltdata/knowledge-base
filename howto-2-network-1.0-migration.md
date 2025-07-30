@@ -167,4 +167,3 @@ For your next regular update, Quilt will provide you with a standard network 2.0
 Once everything has been updated, verify that you can a) login (via the database), and b) view packages in the Packages tab (via ElasticSearch).
 
 You may also want to run through a complete 'stack validation' to ensure there aren't any other difficulties.
-You may also want to run through a complete 'stack validation' to ensure there aren't any other difficulties.
