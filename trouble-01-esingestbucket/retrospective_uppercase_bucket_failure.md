@@ -38,7 +38,7 @@ Per the code comment and GitHub issue reference:
 - See: <https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/79>
 
 Because we (and potentially customers) can have multiple stacks in the same account and region, we need a unique but deterministic name
-for such buckets.  And there do not seem to be any other gauranteed stack-unique identifiers we can use.
+for such buckets.  And there do not seem to be any other guaranteed stack-unique identifiers we can use.
 
 ### Why Other Buckets Don't Have This Issue
 

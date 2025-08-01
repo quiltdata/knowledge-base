@@ -1,4 +1,4 @@
-# Depoying Quilt Release 1.61.0 fails with "Bucket name should not contain uppercase characters" when stack has UpperCaseName
+# Deploying Quilt Release 1.61.0 fails with "Bucket name should not contain uppercase characters" when stack has UpperCaseName
 
 ## Tags
 
@@ -6,7 +6,7 @@
 
 ## Summary
 
-Attempts to deploy Quilt Release 1.61 fails when creating EsIngestBucket due, to uppercase characters in the CloudFormation stack name being used in S3 bucket naming, violating AWS S3 bucket naming requirements. Workaround is to switch to a lowercase stack name.
+Attempts to deploy Quilt Release 1.61 fails when creating EsIngestBucket due to uppercase characters in the CloudFormation stack name being used in S3 bucket naming, violating AWS S3 bucket naming requirements. Workaround is to switch to a lowercase stack name.
 
 ---
 
