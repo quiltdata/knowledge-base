@@ -26,7 +26,7 @@ Follow this manual validation script to confirm proper operation of Quilt Catalo
 
 ### Step-by-Step Stack Validation Flow (Editor Role)
 
-1. **Login and Access**
+#### Login and Access
 
 Requires Admin Permissions.
 
@@ -49,14 +49,14 @@ Requires an existing S3 bucket in the same account (and ideally region), prefera
     - Click Add
     - Go the bucket picker (upper right Q logo)
     - Select the new bucket
-    - Verify it shows the Overview package
+    - Verify it shows the Overview page
     - Click through the top-level tabs
 
 > If the Packages tab is empty, even though there are packages in the bucket, it could be because the index is still being created. This may take tens of minutes if there are many package revisions.
 
 1. **Upload and Annotate**
 
-Requires a handful of files in different formats, such as those from the [open stack](https://open.quiltdata.com).
+Requires a handful of files in different formats, such as those from the [open stack](https://open.quiltdata.com/b/quilt-example/packages/).
 Use the "Get Package -> Download Zip" to get all the files separately (instead of via QuiltSync).
 
     - Go to the Packages tab
@@ -86,7 +86,7 @@ Use the "Get Package -> Download Zip" to get all the files separately (instead o
 
     - Click on the "Search" button on the top bar
     - Verify it shows a list of existing packages
-    - Enter "Your Name" in the Search box, and hit return
+    - Enter "Your Name" in the Search box
     - Verify it shows up in the search Results
     - Explore different filters and modes to see what else is present
 
