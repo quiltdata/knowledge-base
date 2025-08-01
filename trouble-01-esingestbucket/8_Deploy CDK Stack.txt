@@ -1,0 +1,190 @@
+﻿2025-08-01T19:11:23.4770894Z ##[group]Run CMD="npx cdk deploy --require-approval never --app \"npx ts-node bin/quilt.ts\" --context environment=prod --context currentBranch=main"
+2025-08-01T19:11:23.4771878Z [36;1mCMD="npx cdk deploy --require-approval never --app \"npx ts-node bin/quilt.ts\" --context environment=prod --context currentBranch=main"[0m
+2025-08-01T19:11:23.4772450Z [36;1mif [ -n "QuiltStack" ]; then[0m
+2025-08-01T19:11:23.4772718Z [36;1m  CMD="$CMD QuiltStack"[0m
+2025-08-01T19:11:23.4772955Z [36;1mfi[0m
+2025-08-01T19:11:23.4773154Z [36;1mecho "Running: $CMD"[0m
+2025-08-01T19:11:23.4773389Z [36;1meval $CMD[0m
+2025-08-01T19:11:23.4801841Z shell: /usr/bin/bash -e {0}
+2025-08-01T19:11:23.4802099Z env:
+2025-08-01T19:11:23.4802297Z   AWS_REGION: us-east-1
+2025-08-01T19:11:23.4802535Z   AWS_DEFAULT_REGION: us-east-1
+2025-08-01T19:11:23.4803109Z   AWS_ACCESS_KEY_ID: ***
+2025-08-01T19:11:23.4803452Z   AWS_SECRET_ACCESS_KEY: ***
+2025-08-01T19:11:23.4808362Z   AWS_SESSION_TOKEN: ***
+2025-08-01T19:11:23.4808609Z ##[endgroup]
+2025-08-01T19:11:23.4861800Z Running: npx cdk deploy --require-approval never --app "npx ts-node bin/quilt.ts" --context environment=prod --context currentBranch=main QuiltStack
+2025-08-01T19:11:24.3226266Z !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+2025-08-01T19:11:24.3230057Z !!                                                                            !!
+2025-08-01T19:11:24.3237424Z !!  Node 18 has reached end-of-life on 2025-04-30 and is not supported.       !!
+2025-08-01T19:11:24.3240778Z !!  Please upgrade to a supported node version as soon as possible.           !!
+2025-08-01T19:11:24.3244095Z !!                                                                            !!
+2025-08-01T19:11:24.3246547Z !!  This software is currently running on node v18.20.8.                      !!
+2025-08-01T19:11:24.3248981Z !!  As of the current release of this software, supported node releases are:  !!
+2025-08-01T19:11:24.3259694Z !!  - ^20.0.0 (Planned end-of-life: 2026-04-30)                               !!
+2025-08-01T19:11:24.3260550Z !!                                                                            !!
+2025-08-01T19:11:24.3261228Z !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+2025-08-01T19:11:30.2608037Z Current git branch: main
+2025-08-01T19:11:30.2612124Z {
+2025-08-01T19:11:30.2614795Z   "environment": "prod",
+2025-08-01T19:11:30.2617695Z   "branchName": "main",
+2025-08-01T19:11:30.2620616Z   "accountNumber": "***",
+2025-08-01T19:11:30.2623311Z   "region": "us-east-1",
+2025-08-01T19:11:30.2626257Z   "default_sg": "sg-0d39c501bded3d5e9",
+2025-08-01T19:11:30.2629132Z   "perimeter_cidr": "100.96.0.0/16",
+2025-08-01T19:11:30.2639379Z   "perimeter_account_id": "888577035716",
+2025-08-01T19:11:30.2642143Z   "env_domain": "",
+2025-08-01T19:11:30.2644152Z   "api_gateway_vpc_endpoint_id": "vpce-001fd8a5982352fa7",
+2025-08-01T19:11:30.2658599Z   "perimeter_api_gateway_vpc_endpoint_id": "vpce-09f6945fcc9fa39d3"
+2025-08-01T19:11:30.2659270Z }
+2025-08-01T19:11:30.2659575Z Globals:
+2025-08-01T19:11:30.2659875Z {
+2025-08-01T19:11:30.2669938Z   "appName": "fsp-quilt",
+2025-08-01T19:11:30.2670414Z   "region": "us-east-1"
+2025-08-01T19:11:30.2670807Z }
+2025-08-01T19:11:38.4196317Z Current git branch: main
+2025-08-01T19:11:38.4205510Z {
+2025-08-01T19:11:38.4205982Z   "environment": "prod",
+2025-08-01T19:11:38.4206693Z   "branchName": "main",
+2025-08-01T19:11:38.4208429Z   "accountNumber": "***",
+2025-08-01T19:11:38.4208902Z   "region": "us-east-1",
+2025-08-01T19:11:38.4209411Z   "default_sg": "sg-0d39c501bded3d5e9",
+2025-08-01T19:11:38.4209968Z   "perimeter_cidr": "100.96.0.0/16",
+2025-08-01T19:11:38.4210558Z   "perimeter_account_id": "888577035716",
+2025-08-01T19:11:38.4211084Z   "env_domain": "",
+2025-08-01T19:11:38.4211635Z   "api_gateway_vpc_endpoint_id": "vpce-001fd8a5982352fa7",
+2025-08-01T19:11:38.4212499Z   "perimeter_api_gateway_vpc_endpoint_id": "vpce-09f6945fcc9fa39d3"
+2025-08-01T19:11:38.4213121Z }
+2025-08-01T19:11:38.4213437Z Globals:
+2025-08-01T19:11:38.4214354Z {
+2025-08-01T19:11:38.4214729Z   "appName": "fsp-quilt",
+2025-08-01T19:11:38.4215191Z   "region": "us-east-1"
+2025-08-01T19:11:38.4215843Z }
+2025-08-01T19:11:39.5223371Z [Info at /QuiltStack/Quilt/$Mappings/PartitionConfig] Consider making this CfnMapping a lazy mapping by providing `lazy: true`: either no findInMap was called or every findInMap could be immediately resolved without using Fn::FindInMap
+2025-08-01T19:11:39.5227758Z 
+2025-08-01T19:11:39.5228298Z ✨  Synthesis time: 15.02s
+2025-08-01T19:11:39.5228577Z 
+2025-08-01T19:11:40.8793889Z QuiltStack:  start: Building 025215d1b8ee0eab9c1ef6357d7bfa8eb2549f4176d5dce21cc4a86bba8822aa:***-us-east-1
+2025-08-01T19:11:40.8798990Z QuiltStack:  success: Built 025215d1b8ee0eab9c1ef6357d7bfa8eb2549f4176d5dce21cc4a86bba8822aa:***-us-east-1
+2025-08-01T19:11:40.8808573Z QuiltStack:  start: Publishing 025215d1b8ee0eab9c1ef6357d7bfa8eb2549f4176d5dce21cc4a86bba8822aa:***-us-east-1
+2025-08-01T19:11:42.7636516Z QuiltStack:  success: Published 025215d1b8ee0eab9c1ef6357d7bfa8eb2549f4176d5dce21cc4a86bba8822aa:***-us-east-1
+2025-08-01T19:11:42.7675136Z QuiltStack: deploying... [1/1]
+2025-08-01T19:11:44.3841490Z QuiltStack: creating CloudFormation changeset...
+2025-08-01T19:12:31.4964176Z QuiltStack |  0/65 | 7:12:24 PM | UPDATE_IN_PROGRESS   | AWS::CloudFormation::Stack                 | QuiltStack User Initiated
+2025-08-01T19:12:37.1897151Z QuiltStack |  0/65 | 7:12:32 PM | CREATE_IN_PROGRESS   | AWS::Logs::LogGroup                        | Quilt/EsIngestLambdaLogGroup (EsIngestLambdaLogGroup) 
+2025-08-01T19:12:37.1904243Z QuiltStack |  0/65 | 7:12:32 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/EsIngestDeadLetterQueue (EsIngestDeadLetterQueue) 
+2025-08-01T19:12:37.1907270Z QuiltStack |  0/65 | 7:12:32 PM | CREATE_IN_PROGRESS   | AWS::Logs::LogGroup                        | Quilt/ManifestIndexerLambdaLogGroup (ManifestIndexerLambdaLogGroup) 
+2025-08-01T19:12:37.1909091Z QuiltStack |  0/65 | 7:12:32 PM | CREATE_IN_PROGRESS   | AWS::ApiGateway::Deployment                | Quilt/ApiDeployment1753975641 (ApiDeployment1753975641) 
+2025-08-01T19:12:37.1910912Z QuiltStack |  0/65 | 7:12:32 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/ManifestIndexerDeadLetterQueue (ManifestIndexerDeadLetterQueue) 
+2025-08-01T19:12:37.1912514Z QuiltStack |  0/65 | 7:12:32 PM | UPDATE_IN_PROGRESS   | AWS::CDK::Metadata                         | CDKMetadata/Default (CDKMetadata) 
+2025-08-01T19:12:37.1914383Z QuiltStack |  0/65 | 7:12:33 PM | CREATE_IN_PROGRESS   | AWS::Logs::LogGroup                        | Quilt/ManifestIndexerLambdaLogGroup (ManifestIndexerLambdaLogGroup) Resource creation Initiated
+2025-08-01T19:12:37.1916149Z QuiltStack |  0/65 | 7:12:33 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/EsIngestDeadLetterQueue (EsIngestDeadLetterQueue) Resource creation Initiated
+2025-08-01T19:12:37.1917208Z QuiltStack |  0/65 | 7:12:33 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/S3HashLambda (S3HashLambda) 
+2025-08-01T19:12:37.1918211Z QuiltStack |  0/65 | 7:12:33 PM | CREATE_IN_PROGRESS   | AWS::Logs::LogGroup                        | Quilt/EsIngestLambdaLogGroup (EsIngestLambdaLogGroup) Resource creation Initiated
+2025-08-01T19:12:37.1919157Z QuiltStack |  0/65 | 7:12:33 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/S3CopyLambda (S3CopyLambda) 
+2025-08-01T19:12:37.1920197Z QuiltStack |  0/65 | 7:12:33 PM | CREATE_IN_PROGRESS   | AWS::ApiGateway::Deployment                | Quilt/ApiDeployment1753975641 (ApiDeployment1753975641) Resource creation Initiated
+2025-08-01T19:12:37.1922144Z QuiltStack |  0/65 | 7:12:33 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/ManifestIndexerDeadLetterQueue (ManifestIndexerDeadLetterQueue) Resource creation Initiated
+2025-08-01T19:12:37.1924203Z QuiltStack |  0/65 | 7:12:33 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/S3SNSToEventBridgeLambda (S3SNSToEventBridgeLambda) 
+2025-08-01T19:12:37.1926668Z QuiltStack |  1/65 | 7:12:33 PM | UPDATE_COMPLETE      | AWS::CDK::Metadata                         | CDKMetadata/Default (CDKMetadata) 
+2025-08-01T19:12:37.1928096Z QuiltStack |  1/65 | 7:12:33 PM | UPDATE_IN_PROGRESS   | AWS::RDS::DBInstance                       | Quilt/DB (DB) 
+2025-08-01T19:12:37.1929838Z QuiltStack |  1/65 | 7:12:33 PM | UPDATE_IN_PROGRESS   | AWS::S3::BucketPolicy                      | Quilt/UserAthenaResultsBucketPolicy (UserAthenaResultsBucketPolicy) 
+2025-08-01T19:12:37.1931886Z QuiltStack |  2/65 | 7:12:33 PM | CREATE_COMPLETE      | AWS::ApiGateway::Deployment                | Quilt/ApiDeployment1753975641 (ApiDeployment1753975641) 
+2025-08-01T19:12:37.1933899Z QuiltStack |  2/65 | 7:12:34 PM | UPDATE_IN_PROGRESS   | AWS::ApiGateway::Stage                     | Quilt/ApiStage (ApiStage) 
+2025-08-01T19:12:37.1935963Z QuiltStack |  3/65 | 7:12:35 PM | UPDATE_COMPLETE      | AWS::S3::BucketPolicy                      | Quilt/UserAthenaResultsBucketPolicy (UserAthenaResultsBucketPolicy) 
+2025-08-01T19:12:37.1937756Z QuiltStack |  4/65 | 7:12:35 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/S3CopyLambda (S3CopyLambda) 
+2025-08-01T19:12:37.1939378Z QuiltStack |  5/65 | 7:12:35 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/S3HashLambda (S3HashLambda) 
+2025-08-01T19:12:37.1940885Z QuiltStack |  6/65 | 7:12:36 PM | UPDATE_COMPLETE      | AWS::ApiGateway::Stage                     | Quilt/ApiStage (ApiStage) 
+2025-08-01T19:12:42.8761550Z QuiltStack |  6/65 | 7:12:38 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/PkgCreate (PkgCreate) 
+2025-08-01T19:12:42.8763612Z QuiltStack |  6/65 | 7:12:38 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/PkgPromote (PkgPromote) 
+2025-08-01T19:12:42.8765540Z QuiltStack |  6/65 | 7:12:39 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/PackagerLambda (PackagerLambda) 
+2025-08-01T19:12:42.8768603Z QuiltStack |  7/65 | 7:12:41 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/S3SNSToEventBridgeLambda (S3SNSToEventBridgeLambda) 
+2025-08-01T19:12:48.5691205Z QuiltStack |  8/65 | 7:12:42 PM | CREATE_COMPLETE      | AWS::Logs::LogGroup                        | Quilt/EsIngestLambdaLogGroup (EsIngestLambdaLogGroup) 
+2025-08-01T19:12:48.5692985Z QuiltStack |  9/65 | 7:12:42 PM | CREATE_COMPLETE      | AWS::Logs::LogGroup                        | Quilt/ManifestIndexerLambdaLogGroup (ManifestIndexerLambdaLogGroup) 
+2025-08-01T19:12:48.5694657Z QuiltStack | 10/65 | 7:12:47 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/PkgCreate (PkgCreate) 
+2025-08-01T19:12:48.5696304Z QuiltStack | 11/65 | 7:12:47 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/PkgPromote (PkgPromote) 
+2025-08-01T19:12:54.3280929Z QuiltStack | 12/65 | 7:12:48 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/PackagerLambda (PackagerLambda) 
+2025-08-01T19:13:05.7524272Z QuiltStack | 13/65 | 7:13:03 PM | CREATE_COMPLETE      | AWS::SQS::Queue                            | Quilt/EsIngestDeadLetterQueue (EsIngestDeadLetterQueue) 
+2025-08-01T19:13:05.7527622Z QuiltStack | 14/65 | 7:13:04 PM | CREATE_COMPLETE      | AWS::SQS::Queue                            | Quilt/ManifestIndexerDeadLetterQueue (ManifestIndexerDeadLetterQueue) 
+2025-08-01T19:13:05.7529210Z QuiltStack | 14/65 | 7:13:05 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/EsIngestQueue (EsIngestQueue) 
+2025-08-01T19:13:05.7530686Z QuiltStack | 14/65 | 7:13:05 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/ManifestIndexerQueue (ManifestIndexerQueue) 
+2025-08-01T19:13:11.5008931Z QuiltStack | 14/65 | 7:13:05 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/EsIngestQueue (EsIngestQueue) Resource creation Initiated
+2025-08-01T19:13:11.5029781Z QuiltStack | 14/65 | 7:13:05 PM | CREATE_IN_PROGRESS   | AWS::SQS::Queue                            | Quilt/ManifestIndexerQueue (ManifestIndexerQueue) Resource creation Initiated
+2025-08-01T19:13:39.9753313Z QuiltStack | 15/65 | 7:13:36 PM | CREATE_COMPLETE      | AWS::SQS::Queue                            | Quilt/EsIngestQueue (EsIngestQueue) 
+2025-08-01T19:13:39.9756571Z QuiltStack | 16/65 | 7:13:36 PM | CREATE_COMPLETE      | AWS::SQS::Queue                            | Quilt/ManifestIndexerQueue (ManifestIndexerQueue) 
+2025-08-01T19:13:39.9758121Z QuiltStack | 16/65 | 7:13:37 PM | CREATE_IN_PROGRESS   | AWS::SQS::QueuePolicy                      | Quilt/EsIngestQueuePolicy (EsIngestQueuePolicy) 
+2025-08-01T19:13:39.9760247Z QuiltStack | 16/65 | 7:13:38 PM | CREATE_IN_PROGRESS   | AWS::SQS::QueuePolicy                      | Quilt/EsIngestQueuePolicy (EsIngestQueuePolicy) Resource creation Initiated
+2025-08-01T19:13:39.9761821Z QuiltStack | 16/65 | 7:13:38 PM | UPDATE_IN_PROGRESS   | AWS::IAM::Role                             | Quilt/SearchHandlerRole (SearchHandlerRole) 
+2025-08-01T19:13:39.9763208Z QuiltStack | 17/65 | 7:13:38 PM | CREATE_COMPLETE      | AWS::SQS::QueuePolicy                      | Quilt/EsIngestQueuePolicy (EsIngestQueuePolicy) 
+2025-08-01T19:13:39.9764085Z QuiltStack | 17/65 | 7:13:39 PM | CREATE_IN_PROGRESS   | AWS::S3::Bucket                            | Quilt/EsIngestBucket (EsIngestBucket) 
+2025-08-01T19:13:46.1763587Z QuiltStack | 17/65 | 7:13:40 PM | CREATE_IN_PROGRESS   | AWS::S3::Bucket                            | Quilt/EsIngestBucket (EsIngestBucket) Resource creation Initiated
+2025-08-01T19:13:46.1767274Z QuiltStack | 17/65 | 7:13:42 PM | CREATE_FAILED        | AWS::S3::Bucket                            | Quilt/EsIngestBucket (EsIngestBucket) Resource handler returned message: "Bucket name should not contain uppercase characters" (RequestToken: fe351d2c-9eff-2aa2-a6a4-2e357059f731, HandlerErrorCode: GeneralServiceException)
+2025-08-01T19:13:46.1788238Z QuiltStack | 17/65 | 7:13:42 PM | UPDATE_FAILED        | AWS::RDS::DBInstance                       | Quilt/DB (DB) Resource update cancelled
+2025-08-01T19:13:46.1789747Z QuiltStack | 17/65 | 7:13:42 PM | UPDATE_FAILED        | AWS::IAM::Role                             | Quilt/SearchHandlerRole (SearchHandlerRole) Resource update cancelled
+2025-08-01T19:13:46.1791784Z QuiltStack | 17/65 | 7:13:42 PM | UPDATE_ROLLBACK_IN_P | AWS::CloudFormation::Stack                 | QuiltStack The following resource(s) failed to create: [EsIngestBucket]. The following resource(s) failed to update: [DB, SearchHandlerRole]. 
+2025-08-01T19:13:52.3735839Z 
+2025-08-01T19:13:52.3739328Z  ❌  QuiltStack failed: Error: The stack named QuiltStack failed to deploy: UPDATE_ROLLBACK_FAILED (The following resource(s) failed to update: [S3SNSToEventBridgeLambda, DB, SearchHandlerRole]. ): Resource handler returned message: "Bucket name should not contain uppercase characters" (RequestToken: fe351d2c-9eff-2aa2-a6a4-2e357059f731, HandlerErrorCode: GeneralServiceException)
+2025-08-01T19:13:52.3742811Z     at FullCloudFormationDeployment.monitorDeployment (/home/runner/work/aws-data-platform/aws-data-platform/quilt/node_modules/aws-cdk/lib/index.js:433:10615)
+2025-08-01T19:13:52.3744458Z     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-08-01T19:13:52.3746321Z     at async Object.deployStack2 [as deployStack] (/home/runner/work/aws-data-platform/aws-data-platform/quilt/node_modules/aws-cdk/lib/index.js:436:199640)
+2025-08-01T19:13:52.3748108Z     at async /home/runner/work/aws-data-platform/aws-data-platform/quilt/node_modules/aws-cdk/lib/index.js:436:181046
+2025-08-01T19:13:52.3748942Z 
+2025-08-01T19:13:52.3751984Z  ❌ Deployment failed: Error: The stack named QuiltStack failed to deploy: UPDATE_ROLLBACK_FAILED (The following resource(s) failed to update: [S3SNSToEventBridgeLambda, DB, SearchHandlerRole]. ): Resource handler returned message: "Bucket name should not contain uppercase characters" (RequestToken: fe351d2c-9eff-2aa2-a6a4-2e357059f731, HandlerErrorCode: GeneralServiceException)
+2025-08-01T19:13:52.3769801Z     at FullCloudFormationDeployment.monitorDeployment (/home/runner/work/aws-data-platform/aws-data-platform/quilt/node_modules/aws-cdk/lib/index.js:433:10615)
+2025-08-01T19:13:52.3771485Z     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-08-01T19:13:52.3773059Z     at async Object.deployStack2 [as deployStack] (/home/runner/work/aws-data-platform/aws-data-platform/quilt/node_modules/aws-cdk/lib/index.js:436:199640)
+2025-08-01T19:13:52.3774794Z     at async /home/runner/work/aws-data-platform/aws-data-platform/quilt/node_modules/aws-cdk/lib/index.js:436:181046
+2025-08-01T19:13:52.3776885Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::IAM::Role                             | Quilt/SearchHandlerRole (SearchHandlerRole) 
+2025-08-01T19:13:52.3778625Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::S3::BucketPolicy                      | Quilt/UserAthenaResultsBucketPolicy (UserAthenaResultsBucketPolicy) 
+2025-08-01T19:13:52.3780353Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/S3CopyLambda (S3CopyLambda) 
+2025-08-01T19:13:52.3782166Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/S3SNSToEventBridgeLambda (S3SNSToEventBridgeLambda) 
+2025-08-01T19:13:52.3783783Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::CDK::Metadata                         | CDKMetadata/Default (CDKMetadata) 
+2025-08-01T19:13:52.3785268Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::Lambda::Function                      | Quilt/S3HashLambda (S3HashLambda) 
+2025-08-01T19:13:52.3800651Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::RDS::DBInstance                       | Quilt/DB (DB) 
+2025-08-01T19:13:52.3802089Z QuiltStack | 17/65 | 7:13:46 PM | UPDATE_IN_PROGRESS   | AWS::ApiGateway::Stage                     | Quilt/ApiStage (ApiStage) 
+2025-08-01T19:13:52.3803589Z QuiltStack | 16/65 | 7:13:47 PM | UPDATE_COMPLETE      | AWS::CDK::Metadata                         | CDKMetadata/Default (CDKMetadata) 
+2025-08-01T19:13:52.3805672Z QuiltStack | 15/65 | 7:13:47 PM | UPDATE_COMPLETE      | AWS::S3::BucketPolicy                      | Quilt/UserAthenaResultsBucketPolicy (UserAthenaResultsBucketPolicy) 
+2025-08-01T19:13:52.3811139Z QuiltStack | 15/65 | 7:13:47 PM | UPDATE_FAILED        | AWS::RDS::DBInstance                       | Quilt/DB (DB) Resource handler returned message: "Cannot modify engine version because another engine version upgrade is already in progress (Service: Rds, Status Code: 400, Request ID: aa57dd4d-a6d2-4bbb-bdbd-1da695f0ea00) (SDK Attempt Count: 1)" (RequestToken: bd3003eb-c7e7-8fec-8b76-88f2e2273c31, HandlerErrorCode: InvalidRequest)
+2025-08-01T19:13:52.3814216Z QuiltStack | 14/65 | 7:13:48 PM | UPDATE_COMPLETE      | AWS::ApiGateway::Stage                     | Quilt/ApiStage (ApiStage) 
+2025-08-01T19:13:52.3829145Z QuiltStack | 13/65 | 7:13:48 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/S3CopyLambda (S3CopyLambda) 
+2025-08-01T19:13:52.3830486Z QuiltStack | 12/65 | 7:13:48 PM | UPDATE_COMPLETE      | AWS::Lambda::Function                      | Quilt/S3HashLambda (S3HashLambda) 
+2025-08-01T19:13:52.3831443Z QuiltStack | 12/65 | 7:13:48 PM | UPDATE_FAILED        | AWS::IAM::Role                             | Quilt/SearchHandlerRole (SearchHandlerRole) Resource update cancelled
+2025-08-01T19:13:52.3832510Z QuiltStack | 12/65 | 7:13:48 PM | UPDATE_FAILED        | AWS::Lambda::Function                      | Quilt/S3SNSToEventBridgeLambda (S3SNSToEventBridgeLambda) Resource update cancelled
+2025-08-01T19:13:52.3833777Z QuiltStack | 12/65 | 7:13:48 PM | UPDATE_ROLLBACK_FAIL | AWS::CloudFormation::Stack                 | QuiltStack The following resource(s) failed to update: [S3SNSToEventBridgeLambda, DB, SearchHandlerRole]. 
+2025-08-01T19:13:52.3834372Z 
+2025-08-01T19:13:52.3834692Z Failed resources:
+2025-08-01T19:13:52.3836314Z QuiltStack | 7:13:42 PM | CREATE_FAILED        | AWS::S3::Bucket                            | Quilt/EsIngestBucket (EsIngestBucket) Resource handler returned message: "Bucket name should not contain uppercase characters" (RequestToken: fe351d2c-9eff-2aa2-a6a4-2e357059f731, HandlerErrorCode: GeneralServiceException)
+2025-08-01T19:13:52.3838819Z QuiltStack | 7:13:47 PM | UPDATE_FAILED        | AWS::RDS::DBInstance                       | Quilt/DB (DB) Resource handler returned message: "Cannot modify engine version because another engine version upgrade is already in progress (Service: Rds, Status Code: 400, Request ID: aa57dd4d-a6d2-4bbb-bdbd-1da695f0ea00) (SDK Attempt Count: 1)" (RequestToken: bd3003eb-c7e7-8fec-8b76-88f2e2273c31, HandlerErrorCode: InvalidRequest)
+2025-08-01T19:13:52.4507334Z 
+2025-08-01T19:13:52.4528062Z NOTICES         (What's this? https://github.com/aws/aws-cdk/wiki/CLI-Notices)
+2025-08-01T19:13:52.4528961Z 
+2025-08-01T19:13:52.4530375Z 34892	CDK CLI will collect telemetry data on command usage starting at version 2.1100.0 (unless opted out)
+2025-08-01T19:13:52.4531358Z 
+2025-08-01T19:13:52.4535107Z The stack named QuiltStack failed to deploy: UPDATE_ROLLBACK_FAILED (The following resource(s) failed to update: [S3SNSToEventBridgeLambda, DB, SearchHandlerRole]. ): Resource handler returned message: "Bucket name should not contain uppercase characters" (RequestToken: fe351d2c-9eff-2aa2-a6a4-2e357059f731, HandlerErrorCode: GeneralServiceException)
+2025-08-01T19:13:52.4537822Z 	Overview: We do not collect customer content and we anonymize the
+2025-08-01T19:13:52.4539846Z 	          telemetry we do collect. See the attached issue for more
+2025-08-01T19:13:52.4540576Z 	          information on what data is collected, why, and how to
+2025-08-01T19:13:52.4541310Z 	          opt-out. Telemetry will NOT be collected for any CDK CLI
+2025-08-01T19:13:52.4542007Z 	          version prior to version 2.1100.0 - regardless of
+2025-08-01T19:13:52.4542747Z 	          opt-in/out. You can also preview the telemetry we will start
+2025-08-01T19:13:52.4543487Z 	          collecting by logging it to a local file, by adding
+2025-08-01T19:13:52.4544266Z 	          `--unstable=telemetry --telemetry-file=my/local/file` to any
+2025-08-01T19:13:52.4544856Z 	          `cdk` command.
+2025-08-01T19:13:52.4545102Z 
+2025-08-01T19:13:52.4545458Z 	Affected versions: cli: ^2.0.0
+2025-08-01T19:13:52.4545731Z 
+2025-08-01T19:13:52.4546056Z 	More information at: https://github.com/aws/aws-cdk/issues/34892
+2025-08-01T19:13:52.4546466Z 
+2025-08-01T19:13:52.4546475Z 
+2025-08-01T19:13:52.4546854Z 32775	(cli): CLI versions and CDK library versions have diverged
+2025-08-01T19:13:52.4547246Z 
+2025-08-01T19:13:52.4547628Z 	Overview: Starting in CDK 2.179.0, CLI versions will no longer be in
+2025-08-01T19:13:52.4548445Z 	          lockstep with CDK library versions. CLI versions will now be
+2025-08-01T19:13:52.4549144Z 	          released as 2.1000.0 and continue with 2.1001.0, etc.
+2025-08-01T19:13:52.4549550Z 
+2025-08-01T19:13:52.4549773Z 	Affected versions: cli: >=2.0.0 <=2.1005.0
+2025-08-01T19:13:52.4550089Z 
+2025-08-01T19:13:52.4550440Z 	More information at: https://github.com/aws/aws-cdk/issues/32775
+2025-08-01T19:13:52.4550890Z 
+2025-08-01T19:13:52.4550901Z 
+2025-08-01T19:13:52.4552225Z If you don’t want to see a notice anymore, use "cdk acknowledge <id>". For example, "cdk acknowledge 34892".
+2025-08-01T19:13:52.4943842Z ##[error]Process completed with exit code 1.
