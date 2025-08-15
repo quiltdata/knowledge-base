@@ -22,7 +22,7 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 
 ## Prerequisites
 
-- Test bucket: `quilt-smoke-test-bucket` (or any existing S3 bucket)
+- Test bucket: `mycompany-test-bucket` (or any existing S3 bucket)
 - Test user email: `your-email+test@yourcompany.com` (Gmail alias for self-testing)
 - Test data: Copy from `s3://quilt-example/examples/formats` to your bucket for diverse file format testing
 
@@ -45,7 +45,7 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 #### 2. Bucket Setup (30 sec)
 
 1. Admin → Buckets → Click "+"
-2. **Bucket Name:** `quilt-smoke-test-bucket` (or your test bucket)
+2. **Bucket Name:** `mycompany-test-bucket` (or your test bucket)
 3. **Title:** `Smoke Test Bucket`
 4. Click "Add"
 5. Click Q logo (upper right) → Select the new bucket
