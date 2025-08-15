@@ -23,7 +23,7 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 ## Prerequisites
 
 - Test bucket: `quilt-smoke-test-bucket` (or any existing S3 bucket)
-- Test user email: `smoketest@yourcompany.com`
+- Test user email: `your-email+test@yourcompany.com` (Gmail alias for self-testing)
 - Test data: Copy from `s3://quilt-example/examples/formats` to your bucket for diverse file format testing
 
 ---
@@ -35,8 +35,9 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 1. Go to your Quilt URL and log in
 2. Click your user id (upper right) → Admin → Users and Roles → Users
 3. Click "+" to add test user:
-   - **Email:** `smoketest@yourcompany.com`
+   - **Email:** `your-email+test@yourcompany.com`
    - **Role:** Editor
+   - **Note:** Gmail aliases let you test with yourself
 4. ✅ **Success:** User receives invitation email
 
 > **Skip on failure:** Continue to next step if email issues occur.
@@ -53,6 +54,7 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 #### 3. Copy Test Data & Create Package (2 min)
 
 1. **Copy test data to your bucket:**
+
    ```bash
    aws s3 cp -r "s3://quilt-example/examples/formats/" s3://your-test-bucket/examples/formats/
    ```
