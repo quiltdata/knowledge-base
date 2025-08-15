@@ -1,6 +1,4 @@
-# Title
-
-"How-To: Validate my new/updated Quilt Catalog is correctly configured"
+# How-To: Validate my new/updated Quilt Catalog is correctly configured
 
 ## Tags
 
@@ -8,7 +6,7 @@
 
 ## Summary
 
-End-to-end validation checklist for a new Quilt Catalog stack installation, focusing on core UI functionality, metadata tagging, versioning, preview, access, and sharing.
+**5-minute smoke test** for new Quilt Catalog stack installation, focusing on core UI functionality, metadata tagging, versioning, and search. Uses prepared test data for quick copy-paste validation.
 
 ---
 
@@ -20,86 +18,86 @@ End-to-end validation checklist for a new Quilt Catalog stack installation, focu
 
 ## Recommendation
 
-Follow this manual validation script to confirm proper operation of Quilt Catalog after stack installation.
+Follow this **5-minute smoke test** to quickly validate core Quilt Catalog functionality. For comprehensive testing, use additional validation scripts.
+
+## Prerequisites
+
+- Test bucket: `quilt-smoke-test-bucket` (or any existing S3 bucket)
+- Test user email: `smoketest@yourcompany.com`
+- Test files: Download [sample-data.zip](https://open.quiltdata.com/b/quilt-example/packages/examples%2Fwellplates/latest) for quick testing
 
 ---
 
-### Step-by-Step Stack Validation Flow (Editor Role)
+### 5-Minute Smoke Test
 
-#### Login and Access
+#### 1. Login and User Management (1 min)
 
-Requires Admin Permissions.
+1. Go to your Quilt URL and log in
+2. Click your user id (upper right) → Admin → Users and Roles → Users
+3. Click "+" to add test user:
+   - **Email:** `smoketest@yourcompany.com`
+   - **Role:** Editor
+4. ✅ **Success:** User receives invitation email
 
-    - Go to your Quilt URL (either directly or, e.g., via an Okta tile).
-    - Log in using SSO or IAM user credentials.
-    - Go to the upper right corner and click on your user id.
-    - Select Admin -> Users and Roles -> Users.
-    - Use "+" to add a user.
-    - Verify they received and can use that email to login.
+> **Skip on failure:** Continue to next step if email issues occur.
 
-> If they don't receive an email, or it has the wrong URL, contact mailto:support@quilt.bio to update the licensing server (which sends those emails).
+#### 2. Bucket Setup (30 sec)
 
-1. **Adding Buckets**
+1. Admin → Buckets → Click "+"
+2. **Bucket Name:** `quilt-smoke-test-bucket` (or your test bucket)
+3. **Title:** `Smoke Test Bucket`
+4. Click "Add"
+5. Click Q logo (upper right) → Select the new bucket
+6. ✅ **Success:** Overview page loads, tabs are clickable
 
-Requires an existing S3 bucket in the same account (and ideally region), preferably with data.
+#### 3. Quick Package Creation (2 min)
 
-    - Go to Admin -> Buckets.
-    - Click +
-    - Enter the Name (not URI) of that bucket, along with a short Title.
-    - Click Add
-    - Go the bucket picker (upper right Q logo)
-    - Select the new bucket
-    - Verify it shows the Overview page
-    - Click through the top-level tabs
+1. Packages tab → "Create New Package"
+2. **Quick test files:** Create these simple files locally:
+   ```
+   test.txt: "This is a smoke test file"
+   data.csv: "name,value\ntest,123"
+   ```
+3. Drag files into Quilt or "Add Local Files"
+4. **Commit message:** `Smoke test package`
+5. **Metadata:**
+   - Key: `test_type` Value: `smoke_test`
+   - Key: `author` Value: `your-name`
+6. Click "Create"
+7. ✅ **Success:** Package created, preview shows files
 
-> If the Packages tab is empty, even though there are packages in the bucket, it could be because the index is still being created. This may take tens of minutes if there are many package revisions.
+#### 4. Search Validation (1 min)
 
-1. **Upload and Annotate**
+1. Search button (top bar) → Enter `smoke_test`
+2. ✅ **Success:** Your package appears in results
+3. Click package → Verify files are visible and readable
 
-Requires a handful of files in different formats, such as those from the [open stack](https://open.quiltdata.com/b/quilt-example/packages/).
-Use the "Get Package -> Download Zip" to get all the files separately (instead of via QuiltSync).
+> **Combined test:** This validates package creation, indexing, search, and preview in one step.
 
-    - Go to the Packages tab
-    - Click "Create New Package"
-    - Drag in those files (or click "Add Local Files")
-    - Add a commit message "First"
-    - Under "Metadata", add:
-        - Key: author
-        - Value: <Your Name>
-    - Click "Create"
+#### 5. Query Test (30 sec)
 
-> Creation may fail if your bucket requires a workflow, or the user or bucket lacks write permissions.
+1. Queries tab → Enter and run:
+   ```sql
+   SHOW TABLES
+   ```
+2. Look for `your-bucket-name_packages-view`
+3. **Quick metadata query:**
+   ```sql
+   SELECT *
+   FROM "your-bucket-name_packages-view"
+   WHERE json_extract_scalar(user_meta, '$.test_type') = 'smoke_test'
+   LIMIT 5
+   ```
+4. ✅ **Success:** Query returns your test package
 
-1. **Revise a Package**
+---
 
-    - Browse the package
-    - Click "Configure Summary" at the bottom
-    - Add a couple files
-    - Click Save
-    - Add a commit message and "Push" the new revision
-    - Verify the additional files show up in the home page preview
-    - Click on the hash or "v" to see prior versions
+## 🎉 Smoke Test Complete!
 
-> If some file types do not preview, see the [related Kbase Article](https://kb.quilt.bio/why-are-previews-not-rendering-for-certain-file-types-e.g.-.txt-.png-in-quilt).
+**Total time:** ~5 minutes  
+**Validated:** Login, bucket access, package creation, search, and queries
 
-1. **Search and Discover**
-
-    - Click on the "Search" button on the top bar
-    - Verify it shows a list of existing packages
-    - Enter "Your Name" in the Search box
-    - Verify it shows up in the search Results
-    - Explore different filters and modes to see what else is present
-
-> If it does not show up after a while, you may need to [repair the bucket index](https://kb.quilt.bio/fixing-data-display-issues-in-quilt-platform).
-
-1. **Metadata Queries**
-    - Go to the Queries tab.
-    - Type "Show tables" in the Query body and click "Run Query"
-    - Look for the name of `your-bucket`
-    - Enter the following query to find your package:
-
-    SELECT *
-    FROM "your-bucket_packages-view"
-    WHERE json_extract_scalar(user_meta, '$.author') = 'Your Name'
-
-> If you cannot query anything, check your workgroup configuration.
+### Next Steps
+- For comprehensive testing, run detailed validation scripts
+- Monitor logs for any warnings during testing
+- Test additional file types and workflows as needed
