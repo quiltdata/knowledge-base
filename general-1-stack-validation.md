@@ -24,7 +24,7 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 
 - Test bucket: `quilt-smoke-test-bucket` (or any existing S3 bucket)
 - Test user email: `smoketest@yourcompany.com`
-- Test files: Download [sample-data.zip](https://open.quiltdata.com/b/quilt-example/packages/examples%2Fwellplates/latest) for quick testing
+- Test data: Copy from `s3://quilt-example/examples/formats` to your bucket for diverse file format testing
 
 ---
 
@@ -50,21 +50,24 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 5. Click Q logo (upper right) → Select the new bucket
 6. ✅ **Success:** Overview page loads, tabs are clickable
 
-#### 3. Quick Package Creation (2 min)
+#### 3. Copy Test Data & Create Package (2 min)
 
-1. Packages tab → "Create New Package"
-2. **Quick test files:** Create these simple files locally:
+1. **Copy test data to your bucket:**
+   ```bash
+   aws s3 cp -r "s3://quilt-example/examples/formats/" s3://your-test-bucket/examples/formats/
    ```
-   test.txt: "This is a smoke test file"
-   data.csv: "name,value\ntest,123"
-   ```
-3. Drag files into Quilt or "Add Local Files"
-4. **Commit message:** `Smoke test package`
-5. **Metadata:**
-   - Key: `test_type` Value: `smoke_test`
-   - Key: `author` Value: `your-name`
-6. Click "Create"
-7. ✅ **Success:** Package created, preview shows files
+
+2. **Create package from copied data:**
+   - Packages tab → "Create New Package"
+   - Browse to `/examples/formats/` in your bucket
+   - Select the diverse file formats (CSV, JSON, images, etc.)
+   - **Commit message:** `Smoke test package`
+   - **Metadata:**
+     - Key: `test_type` Value: `smoke_test`
+     - Key: `author` Value: `your-name`
+   - Click "Create"
+
+3. ✅ **Success:** Package created with multiple file formats, previews work
 
 #### 4. Search Validation (1 min)
 
@@ -77,27 +80,32 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 #### 5. Query Test (30 sec)
 
 1. Queries tab → Enter and run:
+
    ```sql
    SHOW TABLES
    ```
+
 2. Look for `your-bucket-name_packages-view`
 3. **Quick metadata query:**
+
    ```sql
    SELECT *
    FROM "your-bucket-name_packages-view"
    WHERE json_extract_scalar(user_meta, '$.test_type') = 'smoke_test'
    LIMIT 5
    ```
+
 4. ✅ **Success:** Query returns your test package
 
 ---
 
-## 🎉 Smoke Test Complete!
+## Smoke Test Complete
 
 **Total time:** ~5 minutes  
 **Validated:** Login, bucket access, package creation, search, and queries
 
 ### Next Steps
+
 - For comprehensive testing, run detailed validation scripts
 - Monitor logs for any warnings during testing
 - Test additional file types and workflows as needed
