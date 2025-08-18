@@ -48,7 +48,7 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 2. **Bucket Name:** `mycompany-test-bucket` (or your test bucket)
 3. **Title:** `Smoke Test Bucket`
 4. Click "Add"
-5. Click Q logo (upper right) → Select the new bucket
+5. Click Q logo (upper left) → Select the new bucket
 6. ✅ **Success:** Overview page loads, tabs are clickable
 
 #### 3. Copy Test Data & Create Package (2 min)
