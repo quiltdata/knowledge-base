@@ -38,9 +38,7 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
    - **Email:** `your-email+test@yourcompany.com`
    - **Role:** Editor
    - **Note:** Gmail aliases let you test with yourself
-4. ✅ **Success:** User receives invitation email
-
-> **Skip on failure:** Continue to next step if email issues occur.
+4. ✅ **Success:** You receive an invitation email
 
 #### 2. Bucket Setup (30 sec)
 
@@ -56,24 +54,34 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
 1. **Copy test data to your bucket:**
 
    ```bash
-   aws s3 cp -r "s3://quilt-example/examples/formats/" s3://your-test-bucket/examples/formats/
+   aws s3 cp -r "s3://quilt-example/examples/formats/" s3://mycompany-test-bucket/examples/formats/
    ```
 
-2. **Create package from copied data:**
-   - Packages tab → "Create New Package"
-   - Browse to `/examples/formats/` in your bucket
-   - Select the diverse file formats (CSV, JSON, images, etc.)
-   - **Commit message:** `Smoke test package`
-   - **Metadata:**
-     - Key: `test_type` Value: `smoke_test`
-     - Key: `author` Value: `your-name`
-   - Click "Create"
+1. **Copy test metadtata to a local folder:**
 
-3. ✅ **Success:** Package created with multiple file formats, previews work
+   ```bash
+   aws s3 cp -r "s3://quilt-example/examples/formats/" .
+   ```
+
+1. **Create package from copied data:**
+   - Packages tab → "Create New Package"
+   - Enter the package name `test/smoke`
+   - Click "Add Files from Bucket"
+   - Browse to `examples` -> `formats` in that `mycompany-test-bucket`
+   - Click the upper-left square to select all the files
+   - Click "Add Files"
+   - Drag `iris.csv` local file from step 2 into the "Key | Value" metadata fields
+   - Enter **Commit message:** `Smoke test package`
+   - Click "Create"
+2. ✅ **Success:** Package name shown in alert
+   - Click on the resulting link
+   - Verify files and metadata are show
+
+1. ✅ **Success:** Package created, metadata visible
 
 #### 4. Search Validation (1 min)
 
-1. Search button (top bar) → Enter `smoke_test`
+1. Search button (top bar) → Enter `smoke`
 2. ✅ **Success:** Your package appears in results
 3. Click package → Verify files are visible and readable
 
@@ -87,12 +95,12 @@ Follow this **5-minute smoke test** to quickly validate core Quilt Catalog funct
    SHOW TABLES
    ```
 
-2. Look for `your-bucket-name_packages-view`
+2. Look for `mycompany-test-bucket_packages-view`
 3. **Quick metadata query:**
 
    ```sql
    SELECT *
-   FROM "your-bucket-name_packages-view"
+   FROM "mycompany-test-bucket_packages-view"
    WHERE json_extract_scalar(user_meta, '$.test_type') = 'smoke_test'
    LIMIT 5
    ```
