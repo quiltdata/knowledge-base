@@ -1,6 +1,7 @@
 # Quilt Platform Release 1.62.0
 
-This release expands support for the QuiltSync desktop sync client and the Qurator AI chatbot, and addresses a stack name limitation impacting the prior release.  There is also a new version of `quilt3`
+This release expands support for the QuiltSync desktop sync client and the Qurator AI chatbot,
+and addresses a stack name limitation impacting the prior release.  There is also a new version of `quilt3`
 that streamlines pushing packages across buckets.
 
 ## Catalog Enhancements
@@ -52,7 +53,6 @@ That limitation has been removed, so all customers can now safely upgrade.
 ## Version 7.0 of quilt3 Python SDK
 
 The latest version of `quilt3` adds a new default `selector_fn`
-to the package push command.  This ensures that, unless you specify otherwise, pushing a package to a new bucket does *not* copy all the files from the current bucket.
+to the package `push` command.  This ensures that, unless you specify otherwise, pushing a package to a new bucket does **not** copy all the files from the current bucket.
 
 Changing the existing behavior requires updating the major version number. Many dependency checkers will not automatically update to a new major version, so you may need to manually bump the version to take advantage of this new functionality.
-
