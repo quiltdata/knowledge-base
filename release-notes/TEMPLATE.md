@@ -99,19 +99,4 @@ This release introduces new filtering options in Qurator, performance improvemen
 - Improved page load performance across dataset views.
 - Removed the legacy upload workflow from the UI for a cleaner interface.
 
-This release introduces new filtering options in Qurator, performance improvements, and key bug fixes to streamline the user experience.
-
-### New Features
-
-- **Tag Filtering in Qurator**  
-  You can now filter assets by tag, helping you find relevant datasets more quickly and efficiently.
-
-### Bug Fixes
-
-- Fixed an issue that prevented previews from loading when datasets were linked from Google Drive.
-
-### Other Improvements
-
-- Improved page load performance across dataset views.
-- Removed the legacy upload workflow from the UI for a cleaner interface.
 ```
