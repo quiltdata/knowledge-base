@@ -49,7 +49,7 @@ That limitation has been removed, so all customers can now safely upgrade.
 - Users can now use the keyboard to enter dates for faceted search filters
 - Searches are less likely to experience timeouts when searching large indices on small clusters
 - Search filters handle invalid input more gracefully
-- Secure search performs better under high load
+- Secure search performs better
 
 ## Version 7.0 of quilt3 Python SDK
 
