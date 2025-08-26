@@ -29,7 +29,6 @@ and then download (or clear) the resulting JSON log.
 This is primarily intended for tuning or debugging prompts,
 but is also a convenient way to capture structured results.
 
-
 ### HTTP Redirects for Opening QuiltSync
 
 To support clients that cannot directly open the Quilt+ URIs used by [QuiltSync](https://www.quilt.bio/quiltsync),
@@ -53,7 +52,6 @@ That limitation has been removed, so all customers can now safely upgrade.
 
 ## Version 7.0 of quilt3 Python SDK
 
-The latest version of `quilt3` adds a new default `selector_fn`
-to the package `push` command.  This ensures that, unless you specify otherwise, pushing a package to a new bucket does **not** copy all the files from the current bucket.
+The latest version of `quilt3` changes the default behavior of the package `push` command. Previously, all files would be copied to the destination path by default. Now, by default, only files not currently in the destination bucket will be copied. To restore the previous behavior of copying all files, use `selector_fn=Package.selector_fn_copy_all`.
 
-Changing the existing behavior requires updating the major version number. Many dependency checkers will not automatically update to a new major version, so you may need to manually bump the version to take advantage of this new functionality.
+Since this is a breaking change, it requires a major version update. Dependencies pinned with caret notation (like `^6.0.0`) will not automatically upgrade to version 7.0, so you'll need to manually update your dependency specification to access this functionality.
