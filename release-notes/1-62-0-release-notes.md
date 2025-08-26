@@ -1,0 +1,55 @@
+# Quilt Platform Release 1.62.0
+
+This release expands support for the QuiltSync desktop sync client  
+and the Qurator AI chatbot, along with a new version of `quilt3`  
+that streamlines pushing packages across buckets.  
+It also addresses a stack name limitation impacting the prior release.
+
+## Catalog Enhancements
+
+### Expanded Qurator Developer Tools
+
+The built-in Developer Tools (available in the upper right menu of the Qurator AI chat window) have been expanded with two new features:
+
+![Qurator Developer Tools Screenshot](./1-62-0-qurator-tools.png)
+
+#### Swappable Models
+
+For the first time, you can modify Qurator to use a different Bedrock Model than the default (currently Claude 3.7). This is particularly useful when you want to experiment with newer, cheaper, or specialized models.
+
+Please note:
+
+1. You must paste in the exact Bedrock Model ID or Inference Profile ID
+2. The model (specifically, the inference profile) must be enabled in the same region as your Quilt stack
+3. Qurator expects the model to support text, document and image inputs, and may not function with less capable models.
+
+#### Session Recordings
+
+Similar to web inspectors, users can record a portion of their Qurator session,
+and then download (or clear) the resulting JSON log.
+This is primarily intended for tuning or debugging prompts,
+but is also a convenient way to capture structured results.
+
+### HTTP Redirects for Opening QuiltSync
+
+To support clients that cannot directly open the Quilt+ URIs used by [QuiltSync](https://www.quilt.bio/quiltsync),
+we have added a [new `redir` route](https://docs.quilt.bio/quilt-platform-catalog-user/uri#catalog-usage) to the Quilt Catalog.
+Appending the URL-encoded `quilt+s3://` URI for a package or path to `https://your-catalog-host/redir/`
+generates a standard URL that will redirect to the Quilt+ URI, automatically opening QuiltSync (if installed).
+
+For example: `https://open.quiltdata.com/redir/quilt%2Bs3%3A%2F%2Fquilt-example%23package%3Dakarve%2Fcord19%26path%3DCORD19.ipynb`
+
+### Other Improvements
+
+- Removed stack name limitations that prevented some customers from upgrading to 1.61
+- Users can now use the keyboard to enter dates for faceted search filters
+- Simplify bucket overview queries to improve performance and reduce timeouts
+- Searches are less likely to experience timeouts when searching large indices on small clusters
+- Search filters handle invalid input more gracefully
+- Secure search performs better
+
+## Version 7.0 of quilt3 Python SDK
+
+The latest version of `quilt3` changes the default behavior of the package `push` command. Previously, all files would be copied to the destination path by default. Now, by default, only files not currently in the destination bucket will be copied. To restore the previous behavior of copying all files, use `selector_fn=Package.selector_fn_copy_all`.
+
+Since this is a breaking change, it requires a major version update. Dependencies pinned with caret notation (like `^6.0.0`) will not automatically upgrade to version 7.0, so you'll need to manually update your dependency specification to access this functionality.
