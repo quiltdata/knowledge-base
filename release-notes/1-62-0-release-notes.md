@@ -19,9 +19,9 @@ For the first time, you can modify Qurator to use a different Bedrock Model than
 
 Please note:
 
-1. You must paste in the exact Bedrock Model ID
+1. You must paste in the exact Bedrock Model ID or Inference Profile ID
 2. The model (specifically, the inference profile) must be enabled in the same region as your Quilt stack
-3. Qurator expects the model to support both text and image inputs, and may not function with less capable models.
+3. Qurator expects the model to support text, document and image inputs, and may not function with less capable models.
 
 #### Session Recordings
 
