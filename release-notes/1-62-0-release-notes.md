@@ -6,27 +6,11 @@ that streamlines pushing packages across buckets.
 
 ## Catalog Enhancements
 
-### HTTP Redirects for Opening QuiltSync
-
-To support clients that cannot directly open the Quilt+ URIs used by [QuiltSync](https://www.quilt.bio/quiltsync),
-we have added a [new `redir` route](https://docs.quilt.bio/quilt-platform-catalog-user/uri#catalog-usage) to the Quilt Catalog.
-Appending the URL-encoded `quilt+s3://` URI for a package or path to `https://your-catalog-host/redir/`
-generates a standard URL that will redirect to the Quilt+ URI, automatically opening QuiltSync (if installed).
-
-For example: `https://open.quiltdata.com/redir/quilt%2Bs3%3A%2F%2Fquilt-example%23package%3Dakarve%2Fcord19%26path%3DCORD19.ipynb`
-
 ### Expanded Qurator Developer Tools
 
 The built-in Developer Tools (available in the upper right menu of the Qurator AI chat window) have been expanded with two new features:
 
 ![Qurator Developer Tools Screenshot](./1-62-0-qurator-tools.png)
-
-#### Session Recordings
-
-Similar to web inspectors, users can record a portion of their Qurator session,
-and then download (or clear) the resulting JSON log.
-This is primarily intended for tuning or debugging prompts,
-but is also a convenient way to capture structured results.
 
 #### Swappable Models
 
@@ -37,6 +21,23 @@ Please note:
 1. You must paste in the exact Bedrock Model ID
 2. The model (specifically, the inference profile) must be enabled in the same region as your Quilt stack
 3. Qurator expects the model to support both text and image inputs, and may not function with less capable models.
+
+#### Session Recordings
+
+Similar to web inspectors, users can record a portion of their Qurator session,
+and then download (or clear) the resulting JSON log.
+This is primarily intended for tuning or debugging prompts,
+but is also a convenient way to capture structured results.
+
+
+### HTTP Redirects for Opening QuiltSync
+
+To support clients that cannot directly open the Quilt+ URIs used by [QuiltSync](https://www.quilt.bio/quiltsync),
+we have added a [new `redir` route](https://docs.quilt.bio/quilt-platform-catalog-user/uri#catalog-usage) to the Quilt Catalog.
+Appending the URL-encoded `quilt+s3://` URI for a package or path to `https://your-catalog-host/redir/`
+generates a standard URL that will redirect to the Quilt+ URI, automatically opening QuiltSync (if installed).
+
+For example: `https://open.quiltdata.com/redir/quilt%2Bs3%3A%2F%2Fquilt-example%23package%3Dakarve%2Fcord19%26path%3DCORD19.ipynb`
 
 ### Support for More Stack Names
 
