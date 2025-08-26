@@ -1,8 +1,9 @@
 # Quilt Platform Release 1.62.0
 
-This release expands support for the QuiltSync desktop sync client and the Qurator AI chatbot,
-and addresses a stack name limitation impacting the prior release.  There is also a new version of `quilt3`
-that streamlines pushing packages across buckets.
+This release expands support for the QuiltSync desktop sync client  
+and the Qurator AI chatbot, along with a new version of `quilt3`  
+that streamlines pushing packages across buckets.  
+It also addresses a stack name limitation impacting the prior release.
 
 ## Catalog Enhancements
 
@@ -38,13 +39,9 @@ generates a standard URL that will redirect to the Quilt+ URI, automatically ope
 
 For example: `https://open.quiltdata.com/redir/quilt%2Bs3%3A%2F%2Fquilt-example%23package%3Dakarve%2Fcord19%26path%3DCORD19.ipynb`
 
-### Support for More Stack Names
-
-The new `EsIngestBucket` introduced in 1.61 to support advanced package searches was incompatible with certain stack names.
-That limitation has been removed, so all customers can now safely upgrade.
-
 ### Other Improvements
 
+- Removed stack name limitations that prevented some customers from upgrading to 1.61
 - Users can now use the keyboard to enter dates for faceted search filters
 - Searches are less likely to experience timeouts when searching large indices on small clusters
 - Search filters handle invalid input more gracefully
