@@ -43,6 +43,7 @@ For example: `https://open.quiltdata.com/redir/quilt%2Bs3%3A%2F%2Fquilt-example%
 
 - Removed stack name limitations that prevented some customers from upgrading to 1.61
 - Users can now use the keyboard to enter dates for faceted search filters
+- Simplify bucket overview queries to improve performance and reduce timeouts
 - Searches are less likely to experience timeouts when searching large indices on small clusters
 - Search filters handle invalid input more gracefully
 - Secure search performs better
