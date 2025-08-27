@@ -10,14 +10,14 @@
   - '⬇️ Get files'
   - '📃 Organize'
   - 'Create package'
-- Squeeze to mobile view: all buttons except "Create package" iconized
+- Squeeze to mobile view: all buttons except "Create package" are iconized
 
 - Go to http://localhost:3000/b/quilt-example/tree/examples/formats/JSON.json
 - See toolbar with
   - '⬇️ Get file'
   - '📃 Organize'
   - '✨ Assist'
-- Squeeze to mobile view: all buttons iconized
+- Squeeze to mobile view: all buttons are iconized
 
 ### Directory Popovers
 
@@ -30,7 +30,7 @@
   - "⬇️ Get files"
     - "Download zip (directory)"
     - "Code" (list files Python, download Python, list CLI, download CLI)
-  - 📃 Organize, has (2) badge
+  - "📃 Organize", has (2) badge
     - "2 Selected items"
     - "Add to bookmarks"
     - "Manage selection"
@@ -58,7 +58,7 @@
 
 ### Hide All Buttons
 
-- Go to http://loaclhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/config.yaml
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/config.yaml
 - Set:
 
 ```yaml
@@ -68,16 +68,16 @@ ui:
     downloadObject: false
     createPackage: false
   blocks:
-    qurator: false
+    curator: false
 ```
 
 - See only '📃 Organize'
-- Go to http://loaclhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
   - See only '📃 Organize'
 
 ### Hide "special" buttons
 
-- Go to http://loaclhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/config.yaml
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/config.yaml
 - Set:
 
 ```yaml
@@ -85,16 +85,16 @@ ui:
   actions:
     createPackage: false
   blocks:
-    qurator: false
+    curator: false
 ```
 
 - See "⬇️ Get file" and '📃 Organize', without '✨ Assist'
-- Go to http://loaclhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
   - See no 'Create package'
 
 ### Show defaults
 
-- Go to http://loaclhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/config.yaml
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/config.yaml
 - Set:
 
 ```yaml
@@ -102,7 +102,7 @@ ui: {}
 ```
 
 - See all buttons
-- Go to http://loaclhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
   - See all buttons
 
 ## Actions
@@ -113,7 +113,7 @@ ui: {}
 - Click "Add files"
 - Pick ./assets/catalog-1-bucket-toolbar/workflows/config.yaml using "Add local file", and upload
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/two/files/
-- Select \*.txt files
+- Select *.txt files
 - Create "two/files" package
 
 ### Download
@@ -147,8 +147,9 @@ ui: {}
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/data/atlantic-storms.csv
 - Click "📃 Organize" → "View as Plain text"
+  - See a plain text
 - Click "📃 Organize" → "View as Tabular data"
-- See a correct file viewer
+  - See a tabular view
 
 ### Delete
 
