@@ -111,7 +111,7 @@ ui: {}
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/workflows/
 - Click "Add files"
-- Pick ./assets/catalog-1-bucket-toolbar/workflows/config.yaml and
+- Pick ./assets/catalog-1-bucket-toolbar/workflows/config.yaml using "Add local file", and upload
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/two/files/
 - Select \*.txt files
 - Create "two/files" package
