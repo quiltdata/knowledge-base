@@ -1,12 +1,5 @@
 # Bucket Toolbar Test Plan
 
-## TODO
-
-- [ ] Fix drag and drop area layout on hover
-- [ ] Fix delete icon to work for directories, not just objects
-- [ ] Make able to remove from bookmarks using selection menu
-- [ ] Fix workflows directory upload (use ./workflows upload, instead of ./workflows/config.yml)
-
 ## Layout
 
 ### Buttons Layout
