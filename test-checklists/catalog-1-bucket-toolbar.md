@@ -5,25 +5,25 @@
 ### Buttons Layout
 
 - Go to http://localhost:3000/b/quilt-example/tree/examples/hurdat/
-- See toolbar with
+- Verify the toolbar shows:
   - '➕ Add files'
   - '⬇️ Get files'
   - '📃 Organize'
   - 'Create package'
-- Squeeze to mobile view: all buttons except "Create package" are iconized
+- Resize to mobile view: all buttons except "Create package" are iconized
 
 - Go to http://localhost:3000/b/quilt-example/tree/examples/formats/JSON.json
-- See toolbar with
+- Verify the toolbar shows:
   - '⬇️ Get file'
   - '📃 Organize'
   - '✨ Assist'
-- Squeeze to mobile view: all buttons are iconized
+- Resize to mobile view: all buttons are iconized
 
 ### Directory Popovers
 
 - Go to http://localhost:3000/b/quilt-example/tree/examples/hurdat/
 - Select one directory and one file
-- Click on every button and see:
+- Click each button and verify:
   - "➕ Add files"
     - "Create text file"
     - "Upload files"
@@ -42,7 +42,7 @@
 ### File Popovers
 
 - Go to http://localhost:3000/b/quilt-example/tree/examples/formats/JSON.json
-- Click on every button and see:
+- Click each button and verify:
   - "⬇️ Get file"
     - "Download file"
     - "Code" (download Python, download CLI)
@@ -71,9 +71,9 @@ ui:
     curator: false
 ```
 
-- See only '📃 Organize'
+- Verify only '📃 Organize' appears
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
-  - See only '📃 Organize'
+  - Verify only '📃 Organize' appears
 
 ### Hide "special" buttons
 
@@ -88,9 +88,9 @@ ui:
     curator: false
 ```
 
-- See "⬇️ Get file" and '📃 Organize', without '✨ Assist'
+- Verify "⬇️ Get file" and '📃 Organize' appear, without '✨ Assist'
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
-  - See no 'Create package'
+  - Verify 'Create package' does not appear
 
 ### Show defaults
 
@@ -101,9 +101,9 @@ ui:
 ui: {}
 ```
 
-- See all buttons
+- Verify all buttons appear
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/
-  - See all buttons
+  - Verify all buttons appear
 
 ## Actions
 
@@ -119,48 +119,48 @@ ui: {}
 ### Download
 
 - Go to http://localhost:3000/b/quilt-example/tree/examples/formats/JSON.json
-- Click "⬇️ Get file" → "Download file" - file downloads
+- Click "⬇️ Get file" → "Download file" - the file downloads
 
 - Go to http://localhost:3000/b/quilt-example/tree/examples/hurdat/
-- Click "⬇️ Get files" → "Download zip" - zip file downloads with selected items
+- Click "⬇️ Get files" → "Download zip" - a zip file containing the selected items downloads
 
 ### Bulk upload
 
 - Unpack hurdat.zip
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/
-- Drag'n'drop half of files and directories directly to the page
-- See Upload Dialog
-- Drag'n'drop the rest of files
+- Drag and drop half of files and directories directly to the page
+- Verify the Upload Dialog appears
+- Drag and drop the rest of files
 - Upload
 
 ### Bookmark
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/quilt_summarize.json
-- Click "Organize"
+- Click "📃 Organize"
 - Toggle "Add to Bookmark" / "Remove from Bookmark"
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/
 - Select one directory and one file // TODO: make able to remove from bookmarks using this menu
-- Mouseover over these two items and de-select from bookmarks
+- Hover over these two items and de-select from bookmarks
 
 ### File view
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/data/atlantic-storms.csv
 - Click "📃 Organize" → "View as Plain text"
-  - See a plain text
+  - Verify plain text view
 - Click "📃 Organize" → "View as Tabular data"
-  - See a tabular view
+  - Verify tabular view
 
 ### Delete
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/quilt_summarize.json
-- Click "📃 Organize" → "Delete" - confirm deletion dialog, file is removed
+- Click "📃 Organize" → "Delete" - confirm in the deletion dialog; the file is removed
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/
 - Select multiple files and directories
-- Click "📃 Organize" → "Delete selected items" - confirm deletion, selected files removed
+- Click "📃 Organize" → "Delete selected items" - confirm deletion; the selected files are removed
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/
-- Mouseover over "hurdat"
+- Hover over "hurdat"
 - Click "Delete" icon // FIXME: works only for objects
-- Directory removed
+- The directory is removed
