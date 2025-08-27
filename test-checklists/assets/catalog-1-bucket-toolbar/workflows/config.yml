@@ -1,0 +1,8 @@
+version:
+  base: "1"
+workflows:
+  dummy:
+    name: Dummy
+successors:
+  s3://fiskus-us-east-1:
+    title: Same bucket
