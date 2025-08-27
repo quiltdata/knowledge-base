@@ -10,11 +10,14 @@
   - '⬇️ Get files'
   - '📃 Organize'
   - 'Create package'
+- Squeeze to mobile view: all buttons except "Create package" iconized
+
 - Go to http://localhost:3000/b/quilt-example/tree/examples/formats/JSON.json
 - See toolbar with
   - '⬇️ Get file'
   - '📃 Organize'
   - '✨ Assist'
+- Squeeze to mobile view: all buttons iconized
 
 ### Directory Popovers
 
