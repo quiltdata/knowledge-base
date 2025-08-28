@@ -68,7 +68,7 @@ ui:
     downloadObject: false
     createPackage: false
   blocks:
-    curator: false
+    qurator: false
 ```
 
 - Verify only '📃 Organize' appears
@@ -85,7 +85,7 @@ ui:
   actions:
     createPackage: false
   blocks:
-    curator: false
+    qurator: false
 ```
 
 - Verify "⬇️ Get file" and '📃 Organize' appear, without '✨ Assist'
@@ -140,8 +140,8 @@ ui: {}
 - Toggle "Add to Bookmark" / "Remove from Bookmark"
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/
-- Select one directory and one file // TODO: make able to remove from bookmarks using this menu
-- Hover over these two items and de-select from bookmarks
+- Select one directory and one file
+- Toggle "Add to Bookmark" / "Remove from Bookmark"
 
 ### File view
 
@@ -153,8 +153,11 @@ ui: {}
 
 ### Delete
 
-- Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/quilt_summarize.json
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/catalog/config.yaml
 - Click "📃 Organize" → "Delete" - confirm in the deletion dialog; the file is removed
+
+- Go to http://localhost:3000/b/fiskus-us-east-1/tree/.quilt/workflows/
+- Select all → Click "📃 Organize" → "Delete" - confirm in the deletion dialog; the directory is removed
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/hurdat/
 - Select multiple files and directories
@@ -162,5 +165,5 @@ ui: {}
 
 - Go to http://localhost:3000/b/fiskus-us-east-1/tree/
 - Hover over "hurdat"
-- Click "Delete" icon // FIXME: works only for objects
+- Click "Delete" icon
 - The directory is removed
