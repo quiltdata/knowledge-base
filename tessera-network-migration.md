@@ -1,6 +1,6 @@
 # Tessera Network 2.0 Migration Notes
 
-> This is draft notes for migrating a Tessera network. To be make more general and merged into [howto-2-network-1.0-migration.md](howto-2-network-1.0-migration.md).
+> This is draft notes for migrating a Tessera network. To be made more general and merged into [howto-2-network-1.0-migration.md](howto-2-network-1.0-migration.md).
 
 ## Overview of Changes from Network 1.0 to 2.0
 
