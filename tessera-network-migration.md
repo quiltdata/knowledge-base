@@ -4,7 +4,7 @@
 
 ## Overview of Changes from Network 1.0 to 2.0
 
-- Network 2.0 introduces uses 3 pairs of subnets instead of 1 pair in Network 1.0.
+- Network 2.0 uses 3 pairs of subnets instead of 1 pair in Network 1.0.
 - Network 2.0 requires specific values for variant options that are configurable in Network 1.0:
   - `lambdas_in_vpc=true`
   - `api_gateway_in_vpc=true` if `elb_scheme=internal`
@@ -43,7 +43,7 @@ They'll need to create a VPC endpoint for API Gateway and pass it to `ApiGateway
 
 - it's impossible to change subnets of DBSubnetGroup if they are in use
 - CloudFormation only can change DBSubnetGroup by replacing the DB instance, but it can be done manually
-- new DBSubnetGroup can't be in the same VPC
+- a new DBSubnetGroup can't be in the same VPC
 - moving to new DBSubnetGroup requires multi-AZ to be turned off temporarily
 
 #### Steps (TODO: provide script?)
