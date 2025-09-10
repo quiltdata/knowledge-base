@@ -10,7 +10,11 @@ Guidance on migrating from a legacy single-tier VPC setup (Network 1.0) to the m
 
 ---
 
-## Background
+## Why Use Network 2.0?
+
+- Features in newer versions of the Quilt stack require Network 2.0 architecture
+- Legacy stacks can't adopt newer secure configurations (e.g. `lambdas_in_vpc=true`)
+- IP address overlap or exhaustion when provisioning new subnets
 
 ### What Is Network 1.0?
 
@@ -18,21 +22,20 @@ Network 1.0 is a **legacy flat VPC design** used for earlier stacks. It lacks fo
 
 ### What Is Network 2.0?
 
-Network 2.0 introduces a **three-tier subnet architecture**:
+Network 2.0 introduces a **three-tier subnet architecture** to enforce secure-by-default infrastructure decisions, reducing misconfiguration risks:
 
 1. **Intra Subnets** – private, internal-only (e.g., DBs, Elasticsearch)
 2. **Private Subnets** – used by services not exposed to the internet
 3. **Public Subnets** – for NAT gateways and internet-facing ELBs
 
-It enforces secure-by-default infrastructure decisions, reducing misconfiguration risks.
+To do this, it adds four new CloudFormation parameters:
 
-### Why Use Network 2.0?
+- IntraSubnets
+- UserSecurityGroup
+- UserSubnets
+- ApiGatewayVPCEndpoint
 
-- Features in newer versions of the Quilt stack require Network 2.0 architecture
-- Legacy stacks can't adopt newer secure configurations (e.g. `lambdas_in_vpc=true`)
-- IP address overlap or exhaustion when provisioning new subnets
-
-## Alternatives
+## Alternative Approaches
 
 ### Option A: New Stack
 
@@ -64,8 +67,6 @@ For cases where preserving existing database and Elasticsearch data is critical,
 
 We strongly encourage you to first test this process on a dev stack, to familiarize yourself with the process and identify any possible quirks in your local configuration.
 
-
-
 ### A. Pre-Migration Preparation
 
 #### Step 1: Request a Network 2.0 Template
@@ -78,11 +79,12 @@ Create backups of critical data before beginning migration:
 
 - RDS database snapshot
 - Elasticsearch indices backup (if possible)
-- Document current VPC configuration
+- Screenshots of current VPC configuration
+- Write down current subnets (these will be used for the new `UserSubnets` parameter)
 
 #### Step 3: VPC Infrastructure Preparation
 
-Because you are manually migrating everything, you will need to create and configure you own VPC.
+When api_gateway_in_vpc=True (which is what we recommend), you will need to create and configure a new VPC endpoint. Otherwise, you can simply extend an existing VPC endpoitn.
 
 1. **Assess Current VPC CIDR Allocation**
    - Review existing subnet allocations
@@ -138,24 +140,24 @@ Migrate Elasticsearch to new intra subnets:
 
 ### D. Apply Network 2.0 Configuration
 
-Once infrastructure is prepared and Quilt has created the new variant:
+Once the infrastructure is prepared, upgrade your stack using the Quilt-provided variant template:
 
-1. **Update Stack Parameters**
+1. **Install the Template as an Update**
+
+1. **Set New Stack Parameters**
    - `IntraSubnets`: New intra subnet IDs
    - `UserSubnets`: Current subnets become user subnets  
    - `UserSecurityGroup`: New security group for ELB
    - `ApiGatewayVPCEndpoint`: VPC endpoint created in Step 2 (if applicable)
 
-2. **Deploy Updated Stack**
-   - Apply the new Network 2.0 variant provided by Quilt
-   - Monitor deployment for any issues
+1. **Monitor deployment for any issues**
 
 ### E. Post-Migration Validation
 
 1. **Connectivity Tests**
    - Verify login functionality (database connectivity)
    - Test package browsing (Elasticsearch connectivity)
-   - Validate all application features
+   - Run the [smoke test](https://kb.quilt.bio/how-to-validate-my-quilt-stack-is-correctly-configured)
 
 2. **Security Validation**
    - Confirm services are properly segmented in appropriate subnets
@@ -170,6 +172,4 @@ Once infrastructure is prepared and Quilt has created the new variant:
 ### F. Rollback Considerations
 
 - Keep original subnet configurations documented
-- Maintain database snapshots from before migration
-- Have rollback plan ready in case of critical issues
-- Test rollback procedures in development environment first
+- Maintain database/ES snapshots from before migration
