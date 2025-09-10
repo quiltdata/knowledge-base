@@ -89,6 +89,15 @@ Create backups of critical data before beginning migration:
 - Screenshots of current VPC configuration
 - Write down current subnets (these will be used for the new `UserSubnets` parameter)
 
+   ```bash
+   # Quick backup of current configuration
+   STACK_NAME="your-stack-name"
+   echo "=== Current Stack Configuration ===" > migration-backup.txt
+   aws cloudformation describe-stacks --stack-name $STACK_NAME \
+     --query 'Stacks[0].Parameters[*].[ParameterKey,ParameterValue]' \
+     --output table >> migration-backup.txt
+   ```
+
 #### Step 3: VPC Infrastructure Preparation
 
 When `api_gateway_in_vpc=true` (which is required for `elb_scheme=internal` configurations), you will need to create and configure a new VPC endpoint. Otherwise, you can simply extend an existing VPC endpoint.
@@ -99,6 +108,20 @@ NOTE: This guide assumes you are only using IPv4 to access your Quilt stack. IPv
    - Review existing subnet allocations
    - If VPC CIDR is fully allocated, [add a secondary CIDR block](https://docs.aws.amazon.com/vpc/latest/userguide/configure-your-vpc.html#add-cidr-block-to-vpc) to accommodate new subnets
 
+   ```bash
+   # Automated VPC assessment
+   STACK_NAME="your-stack-name"
+   VPC_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME \
+     --query 'Stacks[0].Parameters[?ParameterKey==`VPC`].ParameterValue' --output text)
+   
+   echo "VPC CIDR Block:"
+   aws ec2 describe-vpcs --vpc-ids $VPC_ID --query 'Vpcs[0].CidrBlock' --output text
+   
+   echo "Current Subnet Allocations:"
+   aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" \
+     --query 'Subnets[*].[SubnetId,CidrBlock,AvailabilityZone,Tags[?Key==`Name`].Value|[0]]' --output table
+   ```
+
 2. **Create Required Subnets**
    - [Create intra subnets](https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html) (2+ across different AZs) for databases and Elasticsearch
    - Create private subnets (2+ across different AZs) for application services
@@ -106,9 +129,54 @@ NOTE: This guide assumes you are only using IPv4 to access your Quilt stack. IPv
    - [Deploy one NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) in each AZ where you have private subnets to ensure high availability and minimize cross-AZ traffic charges
    - Ensure subnets align with the [enterprise architecture diagram](https://docs.quilt.bio/architecture#enterprise-architecture)
 
+   ```bash
+   # Example CIDR calculations for 10.0.0.0/16 VPC
+   # Assumes existing subnets use 10.0.0.0/18 and 10.0.64.0/18
+   
+   # Intra subnets (databases, Elasticsearch)
+   # 10.0.240.0/20 (us-east-1a) - 4,094 IPs
+   # 10.0.224.0/20 (us-east-1b) - 4,094 IPs
+   
+   # Private subnets (application services)  
+   # 10.0.128.0/18 (us-east-1a) - 16,382 IPs
+   # 10.0.192.0/18 (us-east-1b) - 16,382 IPs
+   
+   # Public subnets (NAT gateways, ELB)
+   # 10.0.96.0/20 (us-east-1a) - 4,094 IPs  
+   # 10.0.112.0/20 (us-east-1b) - 4,094 IPs
+   
+   # Get available AZs for your region
+   aws ec2 describe-availability-zones --query 'AvailabilityZones[*].ZoneName' --output text
+   ```
+
 3. **Create Security Groups**
    - [Create `UserSecurityGroup`](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-security-groups.html) for ELB
    - Configure security group rules to allow communication between subnet tiers
+
+   ```bash
+   # Security group discovery and validation
+   STACK_NAME="your-stack-name"
+   VPC_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME \
+     --query 'Stacks[0].Parameters[?ParameterKey==`VPC`].ParameterValue' --output text)
+   
+   echo "=== Current Security Groups ==="
+   aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPC_ID" \
+     --query 'SecurityGroups[*].[GroupId,GroupName,Description]' --output table
+   
+   # Template for UserSecurityGroup creation (replace CIDR blocks with your values)
+   echo "=== UserSecurityGroup Creation Template ==="
+   echo "# Create UserSecurityGroup for ELB access"
+   echo "aws ec2 create-security-group \\"
+   echo "  --group-name ${STACK_NAME}-user-security-group \\"
+   echo "  --description 'Network 2.0 User Security Group for ELB' \\"
+   echo "  --vpc-id $VPC_ID"
+   echo ""
+   echo "# Add ingress rules (customize CIDR blocks for your environment)"
+   echo "# HTTPS access from user networks"
+   echo "aws ec2 authorize-security-group-ingress \\"
+   echo "  --group-id sg-xxxxxxxxx \\"  
+   echo "  --protocol tcp --port 443 --cidr 10.0.0.0/8"
+   ```
 
 4. **Create API Gateway VPC Endpoint** (required when `elb_scheme=internal`)
    - [Create a VPC endpoint for API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-private-apis.html)
@@ -173,6 +241,30 @@ Once the infrastructure is prepared, upgrade your stack using the Quilt-provided
    - `UserSecurityGroup`: New security group for ELB
    - `ApiGatewayVPCEndpoint`: VPC endpoint created in Step 3 (if applicable)
 
+   ```bash
+   # Automated parameter collection
+   STACK_NAME="your-stack-name"
+   
+   # Get current subnets (becomes UserSubnets in Network 2.0)
+   USER_SUBNETS=$(aws cloudformation describe-stacks --stack-name $STACK_NAME \
+     --query 'Stacks[0].Parameters[?ParameterKey==`Subnets`].ParameterValue' --output text)
+   
+   # Get newly created intra subnets (replace with your actual subnet IDs)
+   INTRA_SUBNETS="subnet-xxxxx,subnet-yyyyy"
+   
+   # Get newly created UserSecurityGroup (replace with your actual security group ID)
+   USER_SECURITY_GROUP="sg-xxxxxxxxx"
+   
+   # Optional: Get API Gateway VPC Endpoint (if elb_scheme=internal)
+   # API_GATEWAY_VPC_ENDPOINT="vpce-xxxxxxxxx"
+   
+   echo "CloudFormation Parameters for Network 2.0:"
+   echo "IntraSubnets=$INTRA_SUBNETS"
+   echo "UserSubnets=$USER_SUBNETS"
+   echo "UserSecurityGroup=$USER_SECURITY_GROUP"
+   # echo "ApiGatewayVPCEndpoint=$API_GATEWAY_VPC_ENDPOINT"
+   ```
+
 3. **Monitor deployment for any issues**
    - Watch CloudFormation stack update progress
    - Verify all resources are created successfully
@@ -198,3 +290,89 @@ Once the infrastructure is prepared, upgrade your stack using the Quilt-provided
 
 - Keep original subnet configurations documented
 - Maintain database/ES snapshots from before migration
+
+---
+
+## Appendix: Post-Migration Validation Scripts for Troubleshooting
+
+### Connectivity Testing
+
+```bash
+# Automated connectivity validation
+STACK_NAME="your-stack-name"
+
+# Get stack outputs for testing endpoints
+ELB_DNS=$(aws cloudformation describe-stacks --stack-name $STACK_NAME \
+  --query 'Stacks[0].Outputs[?OutputKey==`LoadBalancerDNSName`].OutputValue' --output text)
+
+REGISTRY_HOST=$(aws cloudformation describe-stacks --stack-name $STACK_NAME \
+  --query 'Stacks[0].Outputs[?OutputKey==`RegistryHost`].OutputValue' --output text)
+
+# Test endpoints
+echo "Testing ELB connectivity..."
+curl -s -o /dev/null -w "%{http_code}" https://$ELB_DNS/health || echo "ELB health check failed"
+
+echo "Testing registry connectivity..."  
+curl -s -o /dev/null -w "%{http_code}" https://$REGISTRY_HOST/api/health || echo "Registry health check failed"
+
+echo "Manual validation still required:"
+echo "- Login at https://$REGISTRY_HOST"
+echo "- Browse packages to test Elasticsearch"
+```
+
+### Network Architecture Validation
+
+```bash
+# Network 2.0 subnet validation
+STACK_NAME="your-stack-name"
+VPC_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME \
+  --query 'Stacks[0].Parameters[?ParameterKey==`VPC`].ParameterValue' --output text)
+
+echo "=== Network 2.0 Subnet Validation ==="
+# Verify intra subnets exist
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" \
+  --query 'Subnets[?contains(Tags[?Key==`Name`].Value, `intra`)][SubnetId,CidrBlock,AvailabilityZone]' \
+  --output table
+
+# Verify private subnets exist  
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" \
+  --query 'Subnets[?contains(Tags[?Key==`Name`].Value, `private`)][SubnetId,CidrBlock,AvailabilityZone]' \
+  --output table
+
+# Verify public subnets exist
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" \
+  --query 'Subnets[?contains(Tags[?Key==`Name`].Value, `public`)][SubnetId,CidrBlock,AvailabilityZone]' \
+  --output table
+
+echo "=== NAT Gateway Validation ==="
+aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=$VPC_ID" \
+  --query 'NatGateways[*].[NatGatewayId,State,SubnetId]' --output table
+```
+
+### Database Migration Status
+
+```bash
+# Database migration status validation
+STACK_NAME="your-stack-name"
+
+# Find RDS instance associated with stack
+DB_INSTANCE=$(aws rds describe-db-instances \
+  --query 'DBInstances[?contains(DBSubnetGroup.DBSubnetGroupName, `'$STACK_NAME'`)].DBInstanceIdentifier' \
+  --output text)
+
+if [ -n "$DB_INSTANCE" ]; then
+  echo "=== Database Migration Status ==="
+  aws rds describe-db-instances --db-instance-identifier $DB_INSTANCE \
+    --query 'DBInstances[0].[DBInstanceIdentifier,DBInstanceStatus,MultiAZ,DBSubnetGroup.DBSubnetGroupName]' \
+    --output table
+  
+  # Validate database is in correct subnets
+  aws rds describe-db-subnet-groups \
+    --db-subnet-group-name $(aws rds describe-db-instances --db-instance-identifier $DB_INSTANCE \
+      --query 'DBInstances[0].DBSubnetGroup.DBSubnetGroupName' --output text) \
+    --query 'DBSubnetGroups[0].Subnets[*].[SubnetIdentifier,SubnetAvailabilityZone.Name]' \
+    --output table
+else
+  echo "No RDS instance found for stack $STACK_NAME"
+fi
+```
