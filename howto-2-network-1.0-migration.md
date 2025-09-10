@@ -14,7 +14,7 @@ Guidance on migrating from a legacy single-tier VPC setup (Network 1.0) to the m
 
 ### What Is Network 1.0?
 
-Network 1.0 is a **legacy flat VPC design** used for earlier stacks. It lacks formal network segmentation, placing all resources—databases, load balancers, services—in the same subnet layers.
+Network 1.0 is a **legacy flat VPC design** used for earlier stacks. It lacks formal network segmentation, placing all resources -- databases, load balancers, services -- in the same subnet and availability zone.
 
 ### What Is Network 2.0?
 
@@ -26,15 +26,15 @@ Network 2.0 introduces a **three-tier subnet architecture**:
 
 It enforces secure-by-default infrastructure decisions, reducing misconfiguration risks.
 
----
-
-## Motivation
+### Why Use Network 2.0?
 
 - Features in newer versions of the Quilt stack require Network 2.0 architecture
 - Legacy stacks can't adopt newer secure configurations (e.g. `lambdas_in_vpc=true`)
 - IP address overlap or exhaustion when provisioning new subnets
 
-### Recommendation: Use a New Stack
+## Alternatives
+
+### Option A: New Stack
 
 The simplest option is to directly upgrade to a brand-new stack to take advantage of network 2.0:
 
@@ -53,117 +53,123 @@ However, that would require:
 - manually recreating user accounts and other database-backed configuration
 
 While it is technically possible to backup and restore the database, there is no way to restore ElasticSearch.
-In order to do that, you would need to follow the steps below.
+
+### Option B: Manual Migration
+
+For cases where preserving existing database and Elasticsearch data is critical, manual migration is required. This approach is particularly relevant for configurations with `existing_vpc=true` like Tessera deployments. **Quilt will create the new Network 2.0 variant** - the following section covers the manual infrastructure preparation and migration steps required.
 
 ---
 
-## Migration Steps
+## Manual Migration Steps
 
 We strongly encourage you to first test this process on a dev stack, to familiarize yourself with the process and identify any possible quirks in your local configuration.
 
-### A. Request and Install a Network 1.5 Stack
 
-- Submit a request to Quilt via [support@quilt.bio](mailto:support@quilt.bio) for a "Network 1.5" stack.
-- This transitional stack includes:
-  - A three-tier subnet structure (intra, private, public)
-  - All secure 2.0 defaults:
-    - `elb_scheme=internal`
-    - `lambdas_in_vpc=true`
-    - `api_gateway_in_vpc=true`
-    - `ecs_public_ip=false`
-    - `elastic_search_config.vpc=true`
-- Critically, **existing Network 1.0 Elasticsearch and database resources are preserved** in place (not replaced or migrated).
 
-> INTERNAL NOTE: For 1.0 customers using a Quilt-provided VPC (e.g., Inari), we need to create the 2.0 subnets in a different location (perhaps via `subnet_ip_base`), as otherwise we'd collide with the 1.0 subnets.
+### A. Pre-Migration Preparation
 
-You should verify that you can still a) login, and b) view packages in the Packages tab before we start the reconfiguration process.
+#### Step 1: Request a Network 2.0 Template
 
-### B. Reconfigure services to use the new subnets
+Fill out the Quilt Stack [Install Form](https://www.quilt.bio/install) so we can send you a modern template tailored for your environment.
 
-We recommend doing this via the AWS console, though you can perform some steps using the `aws` cli.
+#### Step 2: Create Backups
 
-**Important**: Network 1.5 has already created the new Network 2.0 subnets. We're simply reconfiguring existing resources to use them.
+Create backups of critical data before beginning migration:
 
-#### RDS Database
+- RDS database snapshot
+- Elasticsearch indices backup (if possible)
+- Document current VPC configuration
 
-**⚠️ Warning**: This process requires a maintenance window and will cause downtime.
+#### Step 3: VPC Infrastructure Preparation
 
-1. **Identify the existing Network 2.0 DB Subnet Group**:
-   - Navigate to **RDS** → **Subnet groups** in the AWS Console
-   - Look for a subnet group that includes the new Network 2.0 intra subnets
-   - This should have been created automatically by the Network 1.5 deployment
+Because you are manually migrating everything, you will need to create and configure you own VPC.
 
-2. **Modify the RDS Instance to use Network 2.0 subnets**:
-   - Navigate to **RDS** → **Databases**
-   - Select your existing Quilt database instance  
-   - Click **Modify**
-   - Scroll to **Network & Security**
-   - **DB subnet group**: Change to the Network 2.0 subnet group
-   - **Apply immediately**: Check this box (or schedule for maintenance window)
-   - Click **Continue** → **Modify DB instance**
+1. **Assess Current VPC CIDR Allocation**
+   - Review existing subnet allocations
+   - If VPC CIDR is fully allocated, add a secondary CIDR block to accommodate new subnets
 
-3. **Monitor the modification**:
-   - The instance will show "Modifying" status
-   - This process typically takes 5-15 minutes
-   - The database will be briefly unavailable during the subnet change
+2. **Create Required Subnets**
+   - Create intra subnets (2+ across different AZs) for databases and Elasticsearch
+   - Create private subnets (2+ across different AZs) for application services
+   - Ensure subnets align with the [enterprise architecture diagram](https://docs.quilt.bio/architecture#enterprise-architecture)
 
-#### Elasticsearch
+3. **Create Security Groups**
+   - Create `UserSecurityGroup` for ELB
+   - Configure security group rules to allow communication between subnet tiers
 
-> INTERNAL NOTE: Can existing Elasticsearch domains be reconfigured to use different subnets within the same VPC?
+4. **Create API Gateway VPC Endpoint** (for `elb_scheme=internal` configurations)
+   - Create a VPC endpoint for API Gateway
+   - This endpoint will be passed to the `ApiGatewayVPCEndpoint` parameter
 
-**If subnet reconfiguration is possible**:
+### B. Database Migration
 
-1. Navigate to **Amazon Elasticsearch Service** → **Domains**
-2. Select your existing Quilt Elasticsearch domain
-3. Look for options to modify VPC/subnet configuration
-4. Update to use Network 2.0 intra subnets
+**⚠️ Warning**: This process requires downtime and should be performed during a maintenance window.
 
-**If subnet reconfiguration is NOT possible**:
+#### Manual Database Subnet Migration Process
 
-- Elasticsearch domains may be locked to their original subnets
-- This would require data migration to a new domain
-- **Need to test/verify** which approach is required
+Since it's impossible to directly change DBSubnetGroup subnets when in use, use this workaround:
 
-#### Security Groups
+1. **Create Temporary VPC Infrastructure**
+   - Create temporary VPC with 2 subnets in different AZs
+   - Include restrictive security group and new DBSubnetGroup
+   - Consider using CloudFormation template for consistency
 
-Update security groups to allow communication from Network 2.0 subnets:
+2. **Modify Database Configuration**
+   - Turn off Multi-AZ on the RDS instance
+   - Modify DB instance to use the new DBSubnetGroup in temporary VPC
+   - Update the original DBSubnetGroup to include new IntraSubnets
+   - Modify DB instance back to the original DBSubnetGroup (now with new subnets)
+   - Re-enable Multi-AZ on the RDS instance
 
-1. **Navigate to EC2** → **Security Groups**
-2. **Find your RDS security group**:
-   - Add inbound rules allowing access from Network 2.0 private/intra subnets
-   - Port: 5432 (PostgreSQL) or 3306 (MySQL)
-   - Source: Network 2.0 subnet CIDRs
-3. **Find your Elasticsearch security group**:
-   - Add inbound rules allowing access from Network 2.0 private/intra subnets
-   - Port: 443 (HTTPS)
+3. **Clean Up**
+   - Delete temporary VPC and DBSubnetGroup resources
+
+### C. Elasticsearch Migration
+
+Migrate Elasticsearch to new intra subnets:
+
+1. **Check Domain Configuration**
+   - Verify if existing domain can be reconfigured for new subnets
+   - If not possible, plan for data migration to new domain
+
+2. **Update Security Groups**
+   - Add inbound rules allowing HTTPS (port 443) from Network 2.0 subnets
    - Source: Network 2.0 subnet CIDRs
 
-**Note**: You may want to keep the old Network 1.0 security group rules temporarily until you verify everything works, then remove them.
+### D. Apply Network 2.0 Configuration
 
-### C. Test the stack to verify everything works
+Once infrastructure is prepared and Quilt has created the new variant:
 
-Once everything has been updated, verify that you can a) login (via the database), and b) view packages in the Packages tab (via ElasticSearch).
+1. **Update Stack Parameters**
+   - `IntraSubnets`: New intra subnet IDs
+   - `UserSubnets`: Current subnets become user subnets  
+   - `UserSecurityGroup`: New security group for ELB
+   - `ApiGatewayVPCEndpoint`: VPC endpoint created in Step 2 (if applicable)
 
-You may also want to run through a complete 'stack validation' to ensure there aren't any other difficulties.
+2. **Deploy Updated Stack**
+   - Apply the new Network 2.0 variant provided by Quilt
+   - Monitor deployment for any issues
 
-### D. Upgrade to a standard 2.0 stack
+### E. Post-Migration Validation
 
-For your next regular update, Quilt will provide you with a standard network 2.0 template. This is a lower risk update, but we still encourage you to a) first test on a dev stack, and b) carefully validate functionality after upgrading.
+1. **Connectivity Tests**
+   - Verify login functionality (database connectivity)
+   - Test package browsing (Elasticsearch connectivity)
+   - Validate all application features
 
-1. **Update application configuration**:
+2. **Security Validation**
+   - Confirm services are properly segmented in appropriate subnets
+   - Verify security group rules are correctly applied
+   - Test that API Gateway VPC endpoint is functioning (if applicable)
 
-   - Update your Quilt stack configuration to point to the new Elasticsearch endpoint
-   - This typically involves updating environment variables or configuration files
-   - **Do not delete the old domain yet** - keep it as backup until migration is verified
+3. **Performance Monitoring**
+   - Monitor application performance post-migration
+   - Check for any network latency issues
+   - Validate backup and monitoring systems
 
-2. **Verify the migration**:
+### F. Rollback Considerations
 
-   - Test search functionality in the Quilt web interface
-   - Verify all indices are present and searchable
-   - Check that document counts match between old and new domains
-
-### E. Retest the stack to verify everything still works
-
-Once everything has been updated, verify that you can a) login (via the database), and b) view packages in the Packages tab (via ElasticSearch).
-
-You may also want to run through a complete 'stack validation' to ensure there aren't any other difficulties.
+- Keep original subnet configurations documented
+- Maintain database snapshots from before migration
+- Have rollback plan ready in case of critical issues
+- Test rollback procedures in development environment first
