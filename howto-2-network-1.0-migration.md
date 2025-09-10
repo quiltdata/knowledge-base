@@ -28,7 +28,14 @@ Network 2.0 introduces a **three-tier subnet architecture** to enforce secure-by
 2. **Private Subnets** – used by services not exposed to the internet
 3. **Public Subnets** – for NAT gateways and internet-facing ELBs
 
-To do this, it adds four new CloudFormation parameters:
+Network 2.0 also requires specific values for variant options that are configurable in Network 1.0:
+
+- `lambdas_in_vpc=true`
+- `api_gateway_in_vpc=true` (required when `elb_scheme=internal`)
+- `ecs_public_ip=false`
+- `elastic_search_config.vpc=true`
+
+To implement this architecture, it adds four new CloudFormation parameters:
 
 - IntraSubnets
 - UserSecurityGroup
@@ -84,7 +91,7 @@ Create backups of critical data before beginning migration:
 
 #### Step 3: VPC Infrastructure Preparation
 
-When api_gateway_in_vpc=True (which is what we recommend), you will need to create and configure a new VPC endpoint. Otherwise, you can simply extend an existing VPC endpoitn.
+When `api_gateway_in_vpc=true` (which is required for `elb_scheme=internal` configurations), you will need to create and configure a new VPC endpoint. Otherwise, you can simply extend an existing VPC endpoint.
 
 1. **Assess Current VPC CIDR Allocation**
    - Review existing subnet allocations
@@ -99,7 +106,7 @@ When api_gateway_in_vpc=True (which is what we recommend), you will need to crea
    - Create `UserSecurityGroup` for ELB
    - Configure security group rules to allow communication between subnet tiers
 
-4. **Create API Gateway VPC Endpoint** (for `elb_scheme=internal` configurations)
+4. **Create API Gateway VPC Endpoint** (required when `elb_scheme=internal`)
    - Create a VPC endpoint for API Gateway
    - This endpoint will be passed to the `ApiGatewayVPCEndpoint` parameter
 
@@ -110,6 +117,15 @@ When api_gateway_in_vpc=True (which is what we recommend), you will need to crea
 #### Manual Database Subnet Migration Process
 
 Since it's impossible to directly change DBSubnetGroup subnets when in use, use this workaround:
+
+**Technical Constraints:**
+
+- DBSubnetGroup subnets cannot be changed when in use
+- CloudFormation can only change DBSubnetGroup by replacing the DB instance
+- A new DBSubnetGroup cannot be in the same VPC as an existing one
+- Moving to a new DBSubnetGroup requires Multi-AZ to be turned off temporarily
+
+**Migration Steps:**
 
 1. **Create Temporary VPC Infrastructure**
    - Create temporary VPC with 2 subnets in different AZs
@@ -143,14 +159,17 @@ Migrate Elasticsearch to new intra subnets:
 Once the infrastructure is prepared, upgrade your stack using the Quilt-provided variant template:
 
 1. **Install the Template as an Update**
+   - Apply the Network 2.0 variant template to your existing stack
 
-1. **Set New Stack Parameters**
+2. **Set New Stack Parameters**
    - `IntraSubnets`: New intra subnet IDs
    - `UserSubnets`: Current subnets become user subnets  
    - `UserSecurityGroup`: New security group for ELB
-   - `ApiGatewayVPCEndpoint`: VPC endpoint created in Step 2 (if applicable)
+   - `ApiGatewayVPCEndpoint`: VPC endpoint created in Step 3 (if applicable)
 
-1. **Monitor deployment for any issues**
+3. **Monitor deployment for any issues**
+   - Watch CloudFormation stack update progress
+   - Verify all resources are created successfully
 
 ### E. Post-Migration Validation
 
