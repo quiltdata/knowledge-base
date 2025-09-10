@@ -23,9 +23,13 @@
 
 ## Migration Steps
 
-### Step 0: make backups of DB and ES?
+### Step 0: Create Backups of Database and Elasticsearch
 
-### Step 1: make a new variant option for api_gateway_in_vpc=True?
+Before beginning the migration, create backups of your database and Elasticsearch cluster to ensure data safety during the transition process.
+
+### Step 1: Configure API Gateway VPC Setting
+
+Create a new variant with `api_gateway_in_vpc=true` to enable API Gateway within the VPC.
 
 They'll need to create a VPC endpoint for API Gateway and pass it to `ApiGatewayVPCEndpoint` parameter
 
@@ -46,9 +50,9 @@ They'll need to create a VPC endpoint for API Gateway and pass it to `ApiGateway
 - a new DBSubnetGroup can't be in the same VPC
 - moving to new DBSubnetGroup requires multi-AZ to be turned off temporarily
 
-#### Steps (TODO: provide script?)
+#### Steps
 
-1. create temporary VPC with 2 subnets in different AZs, restrictive security group and new DBSubnetGroup (TODO: provide CloudFormation template?)
+1. create temporary VPC with 2 subnets in different AZs, restrictive security group and new DBSubnetGroup
 2. turn off multi-AZ on DB instance
 3. modify DB instance to use new DBSubnetGroup in temporary VPC
 4. set IntraSubnets on old DBSubnetGroup

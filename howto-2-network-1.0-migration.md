@@ -18,7 +18,7 @@ Guidance on migrating from a legacy single-tier VPC setup (Network 1.0) to the m
 
 ### What Is Network 1.0?
 
-Network 1.0 is a **legacy flat VPC design** used for earlier stacks. It lacks formal network segmentation, placing all resources -- databases, load balancers, services -- in the same subnet and availability zone.
+Network 1.0 is a **legacy flat VPC design** used for earlier stacks. It lacks formal network segmentation, placing all resources—databases, load balancers, services—in the same subnet and availability zone.
 
 ### What Is Network 2.0?
 
@@ -194,10 +194,8 @@ Since it's impossible to directly change DBSubnetGroup subnets when in use, use 
 
 - DBSubnetGroup subnets cannot be changed when in use
 - CloudFormation can only change DBSubnetGroup by replacing the DB instance
-- A new DBSubnetGroup cannot be in the same VPC as an existing one
+- A new DBSubnetGroup cannot be in the same VPC as an existing one (this is why a temporary VPC is required during migration)
 - Moving to a new DBSubnetGroup requires Multi-AZ to be turned off temporarily
-
-⚠️ **Important**: A new DBSubnetGroup cannot be created in the same VPC as an existing one. This is why a temporary VPC is required during migration.
 
 **Migration Steps:**
 
