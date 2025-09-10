@@ -84,8 +84,8 @@ Fill out the Quilt Stack [Install Form](https://www.quilt.bio/install) so we can
 
 Create backups of critical data before beginning migration:
 
-- RDS database snapshot
-- Elasticsearch indices backup (if possible)
+- [RDS database snapshot](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateSnapshot.html)
+- [Elasticsearch indices backup](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-snapshots.html) (if possible)
 - Screenshots of current VPC configuration
 - Write down current subnets (these will be used for the new `UserSubnets` parameter)
 
@@ -97,21 +97,21 @@ NOTE: This guide assumes you are only using IPv4 to access your Quilt stack. IPv
 
 1. **Assess Current VPC CIDR Allocation**
    - Review existing subnet allocations
-   - If VPC CIDR is fully allocated, add a secondary CIDR block to accommodate new subnets
+   - If VPC CIDR is fully allocated, [add a secondary CIDR block](https://docs.aws.amazon.com/vpc/latest/userguide/configure-your-vpc.html#add-cidr-block-to-vpc) to accommodate new subnets
 
 2. **Create Required Subnets**
-   - Create intra subnets (2+ across different AZs) for databases and Elasticsearch
+   - [Create intra subnets](https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html) (2+ across different AZs) for databases and Elasticsearch
    - Create private subnets (2+ across different AZs) for application services
    - Create public subnets (2+ across different AZs) for NAT Gateways and internet-facing load balancers
-   - Deploy one NAT Gateway in each AZ where you have private subnets to ensure high availability and minimize cross-AZ traffic charges
+   - [Deploy one NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) in each AZ where you have private subnets to ensure high availability and minimize cross-AZ traffic charges
    - Ensure subnets align with the [enterprise architecture diagram](https://docs.quilt.bio/architecture#enterprise-architecture)
 
 3. **Create Security Groups**
-   - Create `UserSecurityGroup` for ELB
+   - [Create `UserSecurityGroup`](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-security-groups.html) for ELB
    - Configure security group rules to allow communication between subnet tiers
 
 4. **Create API Gateway VPC Endpoint** (required when `elb_scheme=internal`)
-   - Create a VPC endpoint for API Gateway
+   - [Create a VPC endpoint for API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-private-apis.html)
    - This endpoint will be passed to the `ApiGatewayVPCEndpoint` parameter
 
 ### B. Database Migration
@@ -129,16 +129,18 @@ Since it's impossible to directly change DBSubnetGroup subnets when in use, use 
 - A new DBSubnetGroup cannot be in the same VPC as an existing one
 - Moving to a new DBSubnetGroup requires Multi-AZ to be turned off temporarily
 
+⚠️ **Important**: A new DBSubnetGroup cannot be created in the same VPC as an existing one. This is why a temporary VPC is required during migration.
+
 **Migration Steps:**
 
 1. **Create Temporary VPC Infrastructure**
    - Create temporary VPC with 2 subnets in different AZs
-   - Include restrictive security group and new DBSubnetGroup
+   - Include restrictive security group and [new DBSubnetGroup](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets)
    - Consider using CloudFormation template for consistency
 
 2. **Modify Database Configuration**
-   - Turn off Multi-AZ on the RDS instance
-   - Modify DB instance to use the new DBSubnetGroup in temporary VPC
+   - [Turn off Multi-AZ](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html) on the RDS instance
+   - [Modify DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.DBInstance.Modifying.html) to use the new DBSubnetGroup in temporary VPC
    - Update the original DBSubnetGroup to include new IntraSubnets
    - Modify DB instance back to the original DBSubnetGroup (now with new subnets)
    - Re-enable Multi-AZ on the RDS instance
