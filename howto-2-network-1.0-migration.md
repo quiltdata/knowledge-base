@@ -93,6 +93,8 @@ Create backups of critical data before beginning migration:
 
 When `api_gateway_in_vpc=true` (which is required for `elb_scheme=internal` configurations), you will need to create and configure a new VPC endpoint. Otherwise, you can simply extend an existing VPC endpoint.
 
+NOTE: This guide assumes you are only using IPv4 to access your Quilt stack. IPv6 access may require additional configuration.
+
 1. **Assess Current VPC CIDR Allocation**
    - Review existing subnet allocations
    - If VPC CIDR is fully allocated, add a secondary CIDR block to accommodate new subnets
@@ -100,6 +102,8 @@ When `api_gateway_in_vpc=true` (which is required for `elb_scheme=internal` conf
 2. **Create Required Subnets**
    - Create intra subnets (2+ across different AZs) for databases and Elasticsearch
    - Create private subnets (2+ across different AZs) for application services
+   - Create public subnets (2+ across different AZs) for NAT Gateways and internet-facing load balancers
+   - Deploy one NAT Gateway in each AZ where you have private subnets to ensure high availability and minimize cross-AZ traffic charges
    - Ensure subnets align with the [enterprise architecture diagram](https://docs.quilt.bio/architecture#enterprise-architecture)
 
 3. **Create Security Groups**
