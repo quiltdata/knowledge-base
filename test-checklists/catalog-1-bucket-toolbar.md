@@ -37,7 +37,7 @@
     - "Clear selection"
     - "Delete selected items"
   - "Create Package"
-    - Need to create config.yml
+    - s3://quilt-example
 
 ### File Popovers
 
