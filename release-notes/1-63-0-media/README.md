@@ -1,6 +1,6 @@
 # Quilt Platform Bake Testing Bucket
 
-This bucket is use for final "bake testing" of Quilt Platform features and functionality prior to release.
+This bucket is used for final "bake testing" of Quilt Platform features and functionality prior to release.
 
 ## Purpose
 
