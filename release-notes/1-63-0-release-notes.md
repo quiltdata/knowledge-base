@@ -1,6 +1,7 @@
 # Quilt Platform Release 1.63.0
 
-This release enhances the Bucket page experience with a reorganized toolbar, streamlines package creation workflows, and fixes several UI issues.
+This release dramatically streamlines the experience of creating packages from files already in S3 buckets,
+and fixes several UI issues.
 
 ## New Features
 
@@ -8,7 +9,7 @@ This release enhances the Bucket page experience with a reorganized toolbar, str
   The Bucket page toolbar has been reorganized for improved consistency, now featuring quick actions for uploading files and deleting single or multiple files.
 
 - **Streamlined Package Creation**
-  Users can now create packages directly from files in the current bucket by default, with S3 file selection always enabled for the current bucket.
+  Users can now create packages directly from files in the current bucket by default, with S3 file selection always enabled for the current bucket. Administrators can still choose to create a configuration file that disables this.
 
 - **Improved Add Bucket Navigation**
   The "Add Bucket" buttons on the main page now route directly to the Add Bucket admin page for a more intuitive workflow.
