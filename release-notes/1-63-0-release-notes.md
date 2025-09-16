@@ -16,10 +16,8 @@ This release dramatically streamlines the ability to manage and package files in
 - **Zero-Config Package Creation**
   Even without a configuration file, users can always create packages directly from files in the current bucket, either by selecting them directly or by using the 'Add Files' button when revising a package. Administrators can still choose to create a configuration file that disables this.
 
-- **Improved Add Bucket Navigation**
-  The "Add Bucket" buttons on the main page now route directly to the Add Bucket admin page for a more intuitive workflow.
-
 ## Bug Fixes
 
+- Fixed the "Add Bucket" buttons on the main page to route directly to the Add Bucket admin page for a more intuitive workflow.
 - Fixed an issue where the Athena query body would flicker during execution loading.
 - Fixed the sign-in button to correctly display the username after successful authentication.
