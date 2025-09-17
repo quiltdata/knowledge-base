@@ -1,6 +1,6 @@
 # Quilt Platform Release 1.63.0
 
-This release dramatically streamlines the ability to manage and package files in S3 buckets, and fixes several UI issues.
+This release dramatically streamlines managing and packaging files in S3 buckets, and fixes several UI issues.
 
 ## New Features
 
@@ -8,7 +8,7 @@ This release dramatically streamlines the ability to manage and package files in
   The bucket page toolbar has been reorganized to better manage selections and support the new actions below.
 
 - **File Upload to S3 Buckets**
-  You can now upload files directly to S3 buckets through the Quilt interface.
+  You can now upload files directly to S3 buckets through the Quilt interface, either by dragging files directly or using the new 'Add Files' button or icon.
 
 - **File Deletion from S3 Buckets**
   Delete one or more files from S3 buckets without needing to use the AWS Console or CLI. Note that this only adds a delete marker to the latest version, so prior versions will still be available from packages.
