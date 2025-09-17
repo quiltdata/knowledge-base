@@ -8,10 +8,11 @@ This release dramatically streamlines managing and packaging files in S3 buckets
   The bucket page toolbar has been reorganized to better manage selections and support the new actions below.
 
 - **File Upload to S3 Buckets**
-  You can now upload files directly to S3 buckets through the Quilt interface, either by dragging files directly or using the new 'Add Files' button or icon.
+  You can now upload files directly to S3 buckets through the Quilt interface, either by dragging files directly or using the new 'Add Files' button or icon, including into a new subfolder.
 
 - **File Deletion from S3 Buckets**
-  Delete one or more files from S3 buckets without needing to use the AWS Console or CLI. Note that this only adds a delete marker to the latest version, so prior versions will still be available from packages.
+  Delete one or more files from S3 buckets without needing to use the AWS Console or CLI, either directly from the file listing or via the new Organize menu.
+  Note that this only adds a delete marker to the latest version, so prior versions will still be available from packages.
 
 - **Zero-Config Package Creation**
   Even without a configuration file, users can always create packages directly from files in the current bucket, either by selecting them directly or by using the 'Add Files' button when revising a package. Administrators can still choose to create a configuration file that disables this.
