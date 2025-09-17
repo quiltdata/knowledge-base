@@ -15,7 +15,9 @@ This release dramatically streamlines managing and packaging files in S3 buckets
   Note that this only adds a delete marker to the latest version, so prior versions will still be available from packages.
 
 - **Zero-Config Package Creation**
-  Even without a configuration file, users can always create packages directly from files in the current bucket, either by selecting them directly or by using the 'Add Files' button when revising a package. Administrators can still choose to create a configuration file that disables this.
+  Even without a configuration file, users can always create packages directly from files in the current bucket, either by selecting them directly or by using the 'Add Files from Bucket' button when revising a package.
+  
+  Administrators can still create a configuration file with no `successors` to disables this behavior.
 
 ## Bug Fixes
 
