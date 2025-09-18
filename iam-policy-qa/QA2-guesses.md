@@ -90,7 +90,7 @@
 - Allows service-to-service communication without exposing admin endpoints
 - Port 444 chosen to avoid conflicts with standard ports
 
-**Architecture:** Microservices pattern with dedicated internal communication channel.
+**Architecture:** Well-factored pattern with dedicated internal communication channel.
 
 ### ELB Certificate
 
