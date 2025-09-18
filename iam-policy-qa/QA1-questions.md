@@ -6,9 +6,9 @@ Technical questions regarding CloudFormation template review. Security-focused c
 
 On the list of concerns:
 
-1. Blank IaM access policies
-2. Too loose IaM policies
-3. Dynamic IaM policies creation
+1. Blank IAM access policies
+2. Too loose IAM policies
+3. Dynamic IAM policies creation
 4. CloudTrail configuration
 5. Lambda Configuration
 6. Network Security
@@ -28,7 +28,7 @@ On the list of concerns:
 - ![Bucket write policy with wildcard resources](./1-bucket-write-policy-wildcard.png)
 - ![Registry assume role policy](./1-registry-assume-role-policy.png)
 
-They are attached to several IaM roles, but do not seem to make sense in this form.
+They are attached to several IAM roles, but do not seem to make sense in this form.
 
 ### 2. Too Loose IAM Policies
 
@@ -42,7 +42,7 @@ They are attached to several IaM roles, but do not seem to make sense in this fo
 
 ### 3. Dynamic IAM Policy Creation
 
-- `Critical Issue:` These policies for the `AmazonECSTaskExecutionRole` role apparently can be passed by `MigrationLambdaRole` (Lambda) and `TrackingCronRole` (EventBridge).
+- **Critical Issue:** These policies for the `AmazonECSTaskExecutionRole` role apparently can be passed by `MigrationLambdaRole` (Lambda) and `TrackingCronRole` (EventBridge).
 - **Implication:** Almost any resource could create or modify IAM policies
 - **Questions:**
   - Is that true?
