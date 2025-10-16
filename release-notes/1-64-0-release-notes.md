@@ -2,7 +2,7 @@
 
 ## From the [RC CHANGELOG](https://github.com/quiltdata/deployment/pull/2176/files#diff-06ee5dbd187ec4e5b38a42594456cb3c81699d4398919ebf1933765dcaa1c9fb)
 
-This release strengthens Quilt's position as the integration point for AI science, with a new MCP server, visual diffs, external Iceberg support, and Qurator context enhancements.
+This release strengthens Quilt's position as the integration point for AI science, with a new Model Context Protocol server, visual diffs, external Iceberg support, and Qurator context enhancements.
 
 ## Quilt MCP Server
 
@@ -16,12 +16,20 @@ This release strengthens Quilt's position as the integration point for AI scienc
   - configuring and querying Tabulator tables
   - managing users and roles (if a Quilt admin)
 
+- **Tabulator Configuration by Non-Admin Users**
+
+  To support the MCP Server, this release extends Tabulator configuration for use by non-Admins.
+  Users with write access to a bucket can now configure tabulator tables without needing admin privileges, allowing any chatbot to quickly setup cross-package analyses of tabular data.
+
 - **Quilt MCP Workshop**
 
-- **Tabulator Configuration for Non-Admin Users**
-  ~Users with write access to a bucket can now configure tabulator tables without needing admin privileges, allowing anyone to quickly setup cross-package analyses of tabular data.~
+  To help you start doing AI Science on AWS Bedrock, Quilt has produced a [2-hour workshop](https://github.com/quiltdata/quilt-mcp-server/tree/main/workshop), including:
 
-  > EP: This is currently only for direct GraphQL calls, e.g. via MCP, not quilt3 or the catalog GUI, right? So we probably shouldn't mention it.
+  - **Setup** to configure Claude and Quilt MCP for use with [VS Code](code.visualstudio.com) + [Continue](https://www.continue.dev) extension or [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector)
+  - **Four structured exercises**: Explore data, query with Athena, create visualizations, and build complete analysis packages
+  - **Quick reference cards** for common prompts and tool categories
+
+  The workshop teaches participants to use natural language with Claude to query S3 data, run Athena queries, generate visualizations, and create shareable Quilt packages — all while keeping data securely within their AWS infrastructure. We provide a complete teaching guide with timeline, troubleshooting tips, and email templates; [contact us](mailto:support@quilt.bio) if you'd like help hosting a workshop at your company.
 
 ## New Catalog Features
 
@@ -50,8 +58,7 @@ This release strengthens Quilt's position as the integration point for AI scienc
 
 - Fixed an issue that prevented package creation from directories containing hash characters (`#`) in their names.
 
-- Fixed search results and package listings to link directly to the "latest" package revision instead of specific revisions, so it is easier to edit files.
+- Fixed search results and package listings to link directly to the "latest" package revision, so it is easier to edit files.
 
-- Enabling circuit breakers when deploying ECS services, so that deployments fail quickly if the container fails health checks.
-  
+- Enabled circuit breakers when deploying ECS services, so that deployments fail quickly if the container fails health checks.
   > EP: Does this matter for anyone other than us?
