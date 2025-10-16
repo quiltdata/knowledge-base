@@ -2,7 +2,26 @@
 
 ## From the [RC CHANGELOG](https://github.com/quiltdata/deployment/pull/2176/files#diff-06ee5dbd187ec4e5b38a42594456cb3c81699d4398919ebf1933765dcaa1c9fb)
 
-This release strengthens Quilt's position as the integration point for AI science, with visual diffs, external Iceberg support, and Qurator context enhancements.
+This release strengthens Quilt's position as the integration point for AI science, with a new MCP server, visual diffs, external Iceberg support, and Qurator context enhancements.
+
+## Quilt MCP Server
+
+- **MCP Server Package**
+
+  Quilt is excited to release an open source Model Context Protocol server via the [`quilt-mcp` package](https://pypi.org/project/quilt-mcp/), including comprehensive tools for:
+
+  - creating rich packages, complete with auto-generated metadata, READMEs, summaries, and visualization
+  - searching, querying, and browsing packages
+  - setting up and using generic metadata templates
+  - configuring and querying Tabulator tables
+  - managing users and roles (if a Quilt admin)
+
+- **Quilt MCP Workshop**
+
+- **Tabulator Configuration for Non-Admin Users**
+  ~Users with write access to a bucket can now configure tabulator tables without needing admin privileges, allowing anyone to quickly setup cross-package analyses of tabular data.~
+
+  > EP: This is currently only for direct GraphQL calls, e.g. via MCP, not quilt3 or the catalog GUI, right? So we probably shouldn't mention it.
 
 ## New Catalog Features
 
@@ -15,9 +34,6 @@ This release strengthens Quilt's position as the integration point for AI scienc
   Quilt package information is accessible as an Iceberg data catalog, enabling high-performance, low-cost SQL-based querying of packages and entries to external users (Athena, DataBricks, Snowflake, etc.). Access to Iceberg from inside the Quilt catalog is planned for a future release.
   
   > EP: Link to schema documentation? Partitioning?
-
-- **Tabulator Configuration for Non-Admin Users**
-  Users with write permissions can now configure tabulator tables without requiring admin privileges, enabling more flexible data visualization workflows.
 
 ## Qurator Enhancements
 
@@ -33,6 +49,9 @@ This release strengthens Quilt's position as the integration point for AI scienc
 ## Other Improvements
 
 - Fixed an issue that prevented package creation from directories containing hash characters (`#`) in their names.
+
 - Fixed search results and package listings to link directly to the "latest" package revision instead of specific revisions, so it is easier to edit files.
 
-- Enhanced deployment stability with circuit breaker configuration for ECS services.
+- Enabling circuit breakers when deploying ECS services, so that deployments fail quickly if the container fails health checks.
+  
+  > EP: Does this matter for anyone other than us?
