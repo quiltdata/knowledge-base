@@ -48,7 +48,7 @@ This release strengthens Quilt's position as the integration point for AI scienc
 
   ![diff changed](./1-64-0-media/diff-changed.png)
 
-  Or view the Detailed Comparision to see the exact diff between any two revisions:
+  Or view the Detailed Comparison to see the exact diff between any two revisions:
 
   ![diff details](./1-64-0-media/diff-details.png)
 
