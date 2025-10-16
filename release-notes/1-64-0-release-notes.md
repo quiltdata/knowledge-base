@@ -1,30 +1,38 @@
 # Quilt Platform Release 1.64.0
 
-This release brings powerful new capabilities for package management and data exploration, including Athena integration with Iceberg tables, package revision comparison, and enhanced Qurator context loading.
+## From the [RC CHANGELOG](https://github.com/quiltdata/deployment/pull/2176/files#diff-06ee5dbd187ec4e5b38a42594456cb3c81699d4398919ebf1933765dcaa1c9fb)
 
-## New Features
+This release strengthens Quilt's position as the integration point for AI science, with visual diffs, external Iceberg support, and Qurator context enhancements.
 
-- **Athena Database with Iceberg Tables**
-  Quilt packages are now accessible via an Athena database using Iceberg table format, enabling SQL-based querying and analytics directly on your package data.
+## New Catalog Features
 
-- **Package Revision Comparison**
-  Compare different revisions of a package side-by-side to understand what changed between versions, making it easier to track data evolution and collaborate with confidence.
+- **Visual Revision Diffs**
+  Quilt has always made it easy to track multiple versions of your packages and the data inside them. Now you can quickly see what has changed between revisions. Use the new double-arrow icon to quickly view What's Changed from the previous version:
 
-- **Direct Links to Latest Package Revisions**
-  Search results and package listings now link directly to the "latest" revision, simplifying navigation and ensuring you're always viewing the most current version.
+  Or view the Detailed Comparision to see the exact diff between any two revisions:
 
-- **Qurator Auto-Context Loading**
-  Qurator now automatically loads context files (AGENTS.md and README.md) and package metadata, providing richer context for AI-assisted data exploration without manual setup.
+- **External Iceberg Access to Package Information**
+  Quilt package information is accessible as an Iceberg data catalog, enabling high-performance, low-cost SQL-based querying of packages and entries to external users (Athena, DataBricks, Snowflake, etc.). Access to Iceberg from inside the Quilt catalog is planned for a future release.
+  
+  > EP: Link to schema documentation? Partitioning?
 
 - **Tabulator Configuration for Non-Admin Users**
   Users with write permissions can now configure tabulator tables without requiring admin privileges, enabling more flexible data visualization workflows.
 
-## Bug Fixes
+## Qurator Enhancements
 
-- Fixed an issue that prevented package creation from directories containing hash characters (`#`) in their names.
+- **Qurator Auto-Context Loading**
+  Qurator now automatically loads context files (AGENTS.md and README.md) and package metadata from the current and parent locations, providing richer context for AI-assisted data exploration without manual setup.
+
+- **Enhanced Qurator Context Management**
+  Qurator now intelligently limits search results context to 100k characters, preventing context window overflow and ensuring more reliable AI responses for large datasets.
+
+- **Improved Qurator Tool Message Styling**
+  Tool messages in Qurator conversations feature enhanced visual styling for better readability and a more polished user experience.
 
 ## Other Improvements
 
-- Limited Qurator search results context to 100k characters to prevent context window overflow and improve response reliability.
-- Improved visual styling of tool messages in Qurator for better readability.
+- Fixed an issue that prevented package creation from directories containing hash characters (`#`) in their names.
+- Fixed search results and package listings to link directly to the "latest" package revision instead of specific revisions, so it is easier to edit files.
+
 - Enhanced deployment stability with circuit breaker configuration for ECS services.
