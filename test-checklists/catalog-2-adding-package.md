@@ -7,11 +7,19 @@
 ### Empty packages list
 "No matching packages" message with create button
 
+https://nightly.quilttest.com/b/quilt-example/packages/?q=fgsfds
+
+![Empty packages list](catalog-2-adding-package/empty-packages-list.png)
+
 **Input:**
 - Destination bucket
 
 ### Package list directory
 From embedded search page view within packages list
+
+https://nightly.quilttest.com/b/quilt-example/packages/
+
+![Package list directory](catalog-2-adding-package/package-list-directory.png)
 
 **Input:**
 - Destination bucket
@@ -20,6 +28,10 @@ From embedded search page view within packages list
 
 ### From selected S3 files in a Bucket
 Create package with selected files/directories (directories resolve to file lists)
+
+https://nightly.quilttest.com/b/quilt-example/tree/
+
+![Bucket file selection](catalog-2-adding-package/bucket-file-selection.png)
 
 **Input:**
 - Destination bucket
@@ -51,6 +63,8 @@ Create package with found search entries
 ### From Bookmarks
 Create package with bookmarked files (directories resolve to contained files)
 
+![Bookmarks sidebar](catalog-2-adding-package/bookmarks-sidebar.png)
+
 **Input:**
 - Destination bucket
 - List of bookmarked S3 files or directories
@@ -64,12 +78,20 @@ The same test cases as in "From selected S3 files in a Bucket"
 ### Package page
 From package directory or root ("/") directory with pre-uploaded manifest
 
+https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat
+
+![Package page](catalog-2-adding-package/package-page.png)
+
 **Input:**
 - Source: bucket, name and hash of the current package
 - Destination: bucket and name
 
 ### URL parameters on a package page
 `/package/add?logicalKey=s3://file-url.ext&logicalPrefix=s3://directory-url/` on package root page
+
+https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?README.md=s3://quilt-example/README.md
+
+![URL parameters](catalog-2-adding-package/url-parameters.png)
 
 **Input:**
 - Source: bucket, name and hash of the current package
@@ -91,6 +113,10 @@ Taking into account the files tree from "From selected S3 files in a Bucket":
 
 ### Package revisions page
 Revise existing package (similar to package view page)
+
+https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/revisions
+
+![Package revisions](catalog-2-adding-package/package-revisions.png)
 
 **Input:**
 - Source: bucket, name
