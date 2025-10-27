@@ -55,7 +55,7 @@ Create package with bookmarked files (directories resolve to contained files)
 - Destination bucket
 - List of bookmarked S3 files or directories
 
-The same test case as in "From selected S3 files in a Bucket"
+The same test cases as in "From selected S3 files in a Bucket"
 
 ## Revise Existing Package
 
@@ -84,8 +84,8 @@ Taking into account the files tree from "From selected S3 files in a Bucket":
 
 ```
 /add?
-  nested/ # logical ! /key.txt=s3://bucket/root-file.txt&
-  becomes-root.txt=s3://bucket/test/ with / # complex ! /path.txt&
+  nested/%20%23%20logical%20!%20/key.txt=s3://bucket/root-file.txt&
+  becomes-root.txt=s3://bucket/test/%20with%20/%20%23%20complex%20!%20/path.txt&
   change/prefix=s3://bucket/nested/deep
 ```
 
