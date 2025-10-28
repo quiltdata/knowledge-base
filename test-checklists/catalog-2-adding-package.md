@@ -104,11 +104,26 @@ https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?READM
 
 Taking into account the files tree from "From selected S3 files in a Bucket":
 
+```ts
+
+const lkNested = ['nested', ' # logical ! ', 'key.txt'].map(encodeURIComponent).join('/')
+const lkRoot = encodeURIComponent('becomes-root.txt')
+const lkPrefix = ['change', 'prefix'].map(encodeURIComponent).join('/')
+
+const pkNested = 's3://fiskus-us-east-1/' + ['test-selection', 'root-file.txt'].map(encodeURIComponent).join('/')
+const pkRoot = 's3://fiskus-us-east-1/' + ['test-selection', 'test', ' with ', ' # complex ! ', 'path.txt'].map(encodeURIComponent).join('/')
+const pkPrefix = 's3://fiskus-us-east-1/' + ['test-selection', 'nested', 'deep/'].map(encodeURIComponent).join('/')
+
+`add?
+   ${lkNested}=${encodeURI(pkNested)}&
+   ${lkRoot}=${encodeURI(pkRoot)}&
+   ${lkPrefix}=${encodeURI(pkPrefix)}`
 ```
-/add?
-  nested/%20%23%20logical%20!%20/key.txt=s3://bucket/root-file.txt&
-  becomes-root.txt=s3://bucket/test/%20with%20/%20%23%20complex%20!%20/path.txt&
-  change/prefix=s3://bucket/nested/deep
+
+Practical example:
+
+```
+https://nightly.quilttest.com/b/fiskus-us-east-1/packages/fiskus/test-selection-2025-10-27/add?nested/%20%23%20logical%20!%20/key.txt=s3://fiskus-us-east-1/test-selection/root-file.txt&becomes-root.txt=s3://fiskus-us-east-1/test-selection/test/%2520with%2520/%2520%2523%2520complex%2520!%2520/path.txt&change/prefix=s3://fiskus-us-east-1/test-selection/nested/deep/
 ```
 
 ### Package revisions page
