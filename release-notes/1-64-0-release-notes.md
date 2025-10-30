@@ -2,7 +2,7 @@
 
 ## From the [RC CHANGELOG](https://github.com/quiltdata/deployment/pull/2176/files#diff-06ee5dbd187ec4e5b38a42594456cb3c81699d4398919ebf1933765dcaa1c9fb)
 
-This release strengthens Quilt's position as the integration point for AI science, with a new Model Context Protocol server, visual diffs, external Iceberg support, and Qurator context enhancements.
+This release strengthens Quilt's position as the front door for AI science, with integrations for Model Context Protocol, Benchling, and Iceberg; Qurator AI context enhancements; and visual package diffs.
 
 ## Quilt MCP Server
 
@@ -53,11 +53,14 @@ This release strengthens Quilt's position as the integration point for AI scienc
   ![diff details](./1-64-0-media/diff-details.png)
 
 - **External Iceberg Access to Package Information**
-  Quilt package information is accessible as an Iceberg data catalog, enabling high-performance, low-cost SQL-based querying of packages and entries to external users (e.g., Athena, DataBricks, Snowflake). NOTE: Access to Iceberg from inside the Quilt catalog is planned for a future release.
+  Quilt package information is accessible as an Iceberg data catalog, enabling high-performance, low-cost SQL-based querying of packages and entries to external users (e.g., Athena, DataBricks, Snowflake). See [the documentation](https://docs.quilt.bio/quilt-platform-administrator/advanced/iceberg-tables) for more details.
 
   ![athena iceberg](./1-64-0-media/iceberg-athena.png)
   
-  > EP: Link to schema documentation? Partitioning?
+  NOTE: Access to Iceberg from inside the Quilt catalog is planned for a future release.
+
+- **Update Package From Bucket**
+  Users can now create or revise packages directly from selected S3 files in the bucket browser. Simply select files or directories from the bucket view, and Quilt will automatically resolve directories to their contained files. This streamlined workflow supports complex file paths including special characters, making it easier to build packages from existing S3 data without manual file entry.
 
 ## Qurator Enhancements
 
