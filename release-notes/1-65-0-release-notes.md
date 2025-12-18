@@ -8,37 +8,31 @@ This release enhances Quilt's data management capabilities with improved prefix-
 
 - **Prefix-Scoped Bucket Access via API**
 
-  The `quilt3.admin` API now supports prefix-scoped bucket access control, enabling fine-grained permissions management. Administrators can programmatically configure access to specific prefixes within buckets, allowing teams to maintain secure separation of data while sharing the same S3 bucket infrastructure.
+  The `quilt3.admin` API now supports prefix-scoped bucket access control, enabling fine-grained permissions management. Administrators can programmatically configure user access to specific S3 bucket prefixes rather than entire buckets, allowing teams to maintain secure separation of data while sharing the same S3 bucket infrastructure. This feature is particularly valuable for multi-tenant environments where different teams need isolated access within a shared bucket.
 
 - **H5AD (AnnData) File Preview**
 
-  Quilt now provides native preview support for `.h5ad` files, the standard format for annotated data matrices in single-cell genomics. Users can inspect AnnData file structure, metadata, and key attributes directly in the Quilt catalog without downloading files or using external tools.
+  Quilt now provides native preview support for `.h5ad` files, the standard format for annotated data matrices in single-cell genomics. The preview capability required converting the `tabular_preview` Lambda function from a zip-packaged Python runtime to a Docker container image deployment to support the additional dependencies required for AnnData processing. Users can now inspect `.h5ad` file structure, metadata, and key attributes directly in the Quilt catalog without downloading files or using external tools.
 
 - **Unified Metadata Display**
 
-  The metadata viewing experience is now consistent across H5AD, Parquet, and Quilt package previews. All three file types now use the same clean, table-based metadata component, making it easier to understand file characteristics regardless of format. The unified interface provides consistent layouts, styling, and interaction patterns throughout the catalog.
+  The metadata viewing experience is now consistent across H5AD, Parquet, and Quilt package previews. All three file types now use the same clean, table-based metadata component (replacing the previous separate `ParquetMeta` component), making it easier to understand file characteristics regardless of format. The unified interface provides consistent layouts, styling, and interaction patterns throughout the catalog, with dynamic rendering based on metadata type.
 
 - **CRC64NVME Checksum Support**
 
-  Packages now support optional CRC64NVME checksums in addition to existing checksum algorithms. This modern checksum algorithm provides faster validation for large files while maintaining data integrity guarantees, particularly beneficial for high-throughput data workflows.
-
-- **Benchling Webhook Integration Service**
-
-  Quilt introduces a production-ready webhook integration service for Benchling, enabling automated synchronization between Benchling ELN entries and Quilt packages. When Benchling entries are created or updated, the webhook service automatically creates corresponding Quilt packages with metadata, attachments, and rich context. This integration streamlines data flow from laboratory information systems into validated, versioned data packages.
-
-  The service is deployed as a containerized AWS ECS application with API Gateway, providing secure, scalable webhook processing with comprehensive logging and monitoring.
+  Packages now support optional CRC64NVME checksums as an alternative to SHA256 checksums. This AWS-precomputed checksum algorithm provides significantly faster validation for large files while maintaining data integrity guarantees, particularly beneficial for high-throughput data workflows. The implementation uses a two-tier retrieval strategy: precomputed checksums when available, with multipart upload (MPU) fallback for calculation when needed. The feature is controlled by the new `CRC64Checksums` CloudFormation parameter (default: Disabled), replacing the legacy `ChunkedChecksums` parameter. When enabled, increased limits support larger packages: up to 5,100 files, 11 TiB total size, and 5 TiB individual file size.
 
 ## Stack Administration
 
 - **PostgreSQL 15.15 Upgrade**
 
-  CloudFormation-based deployments now use PostgreSQL 15.15, bringing the latest security patches and performance improvements to the Quilt platform database layer.
+  CloudFormation-based deployments now use PostgreSQL 15.15 (upgraded from 15.12), bringing the latest security patches and performance improvements to the Quilt platform database layer. This minor patch upgrade is backwards-compatible and includes coordinated updates across the CloudFormation template and Terraform configurations.
 
 ## Infrastructure & Engineering
 
 - **Python 3.13 Runtime for Lambda Functions**
 
-  All `.zip` packaged Lambda functions have been upgraded to the Python 3.13 runtime, ensuring access to the latest language features, performance improvements, and security updates.
+  All 13 `.zip` packaged Lambda functions have been upgraded from Python 3.11 to Python 3.13 runtime, ensuring access to the latest language features, performance improvements, and security updates. Upgraded functions include: `access_counts`, `preview`, `tabular_preview`, `transcode`, `iceberg`, `pkgevents`, `pkgpush`, `s3hash`, `status_reports`, `es_ingest`, and `manifest_indexer`. Handler paths have been updated to use fully qualified module names (e.g., `t4_lambda_access_counts.index.handler`) for improved clarity.
 
 - **Variants Configuration Updates**
 
