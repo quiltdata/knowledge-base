@@ -33,7 +33,7 @@ This feature is opt-in and requires enabling the `CRC64Checksums` stack paramter
 
 ### Increased Tabulator Flexibility
 
-Improved CSV validation to handle files with extra columns. When headers are present, columns are matched by name; otherwise by position. This makes Tabulator more flexible when working with CSVs that have additional columns not defined in the schema.
+Tabulator's CSV validation has been enhanced to handle files with extra columns. Columns are matched by name when headers are present (otherwise by position). This makes Tabulator more flexible when working with CSVs that have additional columns not defined in the schema.
 
 ## New Python SDK Features
 
