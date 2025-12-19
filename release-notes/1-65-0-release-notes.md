@@ -12,7 +12,7 @@ Quilt now supports previewing **AnnData files** directly in the Catalog. [AnnDat
 
 ![Tabular Metadata View](./1-65-media/h5ad-preview.png)
 
-The preview displays file-level metadata in a new, unified table design shared with [Parquet](https://parquet.apache.org/) and Quilt package previews. For small files it will also show a table of QC metrics.
+The preview displays file-level metadata in a new, unified table design shared with Parquet and Quilt package previews. For small files it will also show a table of QC metrics.
 
 ### Prefix-Scoped Bucket Access
 
@@ -31,7 +31,7 @@ This feature is opt-in and requires enabling the `CRC64Checksums` stack paramter
 
 ![enable CRC64Checksums](./1-65-media/enable-checksums.png)
 
-### Tabulator CSV Handling
+### Increased Tabulator Flexibility
 
 Improved CSV validation to handle files with extra columns. When headers are present, columns are matched by name; otherwise by position. This makes Tabulator more flexible when working with CSVs that have additional columns not defined in the schema.
 
