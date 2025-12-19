@@ -1,6 +1,6 @@
 # Quilt Platform Release 1.65.0
 
-This release brings experimental support for AWS-native CRC64/NVMe checksums, HDF5-based file formats, and quality of life improvements across the platform.
+This release adds AnnData preview support, prefix-scoped bucket access, experimental CRC64/NVMe checksums, increased Tabulator flexibility, and a new bucket management API.
 
 ## New Quilt Platform Features
 
