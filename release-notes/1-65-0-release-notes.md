@@ -6,7 +6,7 @@ This release adds fast packaging for S3 data by leveraging AWS-native CRC64/NVMe
 
 ### CRC64/NVMe Checksum Support (Experimental)
 
-Packaging large files that are already in S3 is now up to **10x faster** with the new CRC64/NVMe checksum option. Instead of computing SHA256 hashes locally, Quilt can leverage S3's built-in AWS-native checksums for dramatically improved performance.
+Packaging large files that are already in S3 is now up to **10x faster** with the new CRC64/NVMe checksum option. Instead of computing SHA256 hashes manually, Quilt can leverage S3's built-in AWS-native checksums for dramatically improved performance.
 
 This feature is opt-in and requires enabling the `CRC64Checksums` stack parameter.
 
@@ -34,15 +34,13 @@ The `quilt3` Python SDK now includes a complete API for programmatic bucket mana
 
 The new module provides functions to add, retrieve, update, and remove bucket configurations with comprehensive error handling. This complements the existing graphical Admin Settings interface and enables automation of bucket management workflows. See the [Admin API documentation](https://docs.quilt.bio/quilt-platform-administrator/admin-1) for details.
 
-#### Prefix-Scoped Bucket Access
+#### New: Prefix-Scoped Bucket Access
 
-The add bucket API also works when the Quilt account only has access to specific prefixes, enabling teams to add selected protions of shared or multi-tenant buckets to the search index.
+The add bucket API can also be used when the Quilt account only has access to specific prefixes of a bucket, enabling teams to add selected portions of shared or multi-tenant buckets to the search index. Note that the bucket itself will be visible but not browsable in the Quilt Catalog.
 
 ![cross-account espresso prefix search](./1-65-media/cross-account-espresso.png)
 
-> NOTE: The Quilt Catalog still only supports whole-bucket acccess.
-
-## Maintenance
+## Other Improvements
 
 - PostgreSQL upgraded to version 15.15 for CloudFormation deployments.
 - Several Lambda functions upgraded to work with Python 3.13 runtime.
