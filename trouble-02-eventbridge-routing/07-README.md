@@ -1,289 +1,357 @@
-# EventBridge Routing Issue - RESOLVED ✅
+# EventBridge Routing Issue - Investigation Summary
 
-**Status:** RESOLVED | **Date:** 2025-12-29 | **Root Cause:** Missing SNS→SQS subscriptions and policies
+**Status:** PARTIALLY RESOLVED (Infrastructure Fixed, Lambda Code Issue Identified) | **Date:** 2025-12-30
 
-## TL;DR
+## Executive Summary
 
-Customer's S3 events weren't reaching Quilt's processing pipeline. While the EventBridge rule was initially disabled (and enabling it appeared to fix the issue), deeper testing revealed the **actual problem**: critical SQS queues weren't subscribed to the SNS topic and lacked proper policies.
+Customer's S3 events weren't reaching Quilt's package indexing pipeline. Investigation revealed **three layers of issues**:
 
-**The Complete Fix:**
+1. **Infrastructure Layer 1 (FIXED):** EventBridge rule was DISABLED ✅
+2. **Infrastructure Layer 2 (FIXED):** Missing SNS subscriptions and SQS policies ✅
+3. **Application Layer (IDENTIFIED):** ManifestIndexer Lambda cannot unwrap SNS messages ❌
 
-```bash
-# Step 1: Enable EventBridge rule (initial fix)
-aws events enable-rule --name cloudtrail-to-sns --region us-east-1
-
-# Step 2: Subscribe ManifestIndexerQueue to SNS (the real fix for packages)
-aws sns subscribe \
-  --topic-arn arn:aws:sns:us-east-1:712023778557:quilt-eventbridge-test-QuiltNotifications-9b3c8cea-3f73-4e6c-8b82-ab5260687e45 \
-  --protocol sqs \
-  --notification-endpoint arn:aws:sqs:us-east-1:712023778557:quilt-staging-ManifestIndexerQueue-uh1K3XwaAR2k \
-  --region us-east-1
-
-# Step 3: Add SQS policy to ManifestIndexerQueue
-aws sqs set-queue-attributes \
-  --queue-url https://sqs.us-east-1.amazonaws.com/712023778557/quilt-staging-ManifestIndexerQueue-uh1K3XwaAR2k \
-  --attributes '{"Policy":"{\"Version\":\"2012-10-17\",\"Id\":\"SQSPolicy\",\"Statement\":[{\"Sid\":\"SQSEventPolicy\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"SQS:SendMessage\",\"Resource\":\"arn:aws:sqs:us-east-1:712023778557:quilt-staging-ManifestIndexerQueue-uh1K3XwaAR2k\",\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"arn:aws:sns:us-east-1:712023778557:quilt-eventbridge-test-QuiltNotifications-9b3c8cea-3f73-4e6c-8b82-ab5260687e45\"}}}]}"}' \
-  --region us-east-1
-
-# Step 4: Subscribe EsIngestQueue to SNS (the real fix for object indexing)
-aws sns subscribe \
-  --topic-arn arn:aws:sns:us-east-1:712023778557:quilt-eventbridge-test-QuiltNotifications-9b3c8cea-3f73-4e6c-8b82-ab5260687e45 \
-  --protocol sqs \
-  --notification-endpoint arn:aws:sqs:us-east-1:712023778557:quilt-staging-EsIngestQueue-ouyPwAl203Ui \
-  --region us-east-1
-
-# Step 5: Add SQS policy to EsIngestQueue
-aws sqs set-queue-attributes \
-  --queue-url https://sqs.us-east-1.amazonaws.com/712023778557/quilt-staging-EsIngestQueue-ouyPwAl203Ui \
-  --attributes '{"Policy":"{\"Version\":\"2012-10-17\",\"Id\":\"SQSPolicy\",\"Statement\":[{\"Sid\":\"SQSEventPolicy\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"SQS:SendMessage\",\"Resource\":\"arn:aws:sqs:us-east-1:712023778557:quilt-staging-EsIngestQueue-ouyPwAl203Ui\",\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"arn:aws:sns:us-east-1:712023778557:quilt-eventbridge-test-QuiltNotifications-9b3c8cea-3f73-4e6c-8b82-ab5260687e45\"}}}]}"}' \
-  --region us-east-1
-```
-
-## Key Takeaways
-
-### 1. Test the Complete Pipeline, Not Just Individual Components
-
-The EventBridge rule appeared to work after enabling it (metrics showed triggers and SNS messages). However, **the Lambda functions weren't being invoked** because messages weren't reaching the correct queues. Always verify end-to-end processing, not just intermediate steps.
-
-### 2. SNS Fan-Out Requires All Consumer Subscriptions
-
-SNS was publishing to 3 queues, but the 2 most critical queues for processing were missing:
-
-- `ManifestIndexerQueue` (package indexing)
-- `EsIngestQueue` (object/ES indexing)
-
-Just because some subscriptions exist doesn't mean all necessary ones are configured.
-
-### 3. SQS Policies Must Allow SNS as Source
-
-Even with subscriptions in place, messages will be silently dropped if the SQS queue policy doesn't explicitly allow the SNS topic to send messages. Both queues had **no policy** initially.
-
-### 4. Lambda Event Source Mappings Can Be Misleading
-
-Lambda was configured to listen to queues with different names than those receiving SNS messages:
-
-- Lambda watched: `ManifestIndexerQueue`
-- SNS sent to: `IndexerQueue` (different queue!)
-
-This mismatch went undetected because both queues existed and had similar names.
-
-## The Problem
-
-Events from S3 → CloudTrail → EventBridge → SNS → SQS weren't reaching the Quilt indexer. Customer followed EventBridge routing documentation but events weren't being processed.
-
-## The Investigation
-
-### Phase 1: Initial Discovery (Correct but Incomplete)
-
-Initial hypotheses (all incorrect):
-
-- ❌ CloudTrail wasn't sending events to EventBridge
-- ❌ SNS wasn't connected to quilt-staging queues
-- ❌ Bucket wasn't in CloudTrail event selectors
-
-First issue found:
-
-- ✅ EventBridge rule `cloudtrail-to-sns` was in `DISABLED` state
-
-After enabling the rule, metrics showed the pipeline was working (176 EventBridge triggers, 178 SNS messages published). **This was prematurely declared as resolved.**
-
-### Phase 2: End-to-End Testing Revealed the Real Issues
-
-When testing actual package creation and object indexing, **nothing worked**. Deeper investigation revealed:
-
-#### Root Cause 1: Missing SNS Subscriptions
-
-- SNS had 3 subscriptions, but critical queues were missing:
-  - ❌ `ManifestIndexerQueue` not subscribed (package indexing broken)
-  - ❌ `EsIngestQueue` not subscribed (object indexing broken)
-- Messages flowed to wrong queues that no Lambda was watching
-- EventBridge → SNS was working, but Lambda functions never got invoked
-
-#### Root Cause 2: Missing SQS Policies
-
-- Both `ManifestIndexerQueue` and `EsIngestQueue` had **no policy**
-- Even after subscribing them to SNS, messages would be rejected
-- Policy needed to explicitly allow SNS topic as source
-
-#### Root Cause 3: Queue Name Confusion
-
-- Lambda `ManifestIndexerLambda` watched: `quilt-staging-ManifestIndexerQueue-uh1K3XwaAR2k`
-- SNS published to: `quilt-staging-IndexerQueue-yD8FCAN9MJWr` (different queue!)
-- Both queues exist, creating a false sense that the wiring was correct
-
-## Verified Working Flow
-
-```text
-S3 Upload (quilt-eventbridge-test)
-    ↓
-CloudTrail (analytics trail)
-    ↓
-EventBridge (aws.s3 events)
-    ↓
-Rule: cloudtrail-to-sns [ENABLED] ✅
-    ↓
-SNS: quilt-eventbridge-test-QuiltNotifications ✅
-    ├─→ SQS: PkgEventsQueue
-    ├─→ SQS: IndexerQueue
-    ├─→ SQS: S3SNSToEventBridgeQueue
-    ├─→ SQS: ManifestIndexerQueue ✅ (FIXED - added subscription + policy)
-    │       ↓
-    │   Lambda: ManifestIndexerLambda
-    │   (Package indexing - creates packages in catalog)
-    │
-    └─→ SQS: EsIngestQueue ✅ (FIXED - added subscription + policy)
-            ↓
-        Lambda: EsIngestLambda
-        (Object indexing - updates Elasticsearch for search)
-```
-
-## Test Results
-
-### Initial Test (Incomplete)
-
-| Metric | Result |
-| ------ | ------ |
-| EventBridge rule triggered | ✅ 176 events |
-| SNS messages published | ✅ 178 messages |
-| SQS messages delivered | ✅ 178 messages |
-| **Pipeline end-to-end** | ❌ **NOT working** |
-
-### After Complete Fix
-
-| Metric | Result |
-| ------ | ------ |
-| EventBridge rule triggered | ✅ Working |
-| SNS messages published | ✅ Working |
-| ManifestIndexerQueue messages | ✅ 2 messages received |
-| EsIngestQueue messages | ✅ 1 message received |
-| Package indexing (ManifestIndexer) | ✅ Working |
-| Object indexing (EsIngest) | ✅ Working |
-| **Pipeline end-to-end** | ✅ **Fully working** |
-
-## Documentation
-
-### Primary
-
-- **[SUCCESS-REPORT.md](SUCCESS-REPORT.md)** - Complete resolution with test data and metrics
-- **[config-quilt-eventbridge-test.toml](config-quilt-eventbridge-test.toml)** - Working configuration reference
-
-### Supporting
-
-- **[test-plan-staging.md](test-plan-staging.md)** - Investigation methodology
-- **[customer-issue-summary.md](customer-issue-summary.md)** - Original problem statement
-- **[ACTION-ITEMS.md](ACTION-ITEMS.md)** - Follow-up tasks
-
-### Archives
-
-- **backup-policies/** - SNS policy backups and modifications
-- **test-artifacts/** - Test execution files and logs
-- **obsolete-reports/** - Superseded investigation documents
-
-## Verification Commands
-
-### Complete End-to-End Verification
-
-To verify the entire pipeline is working:
-
-```bash
-# 1. Upload test file
-echo "Test $(date)" > test.txt
-aws s3 cp test.txt s3://quilt-eventbridge-test/test/test.txt --region us-east-1
-
-# 2. Wait 2-3 minutes for CloudTrail processing
-sleep 180
-
-# 3. Check EventBridge rule triggered
-echo "=== EventBridge Triggers ==="
-aws cloudwatch get-metric-statistics \
-  --namespace AWS/Events \
-  --metric-name TriggeredRules \
-  --dimensions Name=RuleName,Value=cloudtrail-to-sns \
-  --start-time $(date -u -v-5M '+%Y-%m-%dT%H:%M:%S') \
-  --end-time $(date -u '+%Y-%m-%dT%H:%M:%S') \
-  --period 60 \
-  --statistics Sum \
-  --region us-east-1
-
-# 4. Check SNS published messages
-echo "=== SNS Messages Published ==="
-aws cloudwatch get-metric-statistics \
-  --namespace AWS/SNS \
-  --metric-name NumberOfMessagesPublished \
-  --dimensions Name=TopicName,Value=quilt-eventbridge-test-QuiltNotifications-9b3c8cea-3f73-4e6c-8b82-ab5260687e45 \
-  --start-time $(date -u -v-5M '+%Y-%m-%dT%H:%M:%S') \
-  --end-time $(date -u '+%Y-%m-%dT%H:%M:%S') \
-  --period 60 \
-  --statistics Sum \
-  --region us-east-1
-
-# 5. Check ManifestIndexerQueue received messages
-echo "=== ManifestIndexerQueue Messages ==="
-aws cloudwatch get-metric-statistics \
-  --namespace AWS/SQS \
-  --metric-name NumberOfMessagesReceived \
-  --dimensions Name=QueueName,Value=quilt-staging-ManifestIndexerQueue-uh1K3XwaAR2k \
-  --start-time $(date -u -v-5M '+%Y-%m-%dT%H:%M:%S') \
-  --end-time $(date -u '+%Y-%m-%dT%H:%M:%S') \
-  --period 60 \
-  --statistics Sum \
-  --region us-east-1
-
-# 6. Check EsIngestQueue received messages
-echo "=== EsIngestQueue Messages ==="
-aws cloudwatch get-metric-statistics \
-  --namespace AWS/SQS \
-  --metric-name NumberOfMessagesReceived \
-  --dimensions Name=QueueName,Value=quilt-staging-EsIngestQueue-ouyPwAl203Ui \
-  --start-time $(date -u -v-5M '+%Y-%m-%dT%H:%M:%S') \
-  --end-time $(date -u '+%Y-%m-%dT%H:%M:%S') \
-  --period 60 \
-  --statistics Sum \
-  --region us-east-1
-
-# 7. Check Lambda invocations
-echo "=== Lambda Invocations ==="
-aws cloudwatch get-metric-statistics \
-  --namespace AWS/Lambda \
-  --metric-name Invocations \
-  --dimensions Name=FunctionName,Value=quilt-staging-ManifestIndexerLambda-kYYtGJDEOYmU \
-  --start-time $(date -u -v-5M '+%Y-%m-%dT%H:%M:%S') \
-  --end-time $(date -u '+%Y-%m-%dT%H:%M:%S') \
-  --period 60 \
-  --statistics Sum \
-  --region us-east-1
-```
-
-### Expected Results
-
-All metrics should show non-zero counts after waiting for CloudTrail processing:
-
-- EventBridge: Should show triggered rules
-- SNS: Should show published messages
-- ManifestIndexerQueue: Should show received messages
-- EsIngestQueue: Should show received messages
-- Lambda: Should show invocations
-
-## Related Documentation
-
-- Quilt EventBridge Documentation: <https://docs.quilt.bio/quilt-platform-administrator/advanced/eventbridge>
-- Customer originally following SNS Fanout + EventBridge Routing patterns
+**The infrastructure now routes events correctly, but the application code requires fixes in Platform 1.66+.**
 
 ---
 
-## Final Summary
+## Critical Discovery: Input Transformers Are Insufficient
 
-**Investigation:** Two-phase debugging - initial fix appeared successful but end-to-end testing revealed deeper issues
+**Key Insight:** Input Transformers transform events BEFORE SNS wrapping. They cannot eliminate the need for SNS unwrapping logic in Lambda code.
 
-**Resolution time:**
+**Why This Matters:**
+- EventBridge → SNS → SQS → Lambda creates 3 layers of message wrapping
+- Input Transformers only affect the innermost payload
+- Lambdas MUST still unwrap SQS and SNS layers regardless of transformation
+- Some Quilt Lambdas lack SNS unwrapping code (ManifestIndexer in ≤1.65)
 
-- Phase 1: ~2 hours investigation, 1 second fix (EventBridge rule enable)
-- Phase 2: ~30 minutes investigation, 5 commands to fix (SNS subscriptions + SQS policies)
+**Result:** Infrastructure fixes enable event flow, but Lambda code issues prevent processing.
 
-**Lessons Learned:**
+See [10-input-transformer-hypothesis.md](10-input-transformer-hypothesis.md) for detailed analysis.
 
-1. **Always test end-to-end**: Intermediate metrics (EventBridge triggers, SNS publishes) can show "success" while the actual processing fails
-2. **Verify Lambda invocations**: The ultimate test is whether Lambda functions process events, not just whether queues receive messages
-3. **Check all SNS subscriptions**: Fan-out architectures need ALL required subscriptions configured
-4. **SQS policies are critical**: Even with subscriptions, messages are silently dropped without proper IAM policies
-5. **Queue naming matters**: Similar queue names (`IndexerQueue` vs `ManifestIndexerQueue`) can create confusion about the actual data flow
+---
+
+## The Three-Layer Problem
+
+### Layer 1: EventBridge Rule (FIXED ✅)
+
+**Problem:** Rule `cloudtrail-to-sns` was DISABLED
+
+**Fix:**
+```bash
+aws events enable-rule --name cloudtrail-to-sns --region us-east-1
+```
+
+**Result:** EventBridge started routing CloudTrail events to SNS (176+ events)
+
+---
+
+### Layer 2: SNS Subscriptions & Policies (FIXED ✅)
+
+**Problem:** Critical queues weren't subscribed to SNS topic
+
+**Missing:**
+- `ManifestIndexerQueue` (package indexing)
+- `EsIngestQueue` (object indexing)
+
+**Fix:**
+```bash
+# Subscribe ManifestIndexerQueue
+aws sns subscribe \
+  --topic-arn arn:aws:sns:us-east-1:712023778557:quilt-eventbridge-test-QuiltNotifications-* \
+  --protocol sqs \
+  --notification-endpoint arn:aws:sqs:us-east-1:712023778557:quilt-staging-ManifestIndexerQueue-* \
+  --region us-east-1
+
+# Add SQS policy to allow SNS
+aws sqs set-queue-attributes \
+  --queue-url https://sqs.us-east-1.amazonaws.com/712023778557/quilt-staging-ManifestIndexerQueue-* \
+  --attributes '{"Policy": "..."}'
+
+# Same for EsIngestQueue
+```
+
+**Result:** Messages now reach queues, triggering Lambda invocations
+
+---
+
+### Layer 3: Lambda Code Compatibility (UNRESOLVED ❌)
+
+**Problem:** ManifestIndexer expects EventBridge format but receives SNS-wrapped messages
+
+**Error:** `KeyError: 'detail'` at `t4_lambda_manifest_indexer/__init__.py:263`
+
+**Root Cause:**
+```python
+# ManifestIndexer (≤1.65) - BROKEN
+for record in event["Records"]:
+    body = orjson.loads(record["body"])  # Unwraps SQS only
+    bucket = body["detail"]["s3"]["bucket"]["name"]  # ❌ Assumes body is EventBridge format
+```
+
+**Reality:** `body` is SNS message: `{"Message": "...", "TopicArn": "..."}`
+
+**Working Pattern (from SearchHandler):**
+```python
+# SearchHandler - WORKS
+for message in event["Records"]:
+    body = json.loads(message["body"])                # Unwrap SQS
+    body_message = json.loads(body["Message"])        # Unwrap SNS ← CRITICAL
+    events = body_message["Records"]                  # Access payload
+```
+
+**Impact:**
+- ✅ Infrastructure delivers events correctly
+- ✅ SearchHandler processes file indexing (works)
+- ❌ ManifestIndexer crashes on every event (100% failure rate)
+- ❌ Packages don't appear in catalog
+
+**Fix Required:** Platform 1.66+ will add SNS unwrapping to ManifestIndexer
+
+See [08-FAILURE_REPORT.md](08-FAILURE_REPORT.md) for complete analysis.
+
+---
+
+## Key Lessons Learned
+
+### 1. Metrics ≠ End-to-End Success
+
+**False Positive:**
+- EventBridge triggers: ✅ 176 events
+- SNS publishes: ✅ 178 messages
+- SQS receives: ✅ Messages delivered
+- **Conclusion:** "It works!" ❌ WRONG
+
+**Reality:**
+- Lambda invoked: ✅ 58 times
+- Lambda errors: ❌ 60+ errors (100% failure rate)
+- Packages indexed: ❌ 0
+
+**Lesson:** Always verify final output (packages in catalog), not intermediate metrics.
+
+---
+
+### 2. Input Transformers Cannot Fix Lambda Code Issues
+
+**Misconception:** "Add Input Transformer to convert EventBridge → S3 format"
+
+**Reality:**
+```
+EventBridge (CloudTrail event)
+    ↓
+[INPUT TRANSFORMER] ← Transforms here
+    ↓
+SNS receives transformed event
+    ↓
+SNS wraps: {"Message": "{...transformed event...}", ...}  ← ALWAYS wraps
+    ↓
+Lambda receives: SQS → SNS → Transformed event
+    ↓
+Lambda STILL needs to unwrap SNS layer
+```
+
+**Lesson:** Input Transformers change the innermost payload but don't eliminate SNS wrapping. Lambda code must handle SNS messages regardless.
+
+---
+
+### 3. Test With Real Workflows, Not Synthetic Events
+
+**Wrong Test:**
+```bash
+# Upload file → Check metrics → "Success!"
+aws s3 cp test.txt s3://bucket/test.txt
+# EventBridge triggered ✅
+# SNS published ✅
+```
+
+**Right Test:**
+```bash
+# Create package → Verify in UI
+quilt3 push user/package s3://bucket/
+# Wait 3 minutes
+# Check: https://catalog.quiltdata.com/b/bucket/packages
+# Does package appear? NO ❌
+```
+
+**Lesson:** Test actual user workflows to detect processing failures.
+
+---
+
+### 4. Two Event Sources = Flaky Testing
+
+**Hidden Problem:**
+```
+S3 Bucket
+    ├─→ Direct S3 Event Notification → SNS → IndexerQueue → SearchHandler ✅ Works
+    └─→ EventBridge → SNS → ManifestIndexerQueue → ManifestIndexer ❌ Fails
+```
+
+**Why Testing Was Confusing:**
+- Files appeared in search (from direct S3 notifications) ✅
+- Packages didn't appear in catalog (from EventBridge) ❌
+- **False conclusion:** "EventBridge works!" (No, only direct S3 works)
+
+**Lesson:** Disable direct S3 Event Notifications when testing EventBridge routing.
+
+---
+
+### 5. Lambda Code Consistency Matters
+
+**Current State:**
+- SearchHandler: Handles SNS-wrapped messages ✅
+- EsIngest: Handles EventBridge format ⚠️ (needs verification)
+- ManifestIndexer: Expects EventBridge, gets SNS ❌ (broken)
+- Iceberg: Expects EventBridge format ⚠️ (needs verification)
+
+**Lesson:** When adding SNS fan-out to EventBridge routing, ALL Lambdas must be audited for SNS compatibility.
+
+---
+
+## Architecture: Current vs Required
+
+### Current Flow (≤1.65)
+
+```
+S3 Upload → CloudTrail → EventBridge Rule [ENABLED] ✅
+    ↓
+SNS Topic ✅
+    ├─→ IndexerQueue → SearchHandler ✅ (has SNS unwrapping)
+    ├─→ EsIngestQueue → EsIngest ⚠️
+    └─→ ManifestIndexerQueue → ManifestIndexer ❌ (no SNS unwrapping)
+                                    ↓
+                                KeyError: 'detail'
+                                100% failure rate
+```
+
+### Fixed Flow (≥1.66)
+
+```
+S3 Upload → CloudTrail → EventBridge Rule [ENABLED] ✅
+    ↓
+SNS Topic ✅
+    ├─→ IndexerQueue → SearchHandler ✅ (has SNS unwrapping)
+    ├─→ EsIngestQueue → EsIngest ✅ (verified working)
+    └─→ ManifestIndexerQueue → ManifestIndexer ✅ (FIXED: added SNS unwrapping)
+                                    ↓
+                                Packages appear in catalog ✅
+```
+
+---
+
+## Version-Specific Behavior
+
+### Platform ≤1.65 (Current)
+
+**Infrastructure:**
+- ✅ EventBridge routing works
+- ✅ SNS fan-out works
+- ✅ Messages reach all queues
+
+**Application:**
+- ✅ File indexing works (SearchHandler)
+- ❌ **Package indexing broken** (ManifestIndexer)
+
+**Workaround:** None - requires Platform 1.66+ update
+
+---
+
+### Platform 1.66+ (With Lambda Fix)
+
+**Infrastructure:**
+- ✅ EventBridge routing works
+- ✅ SNS fan-out works
+- ✅ Messages reach all queues
+
+**Application:**
+- ✅ File indexing works (SearchHandler)
+- ✅ **Package indexing works** (ManifestIndexer - FIXED)
+
+**Input Transformer:** Optional (Lambdas handle raw EventBridge format)
+
+---
+
+## Files in This Investigation
+
+### Timeline (Chronological Order)
+
+1. **[01-customer-issue-summary.md](01-customer-issue-summary.md)** - Original customer report
+2. **[02-local-test-setup.md](02-local-test-setup.md)** - Test environment design
+3. **[03-test-plan-staging.md](03-test-plan-staging.md)** - Staging environment testing
+4. **[04-config-quilt-eventbridge-test.toml](04-config-quilt-eventbridge-test.toml)** - Configuration file
+5. **[05-ACTION-ITEMS.md](05-ACTION-ITEMS.md)** - Initial action items
+6. **[06-SUCCESS-REPORT.md](06-SUCCESS-REPORT.md)** - Initial fix (EventBridge rule enabled)
+7. **[07-README.md](07-README.md)** - This file (complete summary)
+8. **[08-FAILURE_REPORT.md](08-FAILURE_REPORT.md)** - Deep dive: Lambda code issue
+9. **[09-documented-steps.md](09-documented-steps.md)** - Public documentation
+10. **[10-input-transformer-hypothesis.md](10-input-transformer-hypothesis.md)** - Input Transformer analysis & testing guide
+
+### Supporting Files
+
+- **backup-policies/** - SNS policy backups
+- **test-artifacts/** - EventBridge patterns, test scripts
+- **obsolete-reports/** - Superseded documents
+
+---
+
+## Testing Recommendations
+
+### For Platform ≤1.65
+
+**Expected Results:**
+- ❌ Package indexing will NOT work with EventBridge routing
+- ✅ File indexing may work (if SearchHandler subscribed)
+- ⚠️ Recommend waiting for Platform 1.66+ before deploying EventBridge routing
+
+### For Platform 1.66+
+
+**Test Strategy:**
+1. **Disable direct S3 Event Notifications** (critical for accurate testing)
+2. Test EventBridge routing in isolation
+3. Create packages (not just upload files)
+4. Verify packages appear in catalog
+5. Check CloudWatch Logs for Lambda errors
+
+**See [10-input-transformer-hypothesis.md](10-input-transformer-hypothesis.md) for complete testing guide.**
+
+---
+
+## Related Documentation
+
+### Public Documentation
+- [Quilt EventBridge Guide](https://docs.quilt.bio/quilt-platform-administrator/advanced/eventbridge)
+- [AWS EventBridge Documentation](https://docs.aws.amazon.com/eventbridge/)
+- [AWS SNS Fanout Pattern](https://aws.amazon.com/blogs/compute/fanout-s3-event-notifications-to-multiple-endpoints/)
+
+### Internal Analysis
+- [08-FAILURE_REPORT.md](08-FAILURE_REPORT.md) - Complete Lambda code analysis
+- [10-input-transformer-hypothesis.md](10-input-transformer-hypothesis.md) - Why Input Transformers are insufficient
+
+---
+
+## Current Status
+
+### Infrastructure (COMPLETE ✅)
+
+- [x] EventBridge rule enabled
+- [x] SNS topic routing correctly
+- [x] ManifestIndexerQueue subscribed to SNS
+- [x] EsIngestQueue subscribed to SNS
+- [x] SQS policies configured
+- [x] Event flow working end-to-end
+
+### Application (REQUIRES 1.66+ ❌)
+
+- [ ] ManifestIndexer Lambda SNS unwrapping (in Platform 1.66+)
+- [ ] Optional: Dual format support for all Lambdas (future)
+- [ ] Documentation updates reflecting version requirements
+
+---
+
+## Final Takeaways
+
+1. **Infrastructure fixes alone are insufficient** - Application code must match architecture
+2. **Input Transformers cannot eliminate SNS wrapping** - Lambda code fixes required
+3. **Always test end-to-end with real workflows** - Metrics can show false positives
+4. **Isolate event sources during testing** - Disable competing flows
+5. **Version-specific behavior matters** - Document what works in each release
+
+**Bottom Line:** EventBridge routing infrastructure is ready, but full functionality requires Platform 1.66+ Lambda updates.
