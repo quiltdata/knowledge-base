@@ -1,14 +1,16 @@
 # Current Documentation Steps (As Published)
 
-Source: https://docs.quilt.bio/quilt-platform-administrator/advanced/eventbridge
+Source: <https://docs.quilt.bio/quilt-platform-administrator/advanced/eventbridge>
 
 ## Prerequisites
+
 - AWS CLI or Console access
 - Existing Quilt deployment
 - Target S3 bucket
 - CloudTrail enabled for the bucket
 
 ## Step 1: Create SNS Topic
+
 ```bash
 aws sns create-topic \
     --name quilt-eventbridge-notifications \
@@ -16,15 +18,19 @@ aws sns create-topic \
 ```
 
 ## Step 2: Verify CloudTrail Configuration
+
 - Confirm CloudTrail is tracking S3 data events
 - Ensure your bucket is included in the trail
 
 ## Step 3: Create EventBridge Rule
+
 - Navigate to EventBridge Console
 - Create rule named `quilt-s3-events-rule`
 
 ## Step 4: Configure Event Pattern
+
 Key events to capture:
+
 - PutObject
 - CopyObject
 - CompleteMultipartUpload
@@ -32,6 +38,7 @@ Key events to capture:
 - DeleteObjects
 
 Event Pattern JSON:
+
 ```json
 {
   "source": ["aws.s3"],
@@ -53,9 +60,11 @@ Event Pattern JSON:
 ```
 
 ## Step 5: Configure Input Transformer
+
 Transform EventBridge events to S3 event format:
 
 **Input Path:**
+
 ```json
 {
   "awsRegion": "$.detail.awsRegion",
@@ -67,6 +76,7 @@ Transform EventBridge events to S3 event format:
 ```
 
 **Input Template:**
+
 ```json
 {
   "Records": [
@@ -88,6 +98,7 @@ Transform EventBridge events to S3 event format:
 ```
 
 ## Step 6: Set Up IAM Permissions
+
 ```json
 {
   "Version": "2012-10-17",
@@ -105,14 +116,17 @@ Transform EventBridge events to S3 event format:
 ```
 
 ## Step 7: Configure Quilt
+
 - Add bucket in Quilt Admin Panel
 - Use the SNS topic ARN
 - Disable direct S3 Event Notifications
 
 ## Step 8: Perform Initial Indexing
+
 - Re-index bucket without "Repair" option
 
 ## Testing
+
 - Upload test file to S3 bucket
 - Verify event appears in Quilt catalog
 - Check SNS and EventBridge metrics
