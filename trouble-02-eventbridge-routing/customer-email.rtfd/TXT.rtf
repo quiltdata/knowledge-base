@@ -1,0 +1,423 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fswiss\fcharset0 Helvetica;\f2\fswiss\fcharset0 ArialMT;
+\f3\froman\fcharset0 Times-Bold;\f4\froman\fcharset0 Times-Roman;\f5\fswiss\fcharset0 Helvetica-Bold;
+\f6\fnil\fcharset0 Tahoma;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red234\green131\blue43;
+\red31\green26\blue81;\red53\green134\blue255;\red149\green149\blue149;\red25\green25\blue25;\red229\green229\blue229;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0\cname textColor;\cssrgb\c0\c0\c0;\cssrgb\c94118\c58824\c21569;
+\cssrgb\c16471\c15294\c39216;\cssrgb\c25490\c61176\c100000;\cssrgb\c65098\c65098\c65098;\cssrgb\c12941\c12941\c12941;\cssrgb\c91765\c91765\c91765;
+}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 From: Adam Luis Mendez <amendez@fl109inc.com>\
+Subject: Re: Flagship Pioneering - FL109 - Web UI not showing created packages\
+Date: December 16, 2025 at 8:00:38\uc0\u8239 AM PST\
+To: Kevin Moore <kevin@quilt.bio>\
+Cc: "support@quilt.bio" <support@quilt.bio>\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1 \cf2 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec3 The event pattern definitely is firing, and newly added files are being indexed\
+\
+Which is the SQS that handles the packaging? I see these 3 subscribed, but this one seems suspiciously not linked\
+\
+{{\NeXTGraphic unknown.png \width22460 \height10980 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+{{\NeXTGraphic 1__#$!@%!#__unknown.png \width22660 \height11400 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+Yeah, if you guys are free to take a look anytime today or in the next couple of days, it\'92d be much appreciated. I\'92m sure it\'92s a quick fix\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs24 \cf3 \
+\pard\pardeftab720\partightenfactor0
+
+\f3\b\fs32 \cf3 From: 
+\f4\b0 Kevin Moore <kevin@quilt.bio>\
+
+\f3\b Date: 
+\f4\b0 Monday, December 15, 2025 at 7:16\uc0\u8239 PM\
+
+\f3\b To: 
+\f4\b0 Adam Luis Mendez <amendez@fl109inc.com>\
+
+\f3\b Cc: 
+\f4\b0 support@quilt.bio <support@quilt.bio>\
+
+\f3\b Subject: 
+\f4\b0 Re: Flagship Pioneering - FL109 - Web UI not showing created packages\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs24 \cf3 Hi\'a0Adam,\
+\
+Can you verify that the event rule fires when you create a package? I think that should show up in the monitoring tab of the events rule.\
+\
+If that's firing, we'd expect to see that produce messages in the SQS queue that's subscribed to the SNS topic.\
+\
+If SQS is getting messages, the next thing to check is whether or not the IndexerLambda is running and if it's hitting any errors.\
+\
+LMK if you want to schedule a Zoom with our team to help debugging.\
+\
+Best,\
+\
+Kevin\
+\
+\
+\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1360\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw40\brdrcf4 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx4320
+\clvertalc \clshdrawnil \clwWidth2280\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl300 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\fs32 \cf3 {{\NeXTGraphic Quilt Q Purple.png \width2045 \height2057 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf3 \cell 
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+
+\f5\b\fs36 \cf5 \strokec5 Kevin Moore
+\f1\b0 \nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+
+\fs28 \cf5 Founder & CEO\nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+
+\f5\b \AppleTypeServices\AppleTypeServicesF65539 \cf4 \strokec4 QUILT.BIO
+\f1\b0 \AppleTypeServices \nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+\cf5 \strokec5 (415) 518-4477\nestcell \lastrow\nestrow\cell \lastrow\row
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf3 \strokec3 \
+Sent via {\field{\*\fldinst{HYPERLINK "https://sprh.mn/?vip=kevin@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 Superhuman}}\
+\
+\
+On Mon, Dec 15, 2025 at 1:29 PM, Adam Luis Mendez <{\field{\*\fldinst{HYPERLINK "mailto:amendez@fl109inc.com"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 amendez@fl109inc.com}}>\'a0wrote:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf3 Thought I got this fixed, but looks like its resurfaced:\
+\
+Re-indexing the bucket did allow us to see packages from the homepage which were previously missing, but for which we could always browse to the link directly, e.g.:\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic unknown \width640 \height640 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+{{\NeXTGraphic 1__#$!@%!#__unknown \width640 \height640 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 This was definitely caused by an FSx stealing the event feed from the bucket, however I setup a new EventBridge pattern for that bucket, and Targeted the SNS\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 2__#$!@%!#__unknown.png \width22920 \height10400 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+{{\NeXTGraphic 3__#$!@%!#__unknown.png \width22760 \height9100 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 Which in turn links to:\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 4__#$!@%!#__unknown.png \width22760 \height9100 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 I thought this solved the issue, but apparently it was just the re-indexing that caught it. Anything obvious I\'92m missing to make sure newly created packages show up in the UI properly?\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f3\b \cf3 From: 
+\f4\b0 Kevin Moore <{\field{\*\fldinst{HYPERLINK "mailto:kevin@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 kevin@quilt.bio}}>\
+
+\f3\b Date: 
+\f4\b0 Tuesday, November 25, 2025 at 6:33\uc0\u8239 PM\
+
+\f3\b To: 
+\f4\b0 Adam Luis Mendez <{\field{\*\fldinst{HYPERLINK "mailto:amendez@fl109inc.com"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 amendez@fl109inc.com}}>\
+
+\f3\b Cc: {\field{\*\fldinst{HYPERLINK "mailto:support@quilt.bio"}}{\fldrslt 
+\f4\b0 \cf6 \ul \ulc6 \strokec6 support@quilt.bio}}
+\f4\b0 \'a0<{\field{\*\fldinst{HYPERLINK "mailto:support@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 support@quilt.bio}}>\
+
+\f3\b Subject: 
+\f4\b0 Re: Flagship Pioneering - FL109 - Web UI not showing created packages\
+\
+
+\itap1\trowd \taflags5 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat7 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt140 \clpadl40 \clpadb140 \clpadr40 \gaph\cellx2880
+\clvertalc \clcbpat9 \clwWidth12394\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt140 \clpadl300 \clpadb140 \clpadr100 \gaph\cellx5760
+\clvertalc \clcbpat9 \clwWidth1500\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt140 \clpadl100 \clpadb140 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f1 \cf3 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f6 \cf8 \strokec8 You don't often get email from {\field{\*\fldinst{HYPERLINK "mailto:kevin@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 kevin@quilt.bio}}. {\field{\*\fldinst{HYPERLINK "https://aka.ms/LearnAboutSenderIdentification"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 Learn why this is important}}\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f1 \cf8 \cell \lastrow\row
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf3 \strokec3 Hi\'a0Adam,\
+\
+Yes, for the bucket that's has its S3 notifications eaten by FSx, the best practice is to use {\field{\*\fldinst{HYPERLINK "https://docs.quilt.bio/quilt-platform-administrator/advanced/eventbridge#eventbridge-implementation-guide"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 EventBridge}}.\
+\
+For the other buckets, you can either reindex and repair and check "Repair S3 Notifications" to have Quilt rebuild the notifications. Or, if you have a working SNS topic that's already publishing the S3 notifications, you can pass its ARN in the bucket settings.\
+\
+Don't select Skip S3 notifications. That would disable updating the search index.\
+\
+Best,\
+\
+Kevin\
+\'a0\
+\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1360\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw40\brdrcf4 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx4320
+\clvertalc \clshdrawnil \clwWidth2280\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl300 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\fs32 \cf3 {{\NeXTGraphic Quilt Q Purple.png \width2045 \height2057 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf3 \cell 
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+
+\f5\b\fs36 \cf5 \strokec5 Kevin Moore
+\f1\b0 \nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+
+\fs28 \cf5 Founder & CEO\nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://quilt.bio/"}}{\fldrslt 
+\f5\b \AppleTypeServices\AppleTypeServicesF65539 \cf6 \ul \ulc6 \strokec6 QUILT.BIO}}\cf4 \strokec4 \nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+\cf5 \strokec5 (415) 518-4477\nestcell \lastrow\nestrow\cell \lastrow\row
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf3 \strokec3 \
+\pard\pardeftab720\partightenfactor0
+\cf3 Sent via {\field{\*\fldinst{HYPERLINK "https://sprh.mn/?vip=kevin@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 Superhuman}}\
+\
+\
+On Tue, Nov 25, 2025 at 7:04 AM, Adam Luis Mendez <{\field{\*\fldinst{HYPERLINK "mailto:amendez@fl109inc.com"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 amendez@fl109inc.com}}>\'a0wrote:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf3 Gahhh, yep, looks like #1 was it. We did setup this bucket with FSx overlayed on it and that stole the S3 event feed\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 5__#$!@%!#__unknown.png \width30200 \height5860 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 The fix is to create an EventBridge pattern and target the existing Quilt SNS right? {\field{\*\fldinst{HYPERLINK "https://docs.quilt.bio/quilt-platform-administrator/advanced/eventbridge"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 https://docs.quilt.bio/quilt-platform-administrator/advanced/eventbridge}}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 6__#$!@%!#__unknown.png \width30200 \height6180 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 Also, not sure how but it seems that 1 bucket\'92s targets to SQS got unhooked compared to the other 2\
+\
+(Normal)\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 7__#$!@%!#__unknown.png \width30180 \height10600 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 (Not Normal)\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 8__#$!@%!#__unknown.png \width30160 \height10620 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 Do I just add those back? And then reindex but skip S3 notifications?\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 9__#$!@%!#__unknown.png \width25820 \height11380 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f3\b \cf3 From: 
+\f4\b0 Kevin Moore <{\field{\*\fldinst{HYPERLINK "mailto:kevin@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 kevin@quilt.bio}}>\
+
+\f3\b Date: 
+\f4\b0 Tuesday, November 25, 2025 at 12:36\uc0\u8239 AM\
+
+\f3\b To: 
+\f4\b0 Adam Luis Mendez <{\field{\*\fldinst{HYPERLINK "mailto:amendez@fl109inc.com"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 amendez@fl109inc.com}}>\
+
+\f3\b Cc: {\field{\*\fldinst{HYPERLINK "mailto:support@quilt.bio"}}{\fldrslt 
+\f4\b0 \cf6 \ul \ulc6 \strokec6 support@quilt.bio}}
+\f4\b0 \'a0<{\field{\*\fldinst{HYPERLINK "mailto:support@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 support@quilt.bio}}>\
+
+\f3\b Subject: 
+\f4\b0 Re: Flagship Pioneering - FL109 - Web UI not showing created packages\
+\
+
+\itap1\trowd \taflags5 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat7 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt140 \clpadl40 \clpadb140 \clpadr40 \gaph\cellx2880
+\clvertalc \clcbpat9 \clwWidth12148\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt140 \clpadl300 \clpadb140 \clpadr100 \gaph\cellx5760
+\clvertalc \clcbpat9 \clwWidth1500\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt140 \clpadl100 \clpadb140 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f1 \cf3 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f6 \cf8 \strokec8 You don't often get email from {\field{\*\fldinst{HYPERLINK "mailto:kevin@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 kevin@quilt.bio}}. {\field{\*\fldinst{HYPERLINK "https://aka.ms/LearnAboutSenderIdentification"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 Learn why this is important}}\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f1 \cf8 \cell \lastrow\row
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf3 \strokec3 Hi Adam,\
+\
+It seems most likely that the package index isn't getting updated when new packages are added. The most common cause is the search cluster filling its disk or going offline, but you've already checked that. Next, I'd recommend we check the chain of events step by step:\
+\pard\tx220\tx720\pardeftab720\partightenfactor0
+\ls1\ilvl0\cf3 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	1.	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec3 S3 Notifications. If the S3 notifications settings have been deleted or corrupted, they'll need to be restored to update the index\'a0automatically. The bucket notifications should\'a0route to an SNS topic that feeds SQS.\uc0\u8232 \
+\ls1\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	2.	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec3 SQS. Are messages flowing through the indexer queue ($\{stackname\}-IndexerQueue-...)? You showed that the queue isn't backed up, but we should be able to tell if it's processing messages. If not, the S3 notifications are the likely cause.\uc0\u8232 \
+\ls1\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	3.	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec3 Lambda. The SearchHandler lambda ($\{stackname\}-SearchHandler-...) takes messages from the\'a0IndexerQueue and updates the search cluster. Check the monitoring of that lambda and see if it's being run and if the executions are succeeding.\uc0\u8232 \
+\pard\pardeftab720\partightenfactor0
+\cf3 We'll be happy to jump on a Zoom call to help debug. Let us know when you're available.\'a0\
+\
+Best,\
+\
+Kevin\
+\
+\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1360\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw40\brdrcf4 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx4320
+\clvertalc \clshdrawnil \clwWidth2280\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl300 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\fs32 \cf3 {{\NeXTGraphic Quilt Q Purple.png \width2045 \height2057 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf3 \cell 
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+
+\f5\b\fs36 \cf5 \strokec5 Kevin Moore
+\f1\b0 \nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+
+\fs28 \cf5 Founder & CEO\nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://quilt.bio/"}}{\fldrslt 
+\f5\b \AppleTypeServices\AppleTypeServicesF65539 \cf6 \ul \ulc6 \strokec6 QUILT.BIO}}\cf4 \strokec4 \nestcell \nestrow
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2160\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\partightenfactor0
+\cf5 \strokec5 (415) 518-4477\nestcell \lastrow\nestrow\cell \lastrow\row
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf3 \strokec3 \
+\pard\pardeftab720\partightenfactor0
+\cf3 Sent via {\field{\*\fldinst{HYPERLINK "https://sprh.mn/?vip=kevin@quilt.bio"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 Superhuman}}\
+\
+\
+On Mon, Nov 24, 2025 at 1:43 PM, Adam Luis Mendez <{\field{\*\fldinst{HYPERLINK "mailto:amendez@fl109inc.com"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 amendez@fl109inc.com}}>\'a0wrote:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf3 Hi Support team,\
+\
+Lately we\'92ve noticed an issue that we could use your help troubleshooting. In the past, we have been creating many packages of varying sizes (some just a handful of files, others in the 100s with several TB).\
+\
+These packages exist in the "prod-fsp-data-platform-core-analytics\'94 bucket under the Default Workflow\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 10__#$!@%!#__unknown.png \width29920 \height14960 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 Starting about 2 weeks ago, we noticed that while creating packages either in the web UI, or programmatically through the quilt3 sdk, we would receive a response indicating that the package was created successfully, however we were unable to see it actually listed in the screenshot above.\
+\
+One example, is {\field{\*\fldinst{HYPERLINK "https://quilt.data-platform.fsp-visionco.com/b/prod-fsp-data-platform-core-analytics/packages/packages/fm-combined-nano"}}{\fldrslt \cf6 \ul \ulc6 \strokec6 https://quilt.data-platform.fsp-visionco.com/b/prod-fsp-data-platform-core-analytics/packages/packages/fm-combined-nano}}\
+\
+When I browse directly to that link, I can see the package normally and as expected\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 11__#$!@%!#__unknown.png \width26700 \height15020 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 However the package\'92s existence does not show in the Packages homepage\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 12__#$!@%!#__unknown.png \width30120 \height10480 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 This is now true for ~10 of the most recent packages we\'92ve made.\
+\
+Checking the stack health, OpenSearch appears fine, and I don\'92t see any SQS queues clogged\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 {{\NeXTGraphic 13__#$!@%!#__unknown.png \width23240 \height8600 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+{{\NeXTGraphic 14__#$!@%!#__unknown.png \width27120 \height12800 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+{{\NeXTGraphic 15__#$!@%!#__unknown.png \width27120 \height8780 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+{{\NeXTGraphic 16__#$!@%!#__unknown.png \width30140 \height11360 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 Any help welcome! Please help rescue our packages\
+\
+All the best,\
+Adam\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs24 \cf3 \
+}

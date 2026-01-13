@@ -1,0 +1,28 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowBucketToPushNotificationEffect",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "s3.amazonaws.com"
+      },
+      "Action": "sns:Publish",
+      "Resource": "*",
+      "Condition": {
+        "ArnLike": {
+          "aws:SourceArn": "arn:aws:s3:*:*:aneesh-test-service"
+        }
+      }
+    },
+    {
+      "Sid": "AllowEventBridgeToPublish",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "events.amazonaws.com"
+      },
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:us-east-1:712023778557:aneesh-test-service-QuiltNotifications-d7d4993f-2412-408d-832b-f0882a54e302"
+    }
+  ]
+}
