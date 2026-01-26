@@ -6,14 +6,22 @@ This release introduces **API Keys** for programmatic authentication, enabling h
 
 ### API Keys for Programmatic Authentication
 
-Quilt now supports **API Keys** for headless and programmatic authentication, enabling secure automation workflows without interactive logins. This feature is designed for:
+Quilt now supports **API Keys** for headless and programmatic authentication, enabling secure automation workflows without interactive logins. Users can create and manage their own API keys through the Python API, eliminating the need to store SSO credentials or interactive sessions for automation.
+
+**Key capabilities:**
+
+- **Self-Service Management**: Create, list, and revoke your own API keys using `quilt3.api_keys.create()`, `list()`, and `revoke()`
+- **Simple Authentication**: Use `quilt3.login_with_api_key(key)` to authenticate headless clients—no disk state or renewal required
+- **Flexible Expiration**: Set key lifetimes from 1 day to 1 year based on your security requirements
+- **Immediate Revocation**: Revoked keys fail instantly, enabling quick response to security incidents
+
+**Use cases:**
 
 - **CI/CD Pipelines**: Authenticate automated builds and deployments that push or pull Quilt packages
-- **Data Processing Scripts**: Enable long-running batch jobs to access Quilt data without user intervention
-- **Service Accounts**: Create dedicated credentials for applications and services integrating with Quilt
-- **Command-Line Tools**: Simplify authentication for CLI-based workflows and automation scripts
+- **Batch Jobs**: Enable long-running data processing scripts to access Quilt data without user intervention
+- **Scheduled Tasks**: Run automated workflows on recurring schedules without session expiration issues
 
-API Keys can be created and managed through the Quilt Platform interface. Each key can be scoped to specific permissions and revoked independently for security control.
+API keys inherit the full permissions of the user who creates them and can be managed entirely through the `quilt3` Python API.
 
 For detailed usage instructions, see the [API Keys documentation](https://docs.quilt.bio).
 
