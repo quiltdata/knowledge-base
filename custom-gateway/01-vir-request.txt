@@ -1,0 +1,78 @@
+Hello Simon, 
+
+Thanks for your detailed response, 
+
+We do have most of the network config that you mentioned as part of 2.0 
+
+My specific question would be if we can use our TGW instead of dedicated Quilt NAT Gateways? 
+
+Additionally,
+Can Quilt function if we route 0.0.0.0/0 through Transit Gateway instead of NAT Gateway?
+
+Current: Private Subnet → NAT Gateway → Internet
+Desired: Private Subnet → TGW → Corporate Firewall → Internet
+
+Do Lambda functions and ECS containers require direct internet access to external (non-AWS) services?
+If they only call AWS services, we can use VPC Endpoints and avoid internet routing entirely. If they call external APIs/registries, we need TGW routing to work.
+
+Do they call external APIs?, Pull from public Docker Hub? Download from PyPI/npm at runtime?
+
+Which AWS services does Quilt need outbound access to?
+     Do we need to add more VPC Endpoints for all AWS services Quilt uses, so those calls bypass the firewall. Current endpoints: S3, DynamoDB, execute-api
+
+Need to know if we need ECR? CloudWatch? STS? Others?
+Thanks, and Regards,
+
+Ashwin
+
+
+From: Simon Kohnstamm from Quilt Data, Inc. <support@quiltdata.com>
+Date: Tuesday, January 27, 2026 at 9:00 AM
+To: Ashwin Vijayakumar (Consultant) <avijayakumar@vir.bio>, ernest <ernest@quilt.bio>
+Cc: Anh-Huy Le <ale@vir.bio>, Amar Thiara <athiara@vir.bio>, Isaac Montoya (Consultant) <imontoya@vir.bio>
+Subject: [EXTERNAL] Re: Quilt application integration with Vir's Network Infrastructure
+
+CAUTION: External Email. THINK BEFORE YOU CLICK. It could be a phishing email.
+Do not click links or open attachments unless you recognize the sender and are expecting the attachment or link.
+Hi Ashwin,
+Thanks for the detailed note. Yes, Quilt supports integration into an existing corporate network/VPC and is designed to be private-by-default. Our current “Network 2.0” architecture places most services in private subnets and supports internal-only access via private load balancers and VPC endpoints. (See README.md and t4/template/PRIVATE_ENDPOINTS.md.)
+Can Quilt run inside an existing corporate network?
+
+Yes. We support deploying into an existing VPC, using customer-provided subnets and security groups. For Network 2.0 (what you're on), you provide:
+Private subnets for service containers
+Intra subnets for DB/Search
+Optional public subnets if you want an internet-facing ELB
+A “UserSecurityGroup” that controls ingress to the load balancer
+(and optionally, if you want the API Gateway to run inside of your VPC) a VPC Endpoint for execute-api
+Network requirements / dependencies
+
+Network 2.0 defaults:
+Private subnets for ECS/Lambda
+Intra subnets for DB/Elasticsearch
+ELB defaults to internal
+API Gateway and Lambdas run inside the VPC
+Outbound access for private subnets is via NAT or VPC endpoints (for AWS services). If you want fully private egress, we typically use VPC endpoints for services like S3, ECR, CloudWatch, and STS.
+Firewall rules / ports
+
+From the deployment templates:
+Inbound to ELB: TCP 443 and 80 (80 redirects to 443).
+DB access: TCP 5432 is only allowed from the DB accessor security group (internal).
+Everything else remains internal to the VPC and is controlled by security groups.
+Best practices / documentation
+
+Use Network 2.0 defaults (private-by-default) and internal ELB where possible.
+Potential impacts on performance/functionality
+
+No functional limitations are expected. The main impact is access path: if the ELB is internal, users will need VPN/Direct Connect/Transit Gateway connectivity. For outbound calls to AWS services, NAT or VPC endpoints are required. Performance is generally comparable; any added latency is typically due to the corporate network path rather than Quilt itself.
+If helpful, we’re happy to jump on a call and review your target topology (internal-only vs. internet-facing, VPC endpoint strategy, etc.) and map it to the required parameters.
+
+Best regards,
+
+Simon
+
+
+	
+Simon Kohnstamm
+Service And Support
+QUILT.BIO
+See All Tickets
