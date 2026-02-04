@@ -116,30 +116,30 @@ aws ec2 create-vpc-endpoint \
 If TGW routes through firewall, allow HTTPS (443) to:
 
 - `telemetry.quiltdata.cloud` (if telemetry enabled)
+- `login.microsoftonline.com` (if Microsoft Entra SSO)
+- `*.okta.com` or `*.oktapreview.com` (if Okta SSO)
 - `accounts.google.com` (if Google SSO)
-- `login.microsoftonline.com` (if Azure SSO)
 - `*.amazonaws.com` (if no VPC endpoints)
 
 ---
 
-## Step 3: Prepare Parameters
+## Step 3: Deploy Quilt Stack
+
+When deploying the CloudFormation stack, add these Transit Gateway-specific parameters:
 
 ```yaml
 VPC: vpc-xxxxx
-Subnets: subnet-private1,subnet-private2      # TGW routing
-IntraSubnets: subnet-intra1,subnet-intra2     # No internet
-UserSubnets: subnet-private1,subnet-private2  # Same as Subnets
-UserSecurityGroup: sg-xxxxx
-DBUser: quilt_admin
-DBPassword: <password>
-CertificateArnELB: arn:aws:acm:...
-AdminEmail: admin@company.com
-QuiltWebHost: quilt.company.com
+Subnets: subnet-private1,subnet-private2      # Private subnets with TGW routing for ECS/Lambda
+IntraSubnets: subnet-intra1,subnet-intra2     # Isolated subnets for RDS/ElasticSearch (VPC-only)
+UserSubnets: subnet-private1,subnet-private2  # Load balancer subnets (same as Subnets for internal)
+UserSecurityGroup: sg-xxxxx                   # Security group allowing ingress to load balancer
 ```
 
 ---
 
 ## Step 4: Validate & Troubleshoot
+
+Run these tests from within your VPC (EC2 instance, bastion host, or VPN-connected machine):
 
 Test deployment:
 
@@ -150,7 +150,7 @@ REGISTRY=$(aws cloudformation describe-stacks --stack-name $STACK_NAME \
 curl -s -o /dev/null -w "%{http_code}" https://$REGISTRY/  # Expect: 200 or 302
 ```
 
-Verify VPC endpoints (DNS should resolve to 10.x.x.x):
+Verify VPC endpoints (DNS should resolve to 10.x.x.x private IPs):
 
 ```bash
 nslookup s3.$REGION.amazonaws.com
