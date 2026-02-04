@@ -6,19 +6,32 @@
 
 ## Summary
 
-Deploy Quilt using your existing Transit Gateway instead of NAT Gateway. No code changes required - just provide TGW-configured subnets as parameters.
+> Deploy Quilt using your existing Transit Gateway instead of NAT Gateway by providing TGW-configured subnets as parameters.
+> Optionally use private VPCs to save costs for high-volume deployments.
 
 ---
 
-## The Simple Answer
+## Overview
 
-**You don't need to modify Quilt.** When your variant has `network.vpn: true`, Quilt uses `existing_vpc: true` mode. This means:
+Deploy Quilt using Transit Gateway for outbound routing instead of NAT Gateway—common in enterprise environments with centralized network routing and security policies.
 
-- ✅ You provide your own VPC and subnets
-- ✅ You control routing via your route tables
-- ✅ Quilt doesn't create NAT Gateway
+### When to Use This Guide
 
-Just give Quilt subnets that route through your Transit Gateway.
+Use Transit Gateway routing when:
+
+- ✅ You have existing Transit Gateway infrastructure
+- ✅ Corporate policy requires traffic through TGW
+- ✅ You want centralized routing and firewall policies
+
+### How It Works
+
+Provide subnet IDs with `0.0.0.0/0 → tgw-xxxxx` routes to your Quilt deployment (`network.vpn: true`)—Quilt uses your existing VPC and route tables, no NAT Gateway created.
+
+---
+
+## VPC Endpoints: Optional but Recommended
+
+VPC endpoints save 90%+ of TGW data charges (~$35/month cost for significant organizational savings) and improve performance by routing AWS traffic through AWS's private network.
 
 ---
 
@@ -26,10 +39,9 @@ Just give Quilt subnets that route through your Transit Gateway.
 
 ### Prerequisites
 
-1. VPC with Transit Gateway attachment
-2. Your variant configured with `network.vpn: true` (sets `existing_vpc: true`)
-3. Network 2.0 architecture (`network_version: "2.0"`)
-4. TGW must route to internet (for ECR image pulls)
+1. **VPC with Transit Gateway attachment** (TGW must route to internet for ECR/AWS service access)
+2. **Quilt deployment with `network.vpn: true`** (set by Quilt - uses your existing VPC, skips NAT Gateway)
+3. **AWS networking knowledge** (VPC, subnets, route tables, security groups, Transit Gateway)
 
 ### Three Types of Subnets
 
@@ -50,7 +62,7 @@ Just give Quilt subnets that route through your Transit Gateway.
 
 ## Step 1: Deploy VPC Endpoints (Recommended)
 
-VPC endpoints eliminate 90%+ of internet traffic. This means less data through your TGW and better performance.
+VPC endpoints eliminate 90%+ of internet traffic—less data through your TGW, better performance.
 
 **Essential endpoints** (~$35/month):
 
@@ -150,7 +162,7 @@ QuiltWebHost: quilt.company.com
 
 ## Step 3: Deploy
 
-Deploy Quilt with your parameters. The stack will use your TGW-configured subnets.
+Deploy Quilt with your TGW-configured subnet parameters.
 
 **CloudFormation:**
 ```bash
@@ -189,18 +201,18 @@ curl -s -o /dev/null -w "%{http_code}" https://$REGISTRY/
 
 ### Verify VPC Endpoints Are Working
 
-Test DNS resolution from a private subnet (requires bastion or Session Manager):
+From a private subnet (bastion or Session Manager), verify DNS resolves to private IPs (10.x.x.x):
 
 ```bash
-# Should resolve to private IP (10.x.x.x)
 nslookup s3.$REGION.amazonaws.com
 nslookup logs.$REGION.amazonaws.com
 ```
 
 ### Check TGW Traffic
 
+Verify minimal TGW traffic (indicates VPC endpoints working):
+
 ```bash
-# TGW traffic should be minimal if VPC endpoints are working
 TGW_ID=$(aws ec2 describe-transit-gateway-attachments \
   --filters "Name=vpc-id,Values=$VPC_ID" \
   --query 'TransitGatewayAttachments[0].TransitGatewayId' --output text)
@@ -218,21 +230,8 @@ aws cloudwatch get-metric-statistics \
 
 ## What Goes Through TGW?
 
-### With VPC Endpoints (Minimal)
-
-Only these need internet via TGW:
-
-- Telemetry (optional - disable with `DISABLE_QUILT_TELEMETRY=true`)
-- SSO providers (optional - Google, Azure, Okta)
-
-**Result:** 95%+ of traffic uses VPC endpoints, not TGW.
-
-### Without VPC Endpoints (Not Recommended)
-
-All AWS API calls go through TGW to internet:
-
-- S3, CloudWatch, ECR, SQS, SNS, etc.
-- Higher latency, higher TGW costs
+**With VPC endpoints:** Only telemetry and SSO providers (if enabled)
+**Without VPC endpoints:** All AWS API traffic
 
 ---
 
@@ -265,31 +264,12 @@ All AWS API calls go through TGW to internet:
 
 ## Firewall Rules (If TGW Routes Through Firewall)
 
-### With VPC Endpoints
-
 **Allow HTTPS (443) to:**
 
 - `telemetry.quiltdata.cloud` (if telemetry enabled)
 - `accounts.google.com` (if Google SSO enabled)
 - `login.microsoftonline.com` (if Azure SSO enabled)
-
-### Without VPC Endpoints
-
-**Allow HTTPS (443) to:**
-
-- `*.amazonaws.com` (all AWS services)
-
----
-
-## Cost Comparison
-
-| Setup                  | Monthly Cost (1TB data) |
-| ---------------------- | ----------------------- |
-| NAT Gateway (default)  | $111                    |
-| TGW + VPC Endpoints    | $83                     |
-| TGW only (no endpoints)| $57                     |
-
-**Note:** TGW cost is shared across your organization. Your marginal cost is ~$35-47/month for VPC endpoints.
+- `*.amazonaws.com` (if not using VPC endpoints)
 
 ---
 
