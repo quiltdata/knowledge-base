@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This audit identifies **40+ AWS services** and **multiple external dependencies** that Quilt's deployment architecture requires. The findings directly answer Vir's questions about Transit Gateway routing feasibility.
+This audit identifies **40+ AWS services** and **multiple external dependencies** that Quilt's deployment architecture requires. The findings directly answer the customer's questions about Transit Gateway routing feasibility.
 
 **Key Findings:**
 - ✅ Most AWS services can be accessed via VPC Endpoints (eliminating NAT/TGW internet routing)
@@ -19,7 +19,7 @@ This audit identifies **40+ AWS services** and **multiple external dependencies*
 
 ---
 
-## Quick Answer to Vir's Questions
+## Quick Answer to Customer's Questions
 
 ### Q1: Can we route 0.0.0.0/0 through TGW instead of NAT Gateway?
 **Answer:** Yes, with the following conditions:
@@ -665,7 +665,7 @@ pl-xxxxx (S3)      vpce-xxxxx          S3 via VPC Gateway Endpoint
 
 ---
 
-## Recommendations for Vir
+## Recommendations for Customer
 
 ### 1. Deploy Essential VPC Endpoints (Tier 1)
 
@@ -718,7 +718,7 @@ Set up CloudWatch metrics and alerts for:
 
 ---
 
-## Implementation Checklist for Vir
+## Implementation Checklist for Customer
 
 ### Pre-Deployment
 - [ ] Inventory existing VPC endpoints in target VPC
@@ -812,7 +812,7 @@ Set up CloudWatch metrics and alerts for:
 
 ### Cost Observations
 - ⚠️ TGW + VPC endpoints cost more than NAT Gateway alone
-- ✅ However, TGW cost is **shared** across all VPCs (sunk cost for Vir)
+- ✅ However, TGW cost is **shared** across all VPCs (sunk cost for customer)
 - ✅ VPC endpoints eliminate data charges for AWS API calls
 - ✅ Marginal cost for Quilt is just VPC endpoints (~$35-105/month)
 - ✅ For multi-VPC environments, TGW + VPC endpoints is more cost-effective
@@ -821,7 +821,7 @@ Set up CloudWatch metrics and alerts for:
 
 ## Conclusion
 
-### Can Vir Use Transit Gateway? **YES ✅**
+### Can Customer Use Transit Gateway? **YES ✅**
 
 Quilt can successfully operate with Transit Gateway routing instead of NAT Gateway, with the following configuration:
 
@@ -830,7 +830,7 @@ Quilt can successfully operate with Transit Gateway routing instead of NAT Gatew
 3. **Optionally disable external services** (telemetry, SSO) to minimize TGW internet routing
 4. **For fully private architecture**, deploy all VPC endpoints and eliminate internet routing entirely
 
-### Benefits for Vir
+### Benefits for Customer
 - ✅ Compliance with network security policies
 - ✅ Centralized routing control via TGW
 - ✅ Eliminates per-VPC NAT Gateway costs
@@ -838,7 +838,7 @@ Quilt can successfully operate with Transit Gateway routing instead of NAT Gatew
 - ✅ All Quilt functionality preserved
 
 ### Next Steps
-1. Review VPC endpoint requirements with Vir's network team
+1. Review VPC endpoint requirements with customer's network team
 2. Provide CDK template modifications for VPC endpoint deployment
 3. Schedule deployment and testing window
 4. Perform phased rollout with validation at each step

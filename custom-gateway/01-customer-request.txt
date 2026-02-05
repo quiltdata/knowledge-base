@@ -1,10 +1,10 @@
-Hello Simon, 
+Hello Simon,
 
-Thanks for your detailed response, 
+Thanks for your detailed response,
 
-We do have most of the network config that you mentioned as part of 2.0 
+We do have most of the network config that you mentioned as part of 2.0
 
-My specific question would be if we can use our TGW instead of dedicated Quilt NAT Gateways? 
+My specific question would be if we can use our TGW instead of dedicated Quilt NAT Gateways?
 
 Additionally,
 Can Quilt function if we route 0.0.0.0/0 through Transit Gateway instead of NAT Gateway?
@@ -18,31 +18,31 @@ If they only call AWS services, we can use VPC Endpoints and avoid internet rout
 Do they call external APIs?, Pull from public Docker Hub? Download from PyPI/npm at runtime?
 
 Which AWS services does Quilt need outbound access to?
-     Do we need to add more VPC Endpoints for all AWS services Quilt uses, so those calls bypass the firewall. Current endpoints: S3, DynamoDB, execute-api
+     Do we need to add more VPC Endpoints for all AWS services Quilt uses, so those calls bypass the firewall. Current endpoints: S3, DynamoDB, execute-api
 
 Need to know if we need ECR? CloudWatch? STS? Others?
 Thanks, and Regards,
 
-Ashwin
+Customer Contact
 
 
 From: Simon Kohnstamm from Quilt Data, Inc. <support@quiltdata.com>
-Date: Tuesday, January 27, 2026 at 9:00 AM
-To: Ashwin Vijayakumar (Consultant) <avijayakumar@vir.bio>, ernest <ernest@quilt.bio>
-Cc: Anh-Huy Le <ale@vir.bio>, Amar Thiara <athiara@vir.bio>, Isaac Montoya (Consultant) <imontoya@vir.bio>
-Subject: [EXTERNAL] Re: Quilt application integration with Vir's Network Infrastructure
+Date: Tuesday, January 27, 2026 at 9:00 AM
+To: Customer Contact <contact@customer.com>, ernest <ernest@quilt.bio>
+Cc: Network Team <network@customer.com>, Security Team <security@customer.com>, Infrastructure Team <infrastructure@customer.com>
+Subject: [EXTERNAL] Re: Quilt application integration with Customer's Network Infrastructure
 
 CAUTION: External Email. THINK BEFORE YOU CLICK. It could be a phishing email.
 Do not click links or open attachments unless you recognize the sender and are expecting the attachment or link.
-Hi Ashwin,
-Thanks for the detailed note. Yes, Quilt supports integration into an existing corporate network/VPC and is designed to be private-by-default. Our current “Network 2.0” architecture places most services in private subnets and supports internal-only access via private load balancers and VPC endpoints. (See README.md and t4/template/PRIVATE_ENDPOINTS.md.)
+Hi Customer Contact,
+Thanks for the detailed note. Yes, Quilt supports integration into an existing corporate network/VPC and is designed to be private-by-default. Our current "Network 2.0" architecture places most services in private subnets and supports internal-only access via private load balancers and VPC endpoints. (See README.md and t4/template/PRIVATE_ENDPOINTS.md.)
 Can Quilt run inside an existing corporate network?
 
 Yes. We support deploying into an existing VPC, using customer-provided subnets and security groups. For Network 2.0 (what you're on), you provide:
 Private subnets for service containers
 Intra subnets for DB/Search
 Optional public subnets if you want an internet-facing ELB
-A “UserSecurityGroup” that controls ingress to the load balancer
+A "UserSecurityGroup" that controls ingress to the load balancer
 (and optionally, if you want the API Gateway to run inside of your VPC) a VPC Endpoint for execute-api
 Network requirements / dependencies
 
@@ -64,14 +64,14 @@ Use Network 2.0 defaults (private-by-default) and internal ELB where possible.
 Potential impacts on performance/functionality
 
 No functional limitations are expected. The main impact is access path: if the ELB is internal, users will need VPN/Direct Connect/Transit Gateway connectivity. For outbound calls to AWS services, NAT or VPC endpoints are required. Performance is generally comparable; any added latency is typically due to the corporate network path rather than Quilt itself.
-If helpful, we’re happy to jump on a call and review your target topology (internal-only vs. internet-facing, VPC endpoint strategy, etc.) and map it to the required parameters.
+If helpful, we're happy to jump on a call and review your target topology (internal-only vs. internet-facing, VPC endpoint strategy, etc.) and map it to the required parameters.
 
 Best regards,
 
 Simon
 
 
-	
+
 Simon Kohnstamm
 Service And Support
 QUILT.BIO

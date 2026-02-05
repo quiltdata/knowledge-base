@@ -1,7 +1,7 @@
-# Product Management Summary: Vir Custom Network Routing Request
+# Product Management Summary: Customer Custom Network Routing Request
 
 **Date:** February 2, 2026
-**Customer:** Vir Biotechnology (Ashwin Vijayakumar)
+**Customer:** Customer Organization
 **Request Type:** Custom Network Architecture Support
 **Priority:** High - Blocking Production Deployment
 
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Vir Biotechnology is requesting support for routing their Quilt deployment through their Transit Gateway (TGW) infrastructure instead of using Quilt's default NAT Gateway setup. This represents a common enterprise requirement where customers need Quilt to integrate with their existing network architecture for security, compliance, and operational reasons. The request requires clarification on Quilt's external service dependencies and network requirements to enable proper routing configuration.
+The customer organization is requesting support for routing their Quilt deployment through their Transit Gateway (TGW) infrastructure instead of using Quilt's default NAT Gateway setup. This represents a common enterprise requirement where customers need Quilt to integrate with their existing network architecture for security, compliance, and operational reasons. The request requires clarification on Quilt's external service dependencies and network requirements to enable proper routing configuration.
 
 **Key Ask:** Route all egress traffic (0.0.0.0/0) through customer's Transit Gateway instead of NAT Gateway, while maintaining full Quilt functionality.
 
@@ -18,13 +18,13 @@ Vir Biotechnology is requesting support for routing their Quilt deployment throu
 ## 2. Customer Context
 
 ### Organization
-- **Company:** Vir Biotechnology
-- **Contact:** Ashwin Vijayakumar (ashwin.vijayakumar@vir.bio)
-- **Industry:** Biotechnology/Life Sciences
+- **Company:** Customer Organization
+- **Contact:** Customer Contact (contact@customer.com)
+- **Industry:** Enterprise
 - **Scale:** Enterprise customer
 
 ### Current Situation
-- Vir has an established AWS network architecture with Transit Gateway
+- Customer has an established AWS network architecture with Transit Gateway
 - They want to deploy Quilt within their existing VPC/networking infrastructure
 - All egress traffic must route through their TGW for security/compliance
 - This is blocking their production deployment of Quilt
@@ -58,7 +58,7 @@ Route all Quilt egress traffic (0.0.0.0/0) through customer's Transit Gateway in
 
 ## 4. Technical Questions Asked
 
-Ashwin has specific technical questions that need answers:
+The customer has specific technical questions that need answers:
 
 ### Network Architecture Questions
 
@@ -96,7 +96,7 @@ Ashwin has specific technical questions that need answers:
 
 ## 5. Business Impact
 
-### Impact to Customer (Vir)
+### Impact to Customer
 - **Deployment Blocked:** Cannot proceed with production deployment
 - **Security Compliance:** Need to maintain network security posture
 - **Cost Control:** TGW may reduce NAT Gateway costs
@@ -210,7 +210,7 @@ Ashwin has specific technical questions that need answers:
    - [ ] Design TGW-based network architecture
    - [ ] Create network diagrams
    - [ ] Document routing configuration
-   - [ ] Test with pilot customer (Vir)
+   - [ ] Test with pilot customer
    - **Owner:** Solutions Architecture
    - **Output:** Reference architecture document
 
@@ -223,7 +223,7 @@ Ashwin has specific technical questions that need answers:
    - **Output:** Updated documentation
 
 6. **Enable Customer Deployment**
-   - [ ] Schedule architecture review with Vir
+   - [ ] Schedule architecture review with customer
    - [ ] Validate their proposed design
    - [ ] Provide deployment support
    - [ ] Monitor deployment success
@@ -261,7 +261,7 @@ Ashwin has specific technical questions that need answers:
 ## 8. Success Metrics
 
 ### Immediate Success (Customer-Specific)
-- Vir successfully deploys Quilt with TGW routing
+- Customer successfully deploys Quilt with TGW routing
 - All Quilt functionality works as expected
 - No performance degradation
 - Customer satisfaction score: 9+/10
@@ -273,8 +273,8 @@ Ashwin has specific technical questions that need answers:
 - Positive feedback on network flexibility
 
 ### Business Success
-- Vir deployment generates reference architecture
-- Convert Vir to long-term customer
+- Customer deployment generates reference architecture
+- Convert to long-term customer
 - Enable 3+ similar enterprise deployments
 - Establish Quilt as enterprise-ready solution
 

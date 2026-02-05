@@ -1,26 +1,26 @@
-# Vir Gateway Workaround - Simplest Fix
+# Customer Gateway Workaround - Simplest Fix
 
 **Date:** February 2, 2026
-**For:** Vir Biotechnology (Ashwin Vijayakumar)
+**For:** Customer Organization
 **Goal:** Use Transit Gateway instead of NAT Gateway with minimal code changes
 
 ---
 
 ## TL;DR - The Simple Answer
 
-**Vir can use their Transit Gateway with ZERO code changes to Quilt!**
+**Customer can use their Transit Gateway with ZERO code changes to Quilt!**
 
-The key is that Vir is already configured with `network.vpn: true` in their variant, which sets `existing_vpc: true`. This means:
+The key is that the customer is already configured with `network.vpn: true` in their variant, which sets `existing_vpc: true`. This means:
 
-✅ **Vir controls their own routing via their own route tables**
+✅ **Customer controls their own routing via their own route tables**
 ✅ **Quilt doesn't create NAT Gateway when `existing_vpc: true`**
 ✅ **Just provide TGW-configured subnets as parameters**
 
 ---
 
-## Current Vir Configuration
+## Current Customer Configuration
 
-From Vir's variant files (`vir-prod.yaml`, `vir-staging.yaml`, `vir-dev.yaml`):
+From customer's variant files (`customer-prod.yaml`, `customer-staging.yaml`, `customer-dev.yaml`):
 
 ```yaml
 factory:
@@ -30,14 +30,14 @@ factory:
 ```
 
 This configuration means:
-- Vir provides their own VPC
-- Vir provides their own subnets
-- Vir controls routing via their own route tables
+- Customer provides their own VPC
+- Customer provides their own subnets
+- Customer controls routing via their own route tables
 - **Quilt does NOT create NAT Gateway**
 
 ---
 
-## What Vir Needs to Do (Zero Code Changes Required)
+## What Customer Needs to Do (Zero Code Changes Required)
 
 ### Step 1: Prepare Subnets with TGW Routing
 
@@ -99,7 +99,7 @@ UserSecurityGroup=sg-xxxxx       # Security group for load balancer ingress
 
 This can be satisfied via:
 - ✅ NAT Gateway (Quilt's default)
-- ✅ Transit Gateway (Vir's preferred)
+- ✅ Transit Gateway (customer's preferred)
 - ✅ VPC Endpoints (most private)
 
 ### Step 4: Configure External Services (Optional)
@@ -162,7 +162,7 @@ nat_gateway = ec2.NatGateway(
 ECS Task/Lambda → Private Subnet → NAT Gateway → Internet Gateway → AWS Services
 ```
 
-### Vir's Transit Gateway Setup
+### Customer's Transit Gateway Setup
 
 ```
 ECS Task/Lambda → Private Subnet → Transit Gateway → Corporate Network → AWS Services
@@ -207,10 +207,10 @@ ECS Task/Lambda → Private Subnet → VPC Endpoints → AWS Services (S3, SQS, 
 
 ## Terraform vs CloudFormation Note
 
-Vir is using `deployment: tf` (Terraform), which means they're likely already managing their own VPC infrastructure via Terraform.
+Customer is using `deployment: tf` (Terraform), which means they're likely already managing their own VPC infrastructure via Terraform.
 
 **Recommendation:**
-1. Vir's Terraform manages: VPC, subnets, route tables, TGW attachment, VPC endpoints
+1. Customer's Terraform manages: VPC, subnets, route tables, TGW attachment, VPC endpoints
 2. Quilt's Terraform references: Existing VPC and subnets via parameters
 3. No conflict, clean separation of concerns
 
@@ -295,7 +295,7 @@ Vir is using `deployment: tf` (Terraform), which means they're likely already ma
 - Data Processing: $0.045/GB
 - **Total (1 TB/month):** $32.40 + $46.08 = **$78.48/month**
 
-### Option 2: TGW Only (Vir's Request)
+### Option 2: TGW Only (Customer's Request)
 - TGW Attachment: $36.50/month (730 hours × $0.05)
 - TGW Data: $0.02/GB
 - **Total (1 TB/month):** $36.50 + $20.48 = **$56.98/month**
@@ -309,7 +309,7 @@ Vir is using `deployment: tf` (Terraform), which means they're likely already ma
 - **Total (1 TB/month):** $36.50 + $35 + $10.24 + $2 = **$83.74/month**
 - **Marginal cost for Quilt:** ~$47/month (VPC endpoints + minimal TGW data)
 
-**For Vir:**
+**For Customer:**
 - TGW attachment cost is already paid (shared resource)
 - Only new cost is VPC endpoints
 - **Net new cost: ~$35-47/month** (much cheaper than NAT Gateway data charges at scale)
@@ -320,7 +320,7 @@ Vir is using `deployment: tf` (Terraform), which means they're likely already ma
 
 ### Immediate (This Week)
 
-1. **Confirm Vir's Current Setup**
+1. **Confirm Customer's Current Setup**
    - Are they using `existing_vpc: true`? (Yes, based on `network.vpn: true`)
    - What subnets are they currently providing?
    - Are those subnets routing through TGW already?
@@ -345,7 +345,7 @@ Vir is using `deployment: tf` (Terraform), which means they're likely already ma
    - Performance benchmarking
 
 5. **Document Learnings**
-   - Update Vir's deployment documentation
+   - Update customer's deployment documentation
    - Create runbook for TGW deployments
    - Share with other customers who might want this
 
@@ -389,7 +389,7 @@ Add section:
 
 ---
 
-## Key Takeaway for Vir
+## Key Takeaway for Customer
 
 **You don't need to modify any Quilt code or templates!**
 
@@ -406,7 +406,7 @@ The parameter description saying "e.g. via NAT Gateway" is just an example, not 
 
 ---
 
-## Next Steps for Vir
+## Next Steps for Customer
 
 1. **Share your subnet IDs** that are configured with TGW routing
 2. **Confirm which VPC endpoints** you've already deployed
