@@ -1,0 +1,57 @@
+# EventBridge Routing Test Configuration
+# This file tracks all AWS resources used, created, or modified during testing
+
+[aws]
+profile = "default"
+region = "us-east-1"
+account_id = "712023778557"  # Verified via aws sts get-caller-identity
+
+[test_environment]
+stack_name = "quilt-staging"
+test_bucket = "aneesh-test-service"
+test_file_key = "test/eventbridge-test-file.txt"
+
+[resources]
+# SNS Topic (existing)
+sns_topic_arn = "arn:aws:sns:us-east-1:712023778557:aneesh-test-service-QuiltNotifications-d7d4993f-2412-408d-832b-f0882a54e302"  # From bucket notification config
+
+# EventBridge Rule (to be created)
+eventbridge_rule_name = "quilt-staging-eventbridge-test"
+eventbridge_rule_arn = "arn:aws:events:us-east-1:712023778557:rule/quilt-staging-eventbridge-test"  # Created successfully
+
+# SQS Queues (existing)
+indexer_queue_url = "https://sqs.us-east-1.amazonaws.com/712023778557/quilt-staging-IndexerQueue-yD8FCAN9MJWr"  # From CloudFormation resources
+indexer_queue_arn = "arn:aws:sqs:us-east-1:712023778557:quilt-staging-IndexerQueue-yD8FCAN9MJWr"
+# WARNING: quilt-staging IndexerQueue is NOT subscribed to the aneesh-test-service SNS topic
+# Current subscriptions are to other stacks (celsius-elb-test, novel-elb-test, aneesh-dev-aug)
+
+# Lambda Functions (existing)
+search_handler_name = "quilt-staging-SearchHandler"
+
+# CloudTrail
+trail_name = "analytics"  # Found via aws cloudtrail list-trails
+# WARNING: aneesh-test-service bucket is NOT in CloudTrail event selectors
+# CloudTrail is not capturing S3 data events for this bucket
+# This will need to be added for EventBridge to receive CloudTrail events
+
+[test_execution]
+test_date = "2025-12-29"
+tester = "Ernest (via automated script)"
+test_file_upload_timestamp = "2025-12-29T19:17:48 UTC"
+
+[test_results]
+eventbridge_triggered = false  # No - CloudTrail not configured for bucket
+sns_published = true  # Yes - S3 direct events working
+sqs_received = false  # No - quilt-staging queues not subscribed
+lambda_processed = false  # No - no messages reached quilt-staging queues
+file_indexed = false  # No - pipeline broken at subscription level
+
+[backups]
+# Original SNS policy backup (before modifications)
+original_sns_policy_file = "current-sns-policy.json"
+
+[created_resources]
+# Resources created during test that should be cleaned up
+eventbridge_rule_created = true
+sns_policy_modified = true
+test_file_uploaded = false
