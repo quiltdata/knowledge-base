@@ -1,6 +1,6 @@
 # Platform Update 1.68
 
-This release introduces Connect Server, an internet-facing gateway that enables AI assistants to work with Quilt data via the Model Context Protocol (MCP). It also includes cross-region S3 fixes, catalog improvements, and infrastructure hardening. Note that we are also changing the default ElasticSearch cluster to use Graviton instances.
+This release introduces Connect Server, an internet-facing gateway that enables AI assistants to work with Quilt data via an integrated Model Context Protocol (MCP) server. It also includes cross-region S3 fixes, catalog improvements, and infrastructure hardening. Note that we are also changing the default ElasticSearch cluster to use Graviton instances.
 
 ## New Quilt Platform Features
 
@@ -10,12 +10,14 @@ Quilt now includes Connect Server, a new internet-facing gateway that exposes yo
 
 Key capabilities:
 
-- **Standards-Based Authentication**: OAuth 2.0 with RFC 8414 discovery, so MCP clients can authenticate automatically
+- **Standards-Based Authentication**: OAuth 2.0 with RFC 8414 discovery, so MCP and other clients can authenticate automatically
 - **Per-User Credentials**: Each session receives scoped credentials via JWT exchange with the Registry, ensuring actions respect existing user permissions
 - **Opt-In Activation**: Connect Server is disabled by default and activated by setting the `ConnectAllowedHosts` CloudFormation parameter
 - **Dedicated Infrastructure**: Runs on a separate internet-facing ALB with its own certificate, isolated from the main application load balancer
 
-Stack administrators can find the MCP server URL in the `PlatformMcpServerUrl` stack output after enabling Connect.
+### Platform MCP Server
+
+This release includes general availability of our new stack-native MCP Server, which use the Connect Server to work seamlessly with claude.ai and any other web-based MCP client using standard authentication protocols. Stack administrators can find the MCP server URL in the `PlatformMcpServerUrl` stack output after enabling Connect.  The legacy `quilt-mcp` Python package remains available for running a local MCP server.
 
 ### Copy URI Button in S3 Browser
 
