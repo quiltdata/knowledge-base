@@ -36,3 +36,23 @@ When creating a package from the File Browser, the current bucket is now offered
 - **ECS Task Tagging**: Running ECS tasks now propagate tags for AWS Cost Explorer visibility, improving cost attribution for Quilt workloads.
 - **Elasticsearch Instance Upgrade**: ES instances upgraded to 6g (Graviton) for all CloudFormation deployments, reducing costs.
 - **GovCloud Compatibility**: Fixed a hardcoded ARN partition in the Benchling integration to support AWS GovCloud deployments.
+
+## QuiltSync v0.14
+
+### Auto-Generated Commit Messages
+
+The commit page now pre-fills the message field with an automatically generated summary of changed files, streamlining the commit workflow.
+
+### JSONL Manifest Format
+
+QuiltSync has migrated its internal manifest format from Parquet to JSONL, improving performance and cross-platform compatibility. The app automatically re-fetches manifests from remote storage when a cached file is in the legacy Parquet format.
+
+### Windows Code Signing
+
+Release installers for Windows are now code-signed, reducing OS security warnings on install.
+
+### QuiltSync Bug Fixes
+
+- Fixed deep link handler failing on macOS and Linux due to URL scheme mismatch
+- Fixed stale Parquet manifest cache that prevented app startup
+
