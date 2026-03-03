@@ -8,11 +8,11 @@ This release introduces Connect Server, an opt-in internet-facing gateway that e
 
 ### Connect Server for External Integrations
 
-Quilt now includes Connect Server, a new internet-facing gateway that exposes your Quilt platform to external services and developer tools. In this release, Connect Server powers the new [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) integration, enabling AI assistants such as Claude Desktop and Cursor to search packages, browse buckets, and read objects using natural language -- all authenticated with per-user credentials.
+Quilt now includes Connect Server, a new internet-facing gateway that exposes your Quilt platform to external services and developer tools. In this release, Connect Server powers the new [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) integration, enabling hosted AI environments such as claude.ai, as well as desktop tools like Claude Desktop and Cursor, to search packages, browse buckets, and read objects using natural language -- all authenticated with per-user credentials.
 
 Key capabilities:
 
-- **Standards-Based Authentication**: OAuth 2.0 with RFC 8414 discovery, so MCP and other clients can authenticate automatically
+- **Standards-Based Authentication**: OAuth 2.1 with RFC 8414 discovery, so MCP and other clients can authenticate automatically
 - **Per-User Credentials**: Each session receives scoped credentials via JWT exchange with the Registry, ensuring actions respect existing user permissions
 - **Opt-In Activation**: Connect Server is disabled by default and activated by setting the `ConnectAllowedHosts` CloudFormation parameter
 - **Dedicated Infrastructure**: Runs on a separate internet-facing ALB with its own certificate, isolated from the main application load balancer
