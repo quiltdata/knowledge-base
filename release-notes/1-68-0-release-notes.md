@@ -1,6 +1,8 @@
 # Platform Update 1.68
 
-This release introduces Connect Server, an internet-facing gateway that enables AI assistants to work with Quilt data via an integrated Model Context Protocol (MCP) server. It also includes cross-region S3 fixes, catalog improvements, and infrastructure hardening. Note that we are also changing the default ElasticSearch cluster to use Graviton instances.
+## Connect Server w/MCP, Copy URI button, ES Graviton2 defaults, QuiltSync commit messages
+
+This release introduces Connect Server, an internet-facing gateway that enables AI assistants to work with Quilt data via the Model Context Protocol (MCP). It also adds a Copy URI button to the S3 browser, defaults Elasticsearch to Graviton2 instances, and ships QuiltSync with auto-generated commit messages.
 
 ## New Quilt Platform Features
 
