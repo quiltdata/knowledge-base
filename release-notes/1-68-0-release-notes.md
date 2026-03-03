@@ -2,13 +2,13 @@
 
 ## Connect Server w/MCP, Copy URI button, ES Graviton2 defaults, QuiltSync commit messages
 
-This release introduces Connect Server, an internet-facing gateway that enables AI assistants to work with Quilt data via the Model Context Protocol (MCP). It also adds a Copy URI button to the S3 browser, defaults Elasticsearch to Graviton2 instances, and ships QuiltSync with auto-generated commit messages.
+This release introduces Connect Server, an opt-in internet-facing gateway that enables AI assistants to work with Quilt data via the Model Context Protocol (MCP). It also adds a Copy URI button to the S3 browser, defaults Elasticsearch to Graviton2 instances, and ships QuiltSync with auto-generated commit messages.
 
 ## New Quilt Platform Features
 
-### Connect Server for AI Assistant Integrations
+### Connect Server for External Integrations
 
-Quilt now includes Connect Server, a new internet-facing gateway that exposes your Quilt platform to AI assistants and developer tools via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Once enabled, AI assistants such as Claude Desktop and Cursor can search packages, browse buckets, and read objects using natural language -- all authenticated with per-user credentials.
+Quilt now includes Connect Server, a new internet-facing gateway that exposes your Quilt platform to external services and developer tools. In this release, Connect Server powers the new [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) integration, enabling AI assistants such as Claude Desktop and Cursor to search packages, browse buckets, and read objects using natural language -- all authenticated with per-user credentials.
 
 Key capabilities:
 
@@ -25,43 +25,30 @@ This release includes general availability of our new stack-native MCP Server, w
 
 A new copy-URI button is available on download buttons for files and directories in the S3 browser, making it easy to copy S3 URIs for use in scripts, notebooks, and CLI workflows.
 
-### Improved Package Destination Defaults
+## Elasticsearch Defaults to Graviton2
 
-When creating a package from the File Browser, the current bucket is now offered as a destination only when no workflow configuration is present. When workflow successors are configured, they are always respected, reducing confusion about where packages are created.
+Both CloudFormation and Terraform ([IAC v1.6.0](https://github.com/quiltdata/iac/releases/tag/1.6.0)) deployments now default Elasticsearch to the Graviton2 (`m6g.xlarge` / `m6g.large`) instances enabled by the prior release, for better price/performance.
 
-## Bug Fixes
+### Warnings
 
-- Fixed an issue where presigned S3 URLs used the wrong region for cross-bucket package files, causing download failures.
-- Fixed errors when working with newly created cross-region buckets.
-- Fixed text selection in toolbar popover code samples so users can copy code snippets reliably.
+- If you are using Elasticsearch reserved instances, contact Quilt support before upgrading to avoid paying for both.
+
+- If you are running 1.65 or earlier, we recommend updating to 1.66 first to avoid potential days-long delays while the indexes sync.
 
 ## Other Improvements
 
-- **ECS Task Tagging**: Running ECS tasks now propagate tags for AWS Cost Explorer visibility, improving cost attribution for Quilt workloads.
-- **GovCloud Compatibility**: Fixed a hardcoded ARN partition in the Benchling integration to support AWS GovCloud deployments.
+- Running ECS tasks now propagate tags for AWS Cost Explorer visibility, improving cost attribution for Quilt workloads.
+- Package creation in the File Browser now respects configured workflow successors.
+- Presigned S3 URLs now use the proper region for cross-bucket package files, avoiding download failures.
+- The Benchling integration now supports AWS GovCloud deployments
+- Fixed errors when working with newly created cross-region buckets.
+- Fixed URI display in toolbar popover code samples.
 
-## Elasticsearch Defaults to Graviton2
+## New QuiltSync Release
 
-Both CloudFormation and Terraform ([IAC v1.6.0](https://github.com/quiltdata/iac/releases/tag/1.6.0)) deployments now default Elasticsearch to Graviton2 (`m6g.xlarge` / `m6g.large`) for better price/performance.
-
-> **Warning:** If you are using Elasticsearch reserved instances, contact Quilt support before upgrading to avoid paying for both.
-
-## QuiltSync v0.14
-
-### Auto-Generated Commit Messages
-
-The commit page now pre-fills the message field with an automatically generated summary of changed files, streamlining the commit workflow.
-
-### JSONL Manifest Format
-
-QuiltSync has migrated its internal manifest format from Parquet to JSONL, improving performance and cross-platform compatibility. The app automatically re-fetches manifests from remote storage when a cached file is in the legacy Parquet format.
-
-### Windows Code Signing
-
-Release installers for Windows are now code-signed, reducing OS security warnings on install.
-
-### QuiltSync Bug Fixes
-
-- Fixed deep link handler failing on macOS and Linux due to URL scheme mismatch
-- Fixed stale Parquet manifest cache that prevented app startup
-
+- **Auto-Generated Commit Messages:** The commit page now pre-fills the message field with an automatically generated summary of changed files, streamlining the commit workflow.
+- **JSONL Manifest Format:** QuiltSync has migrated its internal manifest format from Parquet to JSONL, improving performance and cross-platform compatibility. The app automatically re-fetches manifests from remote storage when a cached file is in the legacy Parquet format.
+- **Windows Code Signing:** Release installers for Windows are now code-signed, reducing OS security warnings on install.
+- **Bug Fixes:**
+  - Fixed deep link handler failing on macOS and Linux due to URL scheme mismatch
+  - Fixed stale Parquet manifest cache that prevented app startup
