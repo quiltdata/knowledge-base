@@ -1,0 +1,40 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowBucketToPushNotificationEffect",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "s3.amazonaws.com"
+            },
+            "Action": "sns:Publish",
+            "Resource": "*",
+            "Condition": {
+                "ArnLike": {
+                    "aws:SourceArn": "arn:aws:s3:*:*:kevin-spg-stage2"
+                }
+            }
+        },
+        {
+            "Sid": "AWSConfigSNSPolicy",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::850787717197:root"
+            },
+            "Action": [
+                "sns:GetTopicAttributes",
+                "sns:Subscribe"
+            ],
+            "Resource": "arn:aws:sns:us-east-1:712023778557:kevin-spg-stage2-QuiltNotifications-6a803e81-3d68-47a4-9ddc-4d14902f745a"
+        },
+        {
+            "Sid": "AllowEventBridgeToPublish",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "events.amazonaws.com"
+            },
+            "Action": "sns:Publish",
+            "Resource": "arn:aws:sns:us-east-1:712023778557:kevin-spg-stage2-QuiltNotifications-6a803e81-3d68-47a4-9ddc-4d14902f745a"
+        }
+    ]
+}

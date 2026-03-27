@@ -1,0 +1,18 @@
+{
+    "Attributes": {
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowBucketToPushNotificationEffect\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"s3.amazonaws.com\"},\"Action\":\"sns:Publish\",\"Resource\":\"*\",\"Condition\":{\"ArnLike\":{\"aws:SourceArn\":\"arn:aws:s3:*:*:kevin-spg-stage2\"}}},{\"Sid\":\"AWSConfigSNSPolicy\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::850787717197:root\"},\"Action\":[\"sns:GetTopicAttributes\",\"sns:Subscribe\"],\"Resource\":\"arn:aws:sns:us-east-1:712023778557:kevin-spg-stage2-QuiltNotifications-6a803e81-3d68-47a4-9ddc-4d14902f745a\"}]}",
+        "LambdaSuccessFeedbackSampleRate": "0",
+        "Owner": "712023778557",
+        "SubscriptionsPending": "0",
+        "KmsMasterKeyId": "6947736b-617d-48bb-a323-a2e6aeba281b",
+        "TopicArn": "arn:aws:sns:us-east-1:712023778557:kevin-spg-stage2-QuiltNotifications-6a803e81-3d68-47a4-9ddc-4d14902f745a",
+        "EffectiveDeliveryPolicy": "{\"http\":{\"defaultHealthyRetryPolicy\":{\"minDelayTarget\":20,\"maxDelayTarget\":20,\"numRetries\":3,\"numMaxDelayRetries\":0,\"numNoDelayRetries\":0,\"numMinDelayRetries\":0,\"backoffFunction\":\"linear\"},\"disableSubscriptionOverrides\":false,\"defaultRequestPolicy\":{\"headerContentType\":\"text/plain; charset=UTF-8\"}}}",
+        "FirehoseSuccessFeedbackSampleRate": "0",
+        "SubscriptionsConfirmed": "5",
+        "SQSSuccessFeedbackSampleRate": "0",
+        "HTTPSuccessFeedbackSampleRate": "0",
+        "ApplicationSuccessFeedbackSampleRate": "0",
+        "DisplayName": "",
+        "SubscriptionsDeleted": "0"
+    }
+}
