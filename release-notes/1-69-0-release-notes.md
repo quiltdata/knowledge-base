@@ -1,8 +1,8 @@
 # Platform Update 1.69
 
-## Qurator Platform Tools, Async Benchling Pipeline, Union-of-Roles SSO, Prefix Reindex
+## Qurator Platform Tools, Async Benchling Pipeline, Union-of-Roles SSO, QuiltSync Updates, Prefix Reindex
 
-This release enhances Qurator with first-class access to platform MCP tools, support auto-update of Benchling canvases, grants SSO users access to multiple roles, and enables partial reindexing of buckets.
+This release enhances Qurator with first-class access to platform MCP tools, supports auto-updating Benchling canvases, grants SSO users access to multiple roles, adds major QuiltSync workflow improvements, and enables partial reindexing of buckets.
 
 ## New Quilt Platform Features
 
@@ -16,7 +16,7 @@ The Benchling canvas now updates asynchronously as Quilt re-exports packages, sh
 
 ### Union-of-Roles SSO Mode
 
-Adminstrators can use the new `union_roles: true` flag in their SSO configuration to grant users access to **all** matching roles, instead of just the first. Users can switch among the assigned roles via the existing role switcher, and any role no longer in the match set is revoked on next login. Default behavior is unchanged — existing SSO configurations will see no difference.
+Administrators can use the new `union_roles: true` flag in their SSO configuration to grant users access to **all** matching roles, instead of just the first. Users can switch among the assigned roles via the existing role switcher, and any role no longer in the match set is revoked on next login. Default behavior is unchanged — existing SSO configurations will see no difference.
 
 ### Prefix-Scoped Reindex
 
@@ -24,7 +24,18 @@ Stack admins can now scope a bucket reindexing to a single prefix. `POST /api/ad
 
 ### Admin Theme Logo Upload
 
-The Admin > Theme editor in Adimin Settings now lets you optionally upload a catalog logo file directly (PNG, JPEG, WebP, or GIF), extending the previous URL-only flow.
+The Admin > Theme editor in Admin Settings now lets you optionally upload a catalog logo file directly (PNG, JPEG, WebP, or GIF), extending the previous URL-only flow.
+
+## New QuiltSync Release
+
+- **Commit and Push Workflow:** QuiltSync now includes a one-step **Commit and Push** action for publishing local package changes. The action is available from the installed packages list, the commit form, and the installed package page, with settings for default message templates, workflow selection, and metadata.
+- **OAuth Login:** QuiltSync now supports browser-based OAuth 2.1 login via `quilt://` deep links, with legacy code-based login retained as a fallback for stacks that do not support OAuth.
+- **Local Package Creation and First Push:** Users can create local packages directly in QuiltSync, optionally choose a source directory, set a remote, and complete the first-push workflow from the app.
+- **`.quiltignore` Support:** QuiltSync surfaces junk file detection badges and ignore/un-ignore controls, then filters ignored entries during package operations.
+- **Diagnostics from Settings:** The former debug toolbar has been replaced by a Settings page that can collect diagnostic logs and send them to Quilt support through Sentry or email.
+- **Faster Package Views:** Installed packages now render immediately from cached lineage while QuiltSync refreshes per-package status in the background.
+- **Release and UI Polish:** QuiltSync now shows release notes inside the app, uses Quilt.bio branding, prevents empty commit messages, highlights packages with uncommitted changes, and protects pulls when local changes would be overwritten.
+- **Reliability Improvements:** The underlying `quilt-rs` client now retries transient HTTP failures with backoff, refreshes expired S3 credentials per request, redacts secrets from debug logs, and uses atomic storage writes.
 
 ## Stack Admin Improvements
 
