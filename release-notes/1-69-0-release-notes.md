@@ -8,7 +8,7 @@ This release enhances Qurator with first-class access to platform MCP tools, sup
 
 ### Qurator Platform Tools
 
-Qurator can now use the platform's MCP tools — package browse and search, object search, S3 reads, Athena queries, tabulator, and package create/edit — alongside its existing in-catalog navigation. Tools execute under the user's catalog session, so all access continues to respect existing role and bucket permissions.  This works even if Quilt Connect is not activated for public MCP access.
+Qurator can now use the platform's MCP tools — package browse and search, object search, S3 reads, Athena queries, tabulator, and package create/edit — alongside its existing in-catalog navigation. Tools execute under the user's catalog session, so all access continues to respect existing role and bucket permissions. This works even if Quilt Connect is not activated for public MCP access.
 
 ### Asynchronous Benchling Integration
 
