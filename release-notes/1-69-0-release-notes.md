@@ -40,7 +40,7 @@ The Admin > Theme editor in Admin Settings now lets you optionally upload a cata
 ## Stack Admin Improvements
 
 - **Admin Bucket Listings Respect Role Scope:** Admin users now see role-appropriate bucket listings (catalog navbar, landing grid, search filter, and the MCP `bucket_list` tool) instead of all buckets.
-- **Wildcard Connect Hosts:** `ConnectAllowedHosts` now supports leading-dot domain suffixes (e.g. `.benchling.com`) to allow any subdomain over HTTPS.
+- **Subdomain Wildcards for Connect Hosts:** `ConnectAllowedHosts` now accepts leading-dot entries (e.g. `.benchling.com`) that match any subdomain over HTTPS at any depth (e.g. `app.benchling.com`, `app.us.benchling.com`); the apex domain is not matched.
 - **Stack-Managed Bucket Protections:** Manual bucket management operations on stack-managed S3 buckets are now denied by bucket policy. All bucket configuration changes must go through CloudFormation.
 
 ## Other Improvements
