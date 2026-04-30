@@ -1,6 +1,6 @@
 # Platform Update 1.69
 
-## Qurator Platform Tools, Async Benchling Pipeline, Union-of-Roles SSO, QuiltSync Updates, Prefix Reindex
+## Qurator Platform Tools, Benchling Auto-Updates, Multi-Role SSO, Streamlined QuiltSync
 
 This release enhances Qurator with first-class access to platform MCP tools, supports auto-updating Benchling canvases, grants SSO users access to multiple roles, adds major QuiltSync workflow improvements, and enables partial reindexing of buckets.
 
@@ -12,7 +12,7 @@ Qurator can now use the platform's MCP tools — package browse and search, obje
 
 ### Asynchronous Benchling Integration
 
-The Benchling canvas now updates asynchronously as Quilt re-exports packages, showing a "pending → complete" state and remaining browsable throughout the re-export. In addition, Benchling `reviewRecord` events will also trigger package updates.
+The Benchling canvas now updates asynchronously whenever Quilt updates packages, and shows as pending when first creating a package. Benchling reviewRecord events can also trigger package updates. In addition, Benchling `reviewRecord` events will also trigger package updates.
 
 ### Union-of-Roles SSO Mode
 
@@ -39,9 +39,9 @@ The Admin > Theme editor in Admin Settings now lets you optionally upload a cata
 
 ## Stack Admin Improvements
 
-- **Admin Bucket Listings Respect Role Scope:** User-facing bucket listings (catalog navbar, landing grid, search filter, and the MCP `bucket_list` tool) no longer bypass role scope for admins.
+- **Admin Bucket Listings Respect Role Scope:** Admin users now see role-appropriate bucket listings (catalog navbar, landing grid, search filter, and the MCP `bucket_list` tool) instead of all buckets.
 - **Wildcard Connect Hosts:** `ConnectAllowedHosts` now supports leading-dot domain suffixes (e.g. `.benchling.com`) to allow any subdomain over HTTPS.
-- **Bucket Management Lockdown:** Manual bucket management operations on stack-managed S3 buckets are now denied by bucket policy. All bucket configuration changes must go through CloudFormation.
+- **Stack-Managed Bucket Protections:** Manual bucket management operations on stack-managed S3 buckets are now denied by bucket policy. All bucket configuration changes must go through CloudFormation.
 
 ## Other Improvements
 
