@@ -1,0 +1,59 @@
+# EventBridge Routing Test Configuration (CORRECTED)
+# Using quilt-eventbridge-test bucket (already in CloudTrail)
+
+[aws]
+profile = "default"
+region = "us-east-1"
+account_id = "712023778557"
+
+[test_environment]
+stack_name = "quilt-staging"
+test_bucket = "quilt-eventbridge-test"  # ✅ Already in CloudTrail
+test_file_key = "test/eventbridge-test-file.txt"
+
+[resources]
+# SNS Topic - using kevin-spg-stage2 topic (already connected to quilt-staging)
+sns_topic_arn = "arn:aws:sns:us-east-1:712023778557:kevin-spg-stage2-QuiltNotifications-6a803e81-3d68-47a4-9ddc-4d14902f745a"
+
+# EventBridge Rule (to be created)
+eventbridge_rule_name = "quilt-staging-eventbridge-test-v2"
+eventbridge_rule_arn = ""
+
+# SQS Queues (existing - already subscribed to kevin-spg-stage2 SNS)
+indexer_queue_url = "https://sqs.us-east-1.amazonaws.com/712023778557/quilt-staging-IndexerQueue-yD8FCAN9MJWr"
+indexer_queue_arn = "arn:aws:sqs:us-east-1:712023778557:quilt-staging-IndexerQueue-yD8FCAN9MJWr"
+
+# Lambda Functions (existing)
+search_handler_name = "quilt-staging-SearchHandler"
+
+# CloudTrail
+trail_name = "analytics"
+# ✅ quilt-eventbridge-test IS in CloudTrail event selectors
+
+[test_execution]
+test_date = "2025-12-29"
+tester = "Ernest (via automated script - v2)"
+test_file_upload_timestamp = "2025-12-29T20:19:13Z"
+
+[test_results]
+eventbridge_triggered = false  # CloudTrail EventBridge integration disabled!
+sns_published = false
+sqs_received = false
+lambda_processed = false
+file_indexed = false
+
+[critical_finding]
+issue = "CloudTrail EventBridge integration is DISABLED"
+cloudtrail_eventbridge_enabled = false
+required_action = "Enable EventBridge in CloudTrail console or IaC"
+impact = "S3 events never reach EventBridge, breaking entire pipeline"
+
+[backups]
+original_sns_policy_file = "kevin-spg-sns-policy-backup.json"
+
+[created_resources]
+eventbridge_rule_created = true
+eventbridge_rule_arn = "arn:aws:events:us-east-1:712023778557:rule/quilt-staging-eventbridge-test-v2"
+sns_policy_modified = true
+test_file_uploaded = true
+test_file_s3_uri = "s3://quilt-eventbridge-test/test/eventbridge-test-file-v2.txt"

@@ -1,0 +1,17 @@
+=== BASELINE METRICS AT 2025-12-29T20:19:19Z ===
+{
+    "Label": "TriggeredRules",
+    "Datapoints": []
+}
+
+{
+    "Label": "NumberOfMessagesPublished",
+    "Datapoints": []
+}
+Test file uploaded at: 2025-12-29T20:19:33Z
+
+=== POST-UPLOAD METRICS AT 2025-12-29T20:21:51Z ===
+{
+    "Label": "TriggeredRules",
+    "Datapoints": []
+}
