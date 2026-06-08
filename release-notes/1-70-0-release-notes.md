@@ -12,9 +12,9 @@ Quilt Connect now supports Databricks and ChatGPT as MCP clients, alongside the 
 
 ### Per-Bucket Package Index
 
-The package-index Iceberg tables have moved from a single global set (`package_*`) to per-bucket tables (`{bucket}_package_entry`, `{bucket}_package_tag`). Every Quilt role now automatically receives Athena read access to the per-bucket tables for the buckets they can read: managed users are narrowed to their scoped buckets via the registry-applied session policy; non-managed roles are stack-wide. Tabulator and the in-catalog package surfaces query the new layout transparently.
+The package-index Iceberg tables have moved from a single global set (`package_*`) to per-bucket tables (`{bucket}_package_{revision,tag,manifest,entry}`). The `bucket` column is gone from every schema — the table name carries it. Every Quilt role now automatically receives Athena read access to the per-bucket tables for the buckets they can read: managed users are narrowed to their scoped buckets via the registry-applied session policy; non-managed roles are stack-wide. Tabulator and the in-catalog package surfaces query the new layout transparently.
 
-External Athena consumers querying the legacy global `package_*` tables should migrate to the per-bucket names — the legacy tables remain queryable but no longer receive updates and will eventually be removed.
+External Athena consumers must migrate to the per-bucket table names — the legacy global tables are removed. Cross-bucket queries now require explicit `UNION ALL` across per-bucket tables (the prior unified view is gone).
 
 ### Tabulator on Per-Bucket Iceberg via Athena
 
