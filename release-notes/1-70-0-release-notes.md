@@ -1,14 +1,16 @@
 # Platform Update 1.70
 
-## Connect for Databricks & ChatGPT, Per-Bucket Package Index, CommonMark Rendering
+## Connect for Databricks, ChatGPT & Codex; Per-Bucket Package Index, CommonMark Rendering
 
-This release adds Databricks and ChatGPT as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, tightens markdown rendering to CommonMark + GFM, and adds an opt-in Lake Formation grants mode.
+This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, tightens markdown rendering to CommonMark + GFM, and adds an opt-in Lake Formation grants mode.
 
 ## New Quilt Platform Features
 
-### Connect for Databricks and ChatGPT
+### Connect for Databricks, ChatGPT, and Codex
 
-Quilt Connect now supports Databricks and ChatGPT as MCP clients, alongside the existing client matrix. Stack admins enabling these targets need to allow the appropriate hosts (`.cloud.databricks.com`, `chat.openai.com`, `chatgpt.com`) in their stack's `ConnectAllowedHosts`. End users then pair their assistant once and can query Quilt buckets, packages, and metadata under their own catalog session.
+Quilt Connect now supports Databricks, ChatGPT, and Codex as MCP clients, alongside the existing client matrix. Stack admins enabling Databricks or ChatGPT need to allow the appropriate hosts (`.cloud.databricks.com`, `chat.openai.com`, `chatgpt.com`) in their stack's `ConnectAllowedHosts`. End users then pair their assistant once and can query Quilt buckets, packages, and metadata under their own catalog session.
+
+Codex support comes from a registry-side OAuth fix: PRM (`oauth-protected-resource`) discovery now also accepts the MCP transport-suffixed well-known path, which Codex and other RFC 9728-strict clients request. No stack-level configuration is required.
 
 ### Per-Bucket Package Index
 
