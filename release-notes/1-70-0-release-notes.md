@@ -1,8 +1,8 @@
 # Platform Update 1.70
 
-## Connect for Databricks, ChatGPT & Codex; Per-Bucket Package Index, CommonMark Rendering
+## Connect for Databricks, ChatGPT & Codex; Per-Bucket Package Index, CommonMark Rendering, QuiltSync Autosync
 
-This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, tightens markdown rendering to CommonMark + GFM, and adds an opt-in Lake Formation grants mode.
+This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, tightens markdown rendering to CommonMark + GFM, adds an opt-in Lake Formation grants mode, and brings background Autosync to QuiltSync along with a crates.io release of the `quilt` CLI.
 
 ## New Quilt Platform Features
 
@@ -25,6 +25,36 @@ Tabulator now resolves package-entry queries by joining the per-bucket Iceberg t
 ### CommonMark + GFM Markdown
 
 Markdown rendering in the catalog now conforms to CommonMark + GFM. Non-standard Pandoc / PHP-Markdown-Extra shortcuts (`==mark==`, `^sup^`, `~sub~`, `++ins++`, abbreviations, definition lists, footnotes) are no longer parsed as syntax; raw inline HTML for these tags still renders.
+
+## QuiltSync & CLI
+
+### Background Autosync
+
+QuiltSync gains an opt-in **Autosync** loop with independent **Pull** and **Push** toggles (Settings → Autosync), so users can enable cheap, idempotent auto-pulls without unattended pushes.
+
+- **Auto-pull:** Periodically refreshes `latest` for every installed remote package and pulls when the package is behind and the working tree is clean. Packages with pending changes, pending commits, or divergence are paused (and surfaced in the UI) rather than clobbered.
+- **Auto-push:** When a mapped package has local changes or a pending commit and the working tree has been quiet, the watcher commits and pushes automatically using the message, metadata, and workflow from your publish settings — no re-prompt. Autosync refuses to push when a teammate has already published under the same namespace (treated as diverged).
+- **Independent cadence:** Pull interval and the post-edit quiet window before publishing ("wait after last edit before publishing", default 30 s) are separate knobs.
+
+### Tray Icon & Close to Tray
+
+A new tray-resident shell keeps Autosync running with the main window closed. An opt-in **Close to tray** setting (default off) hides the window to the tray instead of quitting; the tray shows a folded status (idle / syncing / paused / error) and an **Open Quilt** / **Quit** menu. Environments without a working tray fall back to today's quit-on-close behavior.
+
+### Live Filesystem Watcher
+
+A per-mapping filesystem watcher (default on, toggle under Settings → Filesystem Watcher) refreshes a package's local status live when files change on disk — from an editor save, `cp`, or a script — so status badges and entries lists update within ~500 ms without a reload. The watcher is guarded against feedback loops and only repaints when the computed status actually changes.
+
+### Clearer Merge Actions
+
+The merge page's actions are relabeled to name the direction of change: **Promote my commit** (push the local commit and tag it `latest`) and **Overwrite local with remote** (reset, discarding uncommitted edits). A related library fix ensures **Promote my commit** pushes any pending local commit *before* tagging `latest`, instead of rolling the remote pointer back to the install-time hash.
+
+### quilt-cli on crates.io
+
+The `quilt` CLI (`quilt-cli`) is now published to crates.io and installable via `cargo binstall quilt-cli`, with prebuilt binaries for macOS (x86_64/arm64) and Linux (x86_64).
+
+The CLI now **shares its default data directory with QuiltSync** (`com.quiltdata.quilt-sync`), so state created by `quilt` (without `--domain`) is visible to QuiltSync and vice versa. Existing CLI users with a `com.quiltdata.quilt-rs` data directory should move it manually (see the quilt-cli changelog for per-platform commands).
+
+*Released as quilt-sync 0.18.2, quilt-cli 0.27.0, quilt-rs 0.32.0.*
 
 ## Stack Admin Improvements
 
