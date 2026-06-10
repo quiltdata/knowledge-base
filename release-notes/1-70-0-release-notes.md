@@ -64,5 +64,7 @@ The CLI now **shares its default data directory with QuiltSync** (`com.quiltdata
 
 ## Other Improvements
 
-- Cleaner variant set: removed unused variants (`dsp-concepts`, `seqera`, `interline-stage`, `hudl`) and the dead `localhost` environment option.
-- Postgres engine upgraded to 15.18 for CloudFormation deployments (already shipped via the 1.69.4 patch; included here for completeness).
+> These already shipped as part of the 1.69.4 security update, but are included here for completeness.
+
+- Postgres engine upgraded to 15.18 for CloudFormation deployments.
+- `s3-proxy`: nginx upgraded 1.24.0 → 1.30.2 with a refreshed Amazon Linux base image.
