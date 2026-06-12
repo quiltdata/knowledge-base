@@ -64,6 +64,8 @@ The CLI now **shares its default data directory with QuiltSync** (`com.quiltdata
 
 ## Other Improvements
 
+- Fixed the "Workgroup not found" error on the Athena Queries tab for accounts that had accumulated more than 50 Athena workgroups in a region. The catalog now drains the full workgroup, catalog, and database listings on load rather than giving up after the first page.
+
 > These already shipped as part of the 1.69.4 security update, but are included here for completeness.
 
 - Postgres engine upgraded to 15.18 for CloudFormation deployments.
