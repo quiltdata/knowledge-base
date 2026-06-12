@@ -1,8 +1,8 @@
 # Platform Update 1.70
 
-## Connect for Databricks, ChatGPT & Codex; Per-Bucket Package Index, CommonMark Rendering, QuiltSync Autosync
+## Connect for Databricks, ChatGPT & Codex; Per-Bucket Package Index, Glacier Rehydration, CommonMark Rendering, QuiltSync Autosync
 
-This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, tightens markdown rendering to CommonMark + GFM, adds an opt-in Lake Formation grants mode, and brings background Autosync to QuiltSync along with a crates.io release of the `quilt` CLI.
+This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, makes archive restore (Glacier / Deep Archive) a single-click flow from the file preview, tightens markdown rendering to CommonMark + GFM, adds an opt-in Lake Formation grants mode, and brings background Autosync to QuiltSync along with a crates.io release of the `quilt` CLI.
 
 ## New Quilt Platform Features
 
@@ -25,6 +25,12 @@ Tabulator queries now hit the Iceberg package index instead of doing a full S3 s
 ### CommonMark + GFM Markdown
 
 Markdown rendering in the catalog now conforms to CommonMark + GFM. Non-standard Pandoc / PHP-Markdown-Extra shortcuts (`==mark==`, `^sup^`, `~sub~`, `++ins++`, abbreviations, definition lists, footnotes) are no longer parsed as syntax; raw inline HTML for these tags still renders.
+
+### Glacier Rehydration
+
+Archived files (S3 `GLACIER` and `DEEP_ARCHIVE` storage classes) can now be restored directly from the file preview. Choose a retrieval tier and duration in the prompt; the catalog tracks in-progress and restored state via the S3 `x-amz-restore` response header.
+
+Managed read-write roles automatically receive `s3:RestoreObject` — no stack parameter or admin action required. Per-bucket button visibility is controlled by the `ui.actions.restore` catalog preference.
 
 ## QuiltSync & CLI
 
@@ -65,6 +71,8 @@ The CLI now **shares its default data directory with QuiltSync** (`com.quiltdata
 ## Other Improvements
 
 - Fixed the "Workgroup not found" error on the Athena Queries tab for accounts that had accumulated more than 50 Athena workgroups in a region. The catalog now drains the full workgroup, catalog, and database listings on load rather than giving up after the first page.
+- Landing page bucket cards now show the bucket icons configured for each bucket, matching the navbar bucket selector; custom icons are circle-cropped consistently.
+- Image previews: fixed thumbnail rendering for `.jpeg` / `.webp` files (the `.jpg` extension was unaffected), float and 16-bit-color images, and 16-bit greyscale — the 12-bit microscopy case now rescales by actual value range instead of rendering nearly black.
 
 > These already shipped as part of the 1.69.4 security update, but are included here for completeness.
 
