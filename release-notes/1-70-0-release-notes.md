@@ -18,9 +18,9 @@ The package-index Iceberg tables have moved from a single global set (`package_*
 
 External Athena/Iceberg consumers must migrate to the per-bucket table names — the legacy global tables are removed. Cross-bucket queries now require explicit `UNION ALL` across per-bucket tables (the prior unified view is gone).
 
-### Tabulator on Per-Bucket Iceberg via Athena
+### Faster, Cheaper Tabulator
 
-Tabulator now resolves package-entry queries by joining the per-bucket Iceberg tables directly via Athena, under each caller's bucket-scoped credentials. Queries respect existing role and bucket permissions automatically — no separate Tabulator grant is required.
+Tabulator queries now hit the Iceberg package index instead of doing a full S3 scan through Glue/Athena SerDe tables on every call. Cheaper for users, faster end-to-end. The per-bucket Iceberg restructure (above) is what makes this possible. Permissions are unchanged — each caller queries under their own bucket-scoped credentials, and existing role and bucket permissions apply automatically.
 
 ### CommonMark + GFM Markdown
 
