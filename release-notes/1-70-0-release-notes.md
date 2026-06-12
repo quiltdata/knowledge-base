@@ -73,6 +73,7 @@ The CLI now **shares its default data directory with QuiltSync** (`com.quiltdata
 - Fixed the "Workgroup not found" error on the Athena Queries tab for accounts that had accumulated more than 50 Athena workgroups in a region. The catalog now drains the full workgroup, catalog, and database listings on load rather than giving up after the first page.
 - Landing page bucket cards now show the bucket icons configured for each bucket, matching the navbar bucket selector; custom icons are circle-cropped consistently.
 - Image previews: fixed thumbnail rendering for `.jpeg` / `.webp` files (the `.jpg` extension was unaffected), float and 16-bit-color images, and 16-bit greyscale — the 12-bit microscopy case now rescales by actual value range instead of rendering nearly black.
+- Quilt Connect (MCP): package tools now return the full package revision hash, so the `quilt+s3://…@<hash>` URIs they emit resolve to the exact revision (previously a truncated prefix that couldn't be looked up); registry errors now surface with a legible message at the tool instead of a generic "Internal Server Error."
 
 > These already shipped as part of the 1.69.4 security update, but are included here for completeness.
 
