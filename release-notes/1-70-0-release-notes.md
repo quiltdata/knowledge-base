@@ -1,8 +1,8 @@
 # Platform Update 1.70
 
-## Connect for Databricks, ChatGPT & Codex; Per-Bucket Package Index, Glacier Rehydration, CommonMark Rendering, QuiltSync Autosync
+## Connect for Databricks, ChatGPT & Codex; Direct Iceberg Access to Package Metadata, Glacier Rehydration, CommonMark Rendering, QuiltSync Autosync
 
-This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, makes archive restore (Glacier / Deep Archive) a single-click flow from the file preview, tightens markdown rendering to CommonMark + GFM, adds an opt-in Lake Formation grants mode, and brings background Autosync to QuiltSync along with a crates.io release of the `quilt` CLI.
+This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, gives every Quilt user direct Athena/Iceberg access to package metadata for the buckets they can read, makes archive restore (Glacier / Deep Archive) a single-click flow from the file preview, tightens markdown rendering to CommonMark + GFM, adds an opt-in Lake Formation grants mode, and brings background Autosync to QuiltSync along with a crates.io release of the `quilt` CLI.
 
 ## New Quilt Platform Features
 
@@ -12,11 +12,11 @@ Quilt Connect now supports Databricks, ChatGPT, and Codex as MCP clients, alongs
 
 Codex support comes from a registry-side OAuth fix: PRM (`oauth-protected-resource`) discovery now also accepts the MCP transport-suffixed well-known path, which Codex and other RFC 9728-strict clients request. No stack-level configuration is required.
 
-### Per-Bucket Package Index
+### Direct Iceberg Access to Package Metadata
 
-The package-index Iceberg tables have moved from a single global set (`package_*`) to per-bucket tables (`{bucket}_package_{revision,tag,manifest,entry}`). The `bucket` column is gone from every schema — the table name carries it. Every Quilt role now automatically receives Athena read access to the per-bucket tables for the buckets they can read: managed users are narrowed to their scoped buckets via the registry-applied session policy; non-managed roles are stack-wide. Tabulator and the in-catalog package surfaces query the new layout transparently.
+Quilt users can now query package metadata directly as Iceberg tables in Athena — package revisions, tags, manifests, and entries — instead of relying on Athena crawling individual JSONL manifests on every query. If you can read a bucket in the catalog, you can query the iceberg tables for it using your existing session credentials.
 
-External Athena/Iceberg consumers must migrate to the per-bucket table names — the legacy global tables are removed. Cross-bucket queries now require explicit `UNION ALL` across per-bucket tables (the prior unified view is gone).
+This replaces the single global table set (`package_*`, previously external-access only) with per-bucket tables (`{bucket}_package_{revision,tag,manifest,entry}`). Tabulator and in-catalog package surfaces use the new layout transparently. External consumers of the old (now removed) global tables must migrate to the per-bucket names and use `UNION ALL` for cross-bucket queries.
 
 ### Faster, Cheaper Tabulator
 
