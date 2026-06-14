@@ -1,79 +1,70 @@
 # Platform Update 1.70
 
-## Connect for Databricks, ChatGPT & Codex; Direct Iceberg Access to Package Metadata, Glacier Rehydration, CommonMark Rendering, QuiltSync Autosync
-
-This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, gives every Quilt user direct Athena/Iceberg access to package metadata for the buckets they can read, makes archive restore (Glacier / Deep Archive) a single-click flow from the file preview, tightens markdown rendering to CommonMark + GFM, adds an opt-in Lake Formation grants mode, and brings background Autosync to QuiltSync along with a crates.io release of the `quilt` CLI.
+This release adds Databricks, ChatGPT, and Codex as Quilt Connect (MCP) clients, moves the package index to per-bucket Iceberg tables with automatic role-scoped Athena access, tightens Markdown rendering to CommonMark + GFM, and adds QuiltSync Autosync plus a crates.io release of the `quilt` CLI.
 
 ## New Quilt Platform Features
 
 ### Connect for Databricks, ChatGPT, and Codex
 
-Quilt Connect now supports Databricks, ChatGPT, and Codex as MCP clients, alongside the existing client matrix. Stack admins enabling Databricks or ChatGPT need to allow the appropriate hosts (`.cloud.databricks.com`, `chat.openai.com`, `chatgpt.com`) in their stack's `ConnectAllowedHosts`. End users then pair their assistant once and can query Quilt buckets, packages, and metadata under their own catalog session.
-
-Codex support comes from a registry-side OAuth fix: PRM (`oauth-protected-resource`) discovery now also accepts the MCP transport-suffixed well-known path, which Codex and other RFC 9728-strict clients request. No stack-level configuration is required.
+Quilt Connect now supports Databricks, ChatGPT, and Codex as MCP clients. Stack admins can allow Databricks and ChatGPT hosts in ConnectAllowedHosts; Codex works using the existing `localhost`.
 
 ### Direct Iceberg Access to Package Metadata
 
 Quilt users can now query package metadata directly as Iceberg tables in Athena — package revisions, tags, manifests, and entries — instead of relying on Athena crawling individual JSONL manifests on every query. If you can read a bucket in the catalog, you can query the iceberg tables for it using your existing session credentials.
 
-This replaces the single global table set (`package_*`, previously external-access only) with per-bucket tables (`{bucket}_package_{revision,tag,manifest,entry}`). Tabulator and in-catalog package surfaces use the new layout transparently. External consumers of the old (now removed) global tables must migrate to the per-bucket names and use `UNION ALL` for cross-bucket queries.
+This replaces the single global table set with per-bucket tables (`{bucket}_package_{revision,tag,manifest,entry}`). Tabulator and in-catalog package surfaces use the new layout transparently. External consumers of the old (now removed) global tables must migrate to the per-bucket names and use `UNION ALL` for cross-bucket queries.
+
+### Glacier Rehydration from File Preview
+
+Archived S3 objects in Glacier or Deep Archive can now be restored directly from file preview in the Quilt Catalog. Choose restore tier and duration; Quilt tracks restore state from S3 metadata, and managed read/write roles get s3:RestoreObject.
 
 ### Faster, Cheaper Tabulator
 
-Tabulator queries now hit the Iceberg package index instead of doing a full S3 scan through Glue/Athena SerDe tables on every call. Cheaper for users, faster end-to-end. The per-bucket Iceberg restructure (above) is what makes this possible. Permissions are unchanged — each caller queries under their own bucket-scoped credentials, and existing role and bucket permissions apply automatically.
-
-### CommonMark + GFM Markdown
-
-Markdown rendering in the catalog now conforms to CommonMark + GFM. Non-standard Pandoc / PHP-Markdown-Extra shortcuts (`==mark==`, `^sup^`, `~sub~`, `++ins++`, abbreviations, definition lists, footnotes) are no longer parsed as syntax; raw inline HTML for these tags still renders.
-
-### Glacier Rehydration
-
-Archived files (S3 `GLACIER` and `DEEP_ARCHIVE` storage classes) can now be restored directly from the file preview. Choose a retrieval tier and duration in the prompt; the catalog tracks in-progress and restored state via the S3 `x-amz-restore` response header.
-
-Managed read-write roles automatically receive `s3:RestoreObject` — no stack parameter or admin action required. Per-bucket button visibility is controlled by the `ui.actions.restore` catalog preference.
+Tabulator queries now hit the Iceberg package index instead of doing a full S3 scan through Glue/Athena SerDe tables on every call. Cheaper for users, faster end-to-end. The per-bucket Iceberg restructure is what makes this possible. Permissions are unchanged: each caller queries under their own bucket-scoped credentials, and existing role and bucket permissions apply automatically.
 
 ## QuiltSync & CLI
 
 ### Background Autosync
 
-QuiltSync gains an opt-in **Autosync** loop with independent **Pull** and **Push** toggles (Settings → Autosync), so users can enable cheap, idempotent auto-pulls without unattended pushes.
-
-- **Auto-pull:** Periodically refreshes `latest` for every installed remote package and pulls when the package is behind and the working tree is clean. Packages with pending changes, pending commits, or divergence are paused (and surfaced in the UI) rather than clobbered.
-- **Auto-push:** When a mapped package has local changes or a pending commit and the working tree has been quiet, the watcher commits and pushes automatically using the message, metadata, and workflow from your publish settings — no re-prompt. Autosync refuses to push when a teammate has already published under the same namespace (treated as diverged).
-- **Independent cadence:** Pull interval and the post-edit quiet window before publishing ("wait after last edit before publishing", default 30 s) are separate knobs.
+QuiltSync adds an opt-in Autosync loop with independent Pull and Push toggles. Auto-pull refreshes latest for installed remote packages when the working tree is clean; auto-push can commit and publish quiet local changes using your publish settings, while pausing on pending changes or divergence.
 
 ### Tray Icon & Close to Tray
 
-A new tray-resident shell keeps Autosync running with the main window closed. An opt-in **Close to tray** setting (default off) hides the window to the tray instead of quitting; the tray shows a folded status (idle / syncing / paused / error) and an **Open Quilt** / **Quit** menu. Environments without a working tray fall back to today's quit-on-close behavior.
+A tray-resident shell keeps Autosync running with the main window closed. The optional Close to tray setting hides the window instead of quitting, and the tray shows idle, syncing, paused, or error status with Open Quilt and Quit actions.
 
 ### Live Filesystem Watcher
 
-A per-mapping filesystem watcher (default on, toggle under Settings → Filesystem Watcher) refreshes a package's local status live when files change on disk — from an editor save, `cp`, or a script — so status badges and entries lists update within ~500 ms without a reload. The watcher is guarded against feedback loops and only repaints when the computed status actually changes.
+A per-mapping filesystem watcher refreshes local package status when files change on disk, so status badges and entry lists update within about 500 ms without a reload. The watcher is guarded against feedback loops and only repaints when computed status changes.
 
 ### Clearer Merge Actions
 
-The merge page's actions are relabeled to name the direction of change: **Promote my commit** (push the local commit and tag it `latest`) and **Overwrite local with remote** (reset, discarding uncommitted edits). A related library fix ensures **Promote my commit** pushes any pending local commit *before* tagging `latest`, instead of rolling the remote pointer back to the install-time hash.
+The merge page now labels actions by direction: Promote my commit pushes the local commit and tags it latest, while Overwrite local with remote resets local state and discards uncommitted edits. Promote my commit now pushes before tagging latest.
 
 ### quilt-cli on crates.io
 
-The `quilt` CLI (`quilt-cli`) is now published to crates.io and installable via `cargo binstall quilt-cli`, with prebuilt binaries for macOS (x86_64/arm64) and Linux (x86_64).
-
-The CLI now **shares its default data directory with QuiltSync** (`com.quiltdata.quilt-sync`), so state created by `quilt` (without `--domain`) is visible to QuiltSync and vice versa. Existing CLI users with a `com.quiltdata.quilt-rs` data directory should move it manually (see the quilt-cli changelog for per-platform commands).
-
-*Released as quilt-sync 0.18.2, quilt-cli 0.27.0, quilt-rs 0.32.0.*
+The new QuiltSync-based `quilt` CLI is now published to [crates.io](https://crates.io) with prebuilt binaries for macOS and Linux, installable via `cargo binstall quilt-cli`. This is tightly integrated with QuiltSync's data directory so you can use either the CLI or the GUI to manage your packages.
 
 ## Stack Admin Improvements
 
-- **Lake Formation Grants (Opt-In):** A new `EnableLakeFormationGrants` stack parameter (default `Disabled`) emits `PrincipalPermissions` grants from stack service roles to the data lake. On stacks running with Lake Formation enforcement, this is required for the per-bucket Iceberg access (above) to take effect. The Data Lake Administrator IAM principal must be in place before enabling; see the README for prerequisites.
-- **Canary Runtime v15.1:** The CloudWatch Synthetics canary runtime is now Node 22 / Synthetics 15.1 (`syn-nodejs-puppeteer-15.1`). The previous v10 runtime is on AWS's deprecation path.
-- **Resilient Logo Preview:** The Admin > Theme logo preview no longer breaks the editor when the configured S3 URL is malformed.
+### Lake Formation Grants (Opt-In)
+
+A new EnableLakeFormationGrants stack parameter emits PrincipalPermissions grants from stack service roles to the data lake. On stacks with Lake Formation enforcement, this is required for per-bucket Iceberg access to take effect.
+
+### Canary Runtime v15.1
+
+The CloudWatch Synthetics canary runtime is now Node 22 / Synthetics 15.1, replacing the previous v10 runtime that is on AWS's deprecation path.
+
+### Resilient Logo Preview
+
+The Admin > Theme logo preview no longer breaks the editor when the configured S3 URL is malformed.
 
 ## Other Improvements
 
-- Fixed the "Workgroup not found" error on the Athena Queries tab for accounts that had accumulated more than 50 Athena workgroups in a region. The catalog now drains the full workgroup, catalog, and database listings on load rather than giving up after the first page.
-- Landing page bucket cards now show the bucket icons configured for each bucket, matching the navbar bucket selector; custom icons are circle-cropped consistently.
-- Image previews: fixed thumbnail rendering for `.jpeg` / `.webp` files (the `.jpg` extension was unaffected), float and 16-bit-color images, and 16-bit greyscale — the 12-bit microscopy case now rescales by actual value range instead of rendering nearly black.
-- Quilt Connect (MCP): package tools now return the full package revision hash, so the `quilt+s3://…@<hash>` URIs they emit resolve to the exact revision (previously a truncated prefix that couldn't be looked up); registry errors now surface with a legible message at the tool instead of a generic "Internal Server Error."
+- Landing page bucket cards now show configured bucket icons, matching the navbar selector.
+- Image previews now correctly render .jpeg/.webp thumbnails, float and 16-bit-color images, and 16-bit greyscale.
+- Markdown file previews now render using standard [GitHub-Flavored Markdown](https://github.github.com/gfm/) (a superset of [CommonMark](https://commonmark.org/)). This means we no longer support idiosyncratic Pandoc/PHP-Markdown-Extra shortcuts.
+- The Athena Queries tab no longer errors for accounts with more than 50 Athena workgroups.
+- The Quilt Platform MCP server now returns the full package revision hash, avoiding errors due to truncated hashes. Registry errors are now also properly surfaced by the tool.
 
 > These already shipped as part of the 1.69.4 security update, but are included here for completeness.
 
