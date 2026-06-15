@@ -48,7 +48,7 @@ The new QuiltSync-based `quilt` CLI is now published to [crates.io](https://crat
 
 ### Lake Formation Grants (Opt-In)
 
-A new EnableLakeFormationGrants stack parameter emits PrincipalPermissions grants from stack service roles to the data lake. On stacks with Lake Formation enforcement, this is required for per-bucket Iceberg access to take effect.
+A new EnableLakeFormationGrants stack parameter emits PrincipalPermissions grants from stack service roles to the data lake. If your AWS account enforces Lake Formation on the data lake, you must enable this parameter — otherwise Lake Formation denies the stack's roles and per-bucket Iceberg access (among other things) breaks. It is opt-in and off by default; leave it off only on accounts that do not enforce Lake Formation.
 
 ### Canary Runtime v15.1
 
