@@ -6,7 +6,7 @@
 
 ## Summary
 
-When you report search-related issues (slow or failing searches, incomplete results, high cluster CPU), Quilt support may ask you to collect diagnostics from your deployment's Elasticsearch/OpenSearch domain: CloudWatch performance metrics, plus cluster-state files that must be collected from inside the Quilt stack's VPC (the domain is VPC-internal in most deployments). This article shows how to do both with AWS CloudShell and a short read-only script — no software installation required.
+When you report search-related issues (slow or failing searches, incomplete results, high cluster CPU), Quilt support may ask for diagnostics from your deployment's Elasticsearch/OpenSearch domain: CloudWatch performance metrics, plus cluster-state files collected from inside the stack's VPC (the domain is VPC-internal in most deployments). This article shows how to do both with AWS CloudShell and a short read-only script — no software installation required.
 
 ---
 
@@ -27,7 +27,7 @@ Cluster state — four files describing shard layout, index sizes, disk allocati
 
 Plus one line of text: the domain's engine version (from Step 2).
 
-The metric files contain only numbers and timestamps. The cluster-state files contain index names (which mirror your registered bucket names), document counts, shard and disk statistics, and index configuration — no object contents, document data, or credentials.
+Nothing here contains object data or credentials; index names in the cluster-state files mirror your registered bucket names.
 
 ## Step 1 — Check your credentials
 
@@ -58,7 +58,7 @@ aws opensearch describe-domain --domain-name <DOMAIN_NAME> --region <REGION> \
 
 Note all three — the endpoint and VPC are used below; include the engine version in what you send to support. If you run several Quilt stacks, the `vpc` value tells you which stack's VPC a domain belongs to.
 
-(If `endpoint` comes back null, your domain has a public endpoint instead — check `--query 'DomainStatus.Endpoint'`. In that case skip Step 4 entirely and run the Step 5 script from any shell, using that endpoint as `HOST`.)
+(A null `endpoint` means the domain has a public endpoint instead — `DomainStatus.Endpoint`; then skip Step 4 and run the Step 5 script from any shell.)
 
 ## Step 3 — Export CloudWatch metrics
 
@@ -90,19 +90,17 @@ In a standard CloudShell you can download the files directly: **Actions → Down
 
 The domain only accepts connections from members of one security group in your Quilt stack: `…SearchClusterAccessorSecurityGroup…`. Find it in the EC2 console by its description — *"For resources that need access to search cluster"* — or in the CloudFormation stack's Resources tab under the logical ID `SearchClusterAccessorSecurityGroup`.
 
-(CloudShell isn't mandatory: any host inside the stack VPC with that security group, the Step 1 credentials, and python3 + boto3 can run the Step 5 script — then copy the files off it however you normally would; Step 6 and Cleanup are CloudShell-specific. The path below uses CloudShell, which works even in a VPC with no internet access.)
-
-In **CloudShell** (in your stack's region), create a new **VPC environment**. Two constraints to know before creating: you can have at most **two** VPC environments per user, and an environment's network settings can't be changed after creation — delete and recreate instead. Fill in:
+In **CloudShell** (in your stack's region), create a new **VPC environment**. Before creating, know: at most **two** VPC environments per user, and network settings are fixed at creation — delete and recreate to change them. Fill in:
 
 - **VPC**: the `vpc` value from Step 2.
-- **Subnet**: any subnet in the VPC can reach the domain. Step 6 additionally needs a route to S3 — in a Quilt-created VPC every subnet has one (S3 gateway endpoint), so pick any; in a customer-managed VPC prefer a subnet that can reach S3 through an S3 gateway endpoint, NAT, or your network's usual egress path (e.g. Transit Gateway).
+- **Subnet**: any subnet reaches the domain, but Step 6 needs an S3 route from it. Quilt-created VPCs: every subnet has one (S3 gateway endpoint) — pick any. Customer-managed VPCs: pick a subnet with an S3 gateway endpoint, NAT, or your usual egress path (e.g. Transit Gateway).
 - **Security group**: the one from above.
 
 Provisioning takes a minute or two; you're ready when the new environment opens with a shell prompt.
 
 ## Step 5 — Collect the cluster state
 
-Requests to the domain must be SigV4-signed; the script below signs them with your session's credentials using CloudShell's preinstalled Python and boto3. The request paths are fixed: AWS-managed domains only accept an allowlisted subset of the Elasticsearch REST API (for example, `/_all/_settings` is allowed but bare `/_settings` is rejected).
+Requests to the domain must be SigV4-signed; the script below signs them with your session's credentials using CloudShell's preinstalled Python and boto3. The request paths are fixed: AWS-managed domains accept only an allowlisted subset of the Elasticsearch REST API.
 
 Fill in the two placeholders — `<VPC_ENDPOINT>` is the `endpoint` value from Step 2, pasted as-is (no `https://` prefix); `<REGION>` is your stack's region, as in Step 2 — then paste the whole block:
 
