@@ -49,7 +49,7 @@ List the domains in your account (use your stack's region):
 aws opensearch list-domain-names --region <REGION>
 ```
 
-The search domain's name is derived from your CloudFormation stack name — lowercased and truncated — so a stack named `Prod-QuiltDeploymentStack` gets a domain like `prod-qu-search-<random-suffix>`. Get its VPC endpoint, engine version, and VPC:
+The Quilt search domain's name resembles your stack or deployment name, possibly lowercased, truncated, and suffixed — e.g. a stack named `Prod-QuiltDeploymentStack` gets a domain like `prod-qu-search-<random-suffix>`. Get its VPC endpoint, engine version, and VPC:
 
 ```bash
 aws opensearch describe-domain --domain-name <DOMAIN_NAME> --region <REGION> \
@@ -88,12 +88,12 @@ In a standard CloudShell you can download the files directly: **Actions → Down
 
 ## Step 4 — Open a shell inside the stack VPC
 
-The domain only accepts connections from members of one security group in your Quilt stack: `…SearchClusterAccessorSecurityGroup…`. Find it in the EC2 console by its description — *"For resources that need access to search cluster"* — or in the CloudFormation stack's Resources tab under the logical ID `SearchClusterAccessorSecurityGroup`.
+The domain only accepts connections from members of one security group in your Quilt deployment. Find it in the EC2 console by its description — *"For resources that need access to search cluster"* — or by name: it contains `search-accessor` or `SearchClusterAccessorSecurityGroup`.
 
 In **CloudShell** (in your stack's region), create a new **VPC environment**. Before creating, know: at most **two** VPC environments per user, and network settings are fixed at creation — delete and recreate to change them. Fill in:
 
 - **VPC**: the `vpc` value from Step 2.
-- **Subnet**: any subnet reaches the domain, but Step 6 needs an S3 route from it. Quilt-created VPCs: every subnet has one (S3 gateway endpoint) — pick any. Customer-managed VPCs: pick a subnet with an S3 gateway endpoint, NAT, or your usual egress path (e.g. Transit Gateway).
+- **Subnet**: any subnet reaches the domain, but Step 6 needs an S3 route from it — an S3 gateway endpoint in the subnet's route table, NAT, or your usual egress path (e.g. Transit Gateway). In Quilt-created VPCs every subnet typically qualifies.
 - **Security group**: the one from above.
 
 Provisioning takes a minute or two; you're ready when the new environment opens with a shell prompt.
