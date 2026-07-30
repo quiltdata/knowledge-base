@@ -14,7 +14,7 @@ When you report search-related issues (slow or failing searches, incomplete resu
 
 You'll work in two shells: a **standard CloudShell** for the performance metrics (Step 3), and a **CloudShell VPC environment** for the cluster state (Steps 4–6).
 
-Performance history — one JSON file per CloudWatch metric (CPU, search/indexing latency and rates, queues, JVM pressure, storage):
+Performance history — one JSON file per CloudWatch metric (CPU, search/indexing latency and rates, queues and rejections, JVM pressure, storage):
 
 - `cw_<MetricName>.json` (12 files)
 
@@ -27,7 +27,7 @@ Cluster state — four files describing shard layout, index sizes, disk allocati
 
 Plus one line of text: the domain's engine version (from Step 2).
 
-Nothing here contains object data or credentials; index names in the cluster-state files mirror your registered bucket names.
+The files disclose your registered bucket names (as index names in the cluster-state files), but no object contents, document data, or credentials.
 
 ## Step 1 — Check your credentials
 
@@ -49,7 +49,7 @@ List the domains in your account (use your stack's region):
 aws opensearch list-domain-names --region <REGION>
 ```
 
-The Quilt search domain's name resembles your stack or deployment name, possibly lowercased, truncated, and suffixed — e.g. a stack named `Prod-QuiltDeploymentStack` gets a domain like `prod-qu-search-<random-suffix>`. Get its VPC endpoint, engine version, and VPC:
+The Quilt search domain's name resembles your stack or deployment name — sometimes unchanged, sometimes lowercased, truncated, and suffixed (a stack named `Prod-QuiltDeploymentStack` gets a domain like `prod-qu-search-<random-suffix>`). Get its VPC endpoint, engine version, and VPC:
 
 ```bash
 aws opensearch describe-domain --domain-name <DOMAIN_NAME> --region <REGION> \
@@ -58,7 +58,7 @@ aws opensearch describe-domain --domain-name <DOMAIN_NAME> --region <REGION> \
 
 Note all three — the endpoint and VPC are used below; include the engine version in what you send to support. If you run several Quilt stacks, the `vpc` value tells you which stack's VPC a domain belongs to.
 
-(A null `endpoint` means the domain has a public endpoint instead — `DomainStatus.Endpoint`; then skip Step 4 and run the Step 5 script from any shell.)
+(A null `endpoint` means the domain has a public endpoint instead — `DomainStatus.Endpoint`. Then skip Step 4, run the Step 5 script from any shell with that endpoint as `HOST`, and skip Step 6 — the files land wherever you ran the script.)
 
 ## Step 3 — Export CloudWatch metrics
 
@@ -88,9 +88,9 @@ In a standard CloudShell you can download the files directly: **Actions → Down
 
 ## Step 4 — Open a shell inside the stack VPC
 
-The domain only accepts connections from members of one security group in your Quilt deployment. Find it in the EC2 console by its description — *"For resources that need access to search cluster"* — or by name: it contains `search-accessor` or `SearchClusterAccessorSecurityGroup`.
+The domain only accepts connections from members of one security group in your Quilt deployment. Find it in the EC2 console by its description — *"For resources that need access to search cluster"* — or by name: depending on how your deployment was created it contains `search-accessor` or `SearchClusterAccessorSecurityGroup`.
 
-In **CloudShell** (in your stack's region), create a new **VPC environment**. Before creating, know: at most **two** VPC environments per user, and network settings are fixed at creation — delete and recreate to change them. Fill in:
+In **CloudShell** (in your stack's region), create a new **VPC environment** ([AWS walkthrough](https://docs.aws.amazon.com/cloudshell/latest/userguide/creating-vpc-environment.html)). Before creating, know: at most **two** VPC environments per user (delete one if you're at the limit), and network settings are fixed at creation — delete and recreate to change them. Fill in:
 
 - **VPC**: the `vpc` value from Step 2.
 - **Subnet**: any subnet reaches the domain, but Step 6 needs an S3 route from it — an S3 gateway endpoint in the subnet's route table, NAT, or your usual egress path (e.g. Transit Gateway). In Quilt-created VPCs every subnet typically qualifies.
@@ -100,9 +100,9 @@ Provisioning takes a minute or two; you're ready when the new environment opens 
 
 ## Step 5 — Collect the cluster state
 
-Requests to the domain must be SigV4-signed; the script below signs them with your session's credentials using CloudShell's preinstalled Python and boto3. The request paths are fixed: AWS-managed domains accept only an allowlisted subset of the Elasticsearch REST API.
+Back in the **VPC environment** from Step 4: requests to the domain must be SigV4-signed, and the script below signs them with your session's credentials using CloudShell's preinstalled Python and boto3. The request paths are fixed — AWS-managed domains accept only an allowlisted subset of the domain's REST API.
 
-Fill in the two placeholders — `<VPC_ENDPOINT>` is the `endpoint` value from Step 2, pasted as-is (no `https://` prefix); `<REGION>` is your stack's region, as in Step 2 — then paste the whole block:
+Fill in the two placeholders — `<VPC_ENDPOINT>` is the `endpoint` value from Step 2 (no `https://` prefix); `<REGION>` as before — then paste the whole block:
 
 ```bash
 python3 << 'EOF'
@@ -147,10 +147,10 @@ Any other status means that request failed and its file contains the error messa
 CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends** — so move the files to S3 right away:
 
 ```bash
-aws s3 cp cat_shards.txt s3://<YOUR_BUCKET>/search-diagnostics/
-aws s3 cp cat_indices.txt s3://<YOUR_BUCKET>/search-diagnostics/
-aws s3 cp cat_allocation.txt s3://<YOUR_BUCKET>/search-diagnostics/
-aws s3 cp settings.json s3://<YOUR_BUCKET>/search-diagnostics/
+aws s3 cp cat_shards.txt s3://<BUCKET>/search-diagnostics/
+aws s3 cp cat_indices.txt s3://<BUCKET>/search-diagnostics/
+aws s3 cp cat_allocation.txt s3://<BUCKET>/search-diagnostics/
+aws s3 cp settings.json s3://<BUCKET>/search-diagnostics/
 ```
 
 Use any bucket you can write to, then download the files from the S3 console.
@@ -166,7 +166,7 @@ Delete the CloudShell VPC environment when you're done — it otherwise keeps ne
 ## Troubleshooting
 
 - **A `cw_*.json` file has an empty `Datapoints` array** (Step 3) — wrong `DOMAIN`, `ACCOUNT`, or region in the variables.
-- **The script hangs, then times out** (Step 5) — the environment isn't in the stack VPC, or is missing the `SearchClusterAccessorSecurityGroup`.
+- **The script hangs, then times out** (Step 5) — the environment isn't in the stack VPC, or is missing the accessor security group from Step 4.
 - **`HTTP 403`** (Step 5) — the credentials lack `es:ESHttpGet` on the domain (Step 1).
 - **`HTTP 401` with `"Your request … is not allowed"`** (Step 5) — the URL path isn't on AWS's supported-operations allowlist for managed domains; use the script exactly as given above.
 - **`aws s3 cp` hangs or fails** (Step 6) — the subnet has no route to S3; recreate the environment in a subnet that has one (see the subnet guidance in Step 4).
