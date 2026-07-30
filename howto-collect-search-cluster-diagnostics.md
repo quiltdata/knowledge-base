@@ -62,14 +62,14 @@ Note all three — the endpoint and VPC are used below; include the engine versi
 
 ## Step 3 — Export CloudWatch metrics
 
-This step needs no VPC access — run it in a standard CloudShell (or any Linux shell with the AWS CLI), **not** in the VPC environment you'll create in Step 4, which has no route to the CloudWatch API. Fill in the two variables at the top:
+This step needs no VPC access — run it in a standard CloudShell (or any shell with the AWS CLI; Linux and macOS both work), **not** in the VPC environment you'll create in Step 4, which has no route to the CloudWatch API. Fill in the two variables at the top:
 
 ```bash
 REGION=<REGION>
 DOMAIN=<DOMAIN_NAME>
 ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
-START=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
-END=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+START=$(($(date +%s) - 7*86400))
+END=$(date +%s)
 
 for m in CPUUtilization SearchLatency IndexingLatency SearchRate IndexingRate \
          JVMMemoryPressure ThreadpoolSearchQueue ThreadpoolSearchRejected \
