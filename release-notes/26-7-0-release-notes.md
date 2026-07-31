@@ -24,6 +24,22 @@ A search query that cannot be parsed — an unparseable numeric term, an invalid
 
 The registry now recycles its request-handling workers gracefully, using staggered worker lifetimes together with a per-worker memory cap, so gradual memory growth no longer ends in abrupt out-of-memory kills. Those kills could land mid-request and surface as an intermittent gateway error or a full-page Catalog error.
 
+## QuiltSync v0.20.0
+
+[QuiltSync](https://www.quilt.bio/quiltsync), the desktop sync client for Quilt packages, now handles multi-role access and local changes more gracefully.
+
+### Role Switching
+
+- **Switch Roles in QuiltSync:** Settings > Auth now shows the active role for each Quilt deployment and lets users with multiple roles switch directly in the app. The selected role takes effect on the next read or write.
+- **Clearer Permission Guidance:** When the active role cannot access a bucket, QuiltSync identifies the role and offers an opportunity to switch instead of showing a raw storage error or asking the user to sign in again. Commit is disabled before the operation starts, and Autosync pauses until the role changes.
+
+### Safer Pulls and Clearer Revisions
+
+- **Preserve Non-Conflicting Local Work:** Pull now keeps local edits that do not conflict with incoming remote changes. QuiltSync identifies conflicts before pulling and directs users to commit and resolve only when the same files changed locally and remotely. Autosync uses the same behavior.
+- **Readable Revision Details:** Version-mismatch banners now show the revision's commit message instead of its top hash, with the full hash available on hover.
+
+Download [QuiltSync v0.20.0](https://github.com/quiltdata/quilt-rs/releases/tag/QuiltSync/v0.20.0).
+
 ## Stack Admin Improvements
 
 This release closes a large batch of security-scanner findings across the CloudFormation template. Nearly all of them are configuration changes with no effect on how the stack behaves; the exceptions are called out below.
