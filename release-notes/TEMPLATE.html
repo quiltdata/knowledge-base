@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{PAGE_TITLE}}</title>
+  <meta name="description" content="{{PAGE_DESCRIPTION}}">
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #2a2765;
+      --panel: rgba(31, 19, 65, 0.3);
+      --text: #fff;
+      --muted: #d8d5ef;
+      --accent: #ff9902;
+      --link: #7ce0d9;
+      --button: #e359e3;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font: 15px/1.75 "Trebuchet MS", Arial, sans-serif;
+    }
+    main, footer { width: min(100% - 40px, 600px); margin-inline: auto; }
+    main { padding: 30px 0 20px; }
+    header { margin-bottom: 24px; }
+    h1 { margin: 20px 0; font-size: 36px; line-height: 1; }
+    h2 { margin: 28px 0 12px; font-size: 24px; line-height: 1.25; }
+    h3 { margin: 0 0 10px; color: var(--muted); font-size: 20px; line-height: 1.25; }
+    p { margin: 0 0 14px; }
+    ul { margin: 0; padding-left: 24px; }
+    li + li { margin-top: 8px; }
+    a { color: var(--link); }
+    code { font-family: "Courier New", monospace; }
+    img { display: block; width: 100%; height: auto; margin: 16px 0 24px; }
+    .logo { width: 164px; margin: 0 0 32px; }
+    .summary, .card { padding: 20px; border-radius: 8px; background: var(--panel); }
+    .card { margin-bottom: 14px; border-top: 3px solid var(--accent); }
+    .button {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 5px;
+      background: var(--button);
+      color: var(--text);
+      text-decoration: none;
+    }
+    footer { padding: 18px 0 30px; border-top: 3px solid var(--accent); font-size: 13px; }
+
+    @media (max-width: 480px) {
+      main, footer { width: min(100% - 24px, 600px); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <img class="logo" src="{{LOGO_URL}}" alt="{{ORGANIZATION_NAME}}">
+      <h1>{{RELEASE_TITLE}}</h1>
+      <p class="summary">{{RELEASE_SUMMARY}}</p>
+    </header>
+
+    <section>
+      <h2>{{SECTION_TITLE}}</h2>
+
+      <!-- Repeat this article for each feature. -->
+      <article class="card">
+        <h3>{{FEATURE_TITLE}}</h3>
+        <p>{{FEATURE_DESCRIPTION}}</p>
+        <ul>
+          <li>{{OPTIONAL_DETAIL}}</li>
+        </ul>
+      </article>
+
+      <!-- Optional supporting image. -->
+      <img src="{{IMAGE_URL}}" alt="{{IMAGE_DESCRIPTION}}">
+    </section>
+
+    <!-- Optional call to action. -->
+    <p><a class="button" href="{{CTA_URL}}">{{CTA_LABEL}}</a></p>
+  </main>
+
+  <footer>
+    <p>{{ORGANIZATION_NAME}}, {{ADDRESS}}</p>
+    <p><a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a></p>
+  </footer>
+</body>
+</html>
