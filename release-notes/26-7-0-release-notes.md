@@ -6,7 +6,9 @@ This release combines a broad batch of security and reliability improvements acr
 
 Starting with this release, Quilt Platform version numbers are date-based: **26.7** is the release for July 2026. The previous release was 1.71.
 
-This changes what the numbers mean, not the platform — it is not a jump of twenty-five major versions, and nothing about compatibility or the upgrade path changes with it. Version tags keep the same three-part form (`26.7.0`), and the third number still marks patch releases off a given month's release (`26.7.1`, `26.7.2`, and so on). Documentation that gives a minimum version as "1.70.0 or higher" continues to read correctly: 26.7 is later than any 1.x release.
+Existing minimum-version constraints such as "1.70.0 or higher," along with tooling that compares release versions, continue to work because 26.7 sorts after every 1.x release.
+
+This changes what the numbers mean, not the platform — it is not a jump of twenty-five major versions, and nothing about compatibility or the upgrade path changes with it. Version tags keep the same three-part form (`26.7.0`), and the third number still marks patch releases off a given month's release (`26.7.1`, `26.7.2`, and so on).
 
 ## Quilt Platform Changes
 
@@ -14,7 +16,7 @@ This changes what the numbers mean, not the platform — it is not a jump of twe
 
 Deleting a file from the Catalog on a versioning-enabled bucket now adds an S3 delete marker instead of erasing that version of the object. The file leaves the bucket listing as before, but earlier versions stay browsable and any package pinning them keeps resolving. On buckets without versioning enabled, deletion still removes the object permanently.
 
-A permission change comes with this. Managed read-write roles no longer grant `s3:DeleteObjectVersion`, so permanently erasing a specific object version is now an administrator operation: a Quilt admin can grant that action through a custom policy for roles that genuinely need it. If you previously relied on a managed read-write role to permanently delete object versions — including via `quilt3` — those calls will now fail with `AccessDenied` until an admin grants the action.
+Deleting a specific object version requires `s3:DeleteObjectVersion`, which Quilt read-write roles do not grant by default. Ask a Quilt admin to attach a custom policy granting this action to your role; otherwise `delete_object` calls, including through `quilt3`, fail with `AccessDenied`. No action is required if nothing in your workflows deletes specific object versions.
 
 ### Clear Errors for Malformed Searches
 

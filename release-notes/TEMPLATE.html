@@ -29,6 +29,7 @@
       font: 15px/1.75 "Trebuchet MS", Arial, sans-serif;
     }
     main, footer { width: min(100% - 40px, 600px); margin-inline: auto; }
+    .deployment-section { width: min(100% - 40px, 600px); margin-inline: auto; }
     main { padding: 30px 0 20px; }
     header { margin-bottom: 24px; }
     h1 { margin: 20px 0; font-size: 36px; line-height: 1; }
@@ -51,10 +52,14 @@
       color: var(--text);
       text-decoration: none;
     }
+    .deployment { display: block; width: 100%; }
+    .deployment div { display: block; width: 100%; margin-bottom: 12px; overflow: hidden; border-radius: 8px; background: #59499a; }
+    .deployment h3 { margin: 0; padding: 12px 14px; }
+    .deployment p { display: block; width: 100%; margin: 0; padding: 12px 14px; background: #fff; color: #33475b; overflow-wrap: anywhere; }
     footer { padding: 18px 0 30px; border-top: 3px solid var(--accent); font-size: 13px; }
 
     @media (max-width: 480px) {
-      main, footer { width: min(100% - 24px, 600px); }
+      main, footer, .deployment-section { width: min(100% - 24px, 600px); }
     }
     /*]]>*/
   </style>
@@ -96,6 +101,21 @@
   </main>
   {% end_module_attribute %}
   {% end_module_block %}
+
+  <!-- Keep deployment tokens outside rich-text modules so HubL evaluates them. -->
+  <section class="deployment-section">
+    <h2>Your CloudFormation Template</h2>
+    <p>Find the CloudFormation YAML file available via the link below:</p>
+    <div class="deployment">
+      <div><h3>Catalog URL</h3><p>{{ personalization_token('p24310949_deployments.quilt_stack_url', 'No URL Found') }}</p></div>
+      <div><h3>Template URL</h3><p>{{ personalization_token('p24310949_deployments.template_variant_url', 'No Template Variant Found') }}</p></div>
+      <div><h3>Deployment Style</h3><p>{{ personalization_token('p24310949_deployments.cf_tf', 'CF') }}</p></div>
+      <div><h3>Network Version</h3><p>{{ personalization_token('p24310949_deployments.network_version', '2') }}</p></div>
+    </div>
+    <p>For more information on how to apply this release for CloudFormation (CF), refer to our <a href="https://docs.quiltdata.com/advanced/technical-reference#routine-maintenance-and-upgrades">upgrade documentation</a> or full <a href="https://docs.quiltdata.com/advanced/technical-reference">installation guide</a>.</p>
+    <p>Terraform users (TF) can use the public <a href="https://github.com/quiltdata/iac">quilt module</a>.</p>
+    <p>Please contact <a href="mailto:[[SUPPORT_EMAIL]]">[[SUPPORT_EMAIL]]</a> if you have any questions.</p>
+  </section>
 
   <footer>
     <p>{{ site_settings.company_name }}, {{ site_settings.company_street_address_1 }}{% if site_settings.company_street_address_2 %}, {{ site_settings.company_street_address_2 }}{% endif %}, {{ site_settings.company_city }}, {{ site_settings.company_state }} {{ site_settings.company_zip }}, {{ site_settings.company_country }}</p>
