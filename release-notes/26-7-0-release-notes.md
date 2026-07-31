@@ -1,6 +1,6 @@
 # Platform Update 26.7
 
-This is primarily a security and reliability release: a broad batch of infrastructure hardening across the stack, safer file deletion in the Catalog, clearer errors for malformed searches, and steadier registry memory use under sustained load. It also changes how Quilt Platform releases are numbered.
+This release combines a broad batch of security and reliability improvements across the stack with QuiltSync v0.20.0, which adds role switching, safer pulls, and clearer revision details. It also brings safer file deletion in the Catalog, clearer errors for malformed searches, steadier registry memory use under sustained load, and a new date-based numbering scheme for Quilt Platform releases.
 
 ## A Note on Version Numbering
 
@@ -30,7 +30,7 @@ The registry now recycles its request-handling workers gracefully, using stagger
 
 ### Role Switching
 
-- **Switch Roles in QuiltSync:** Settings > Auth now shows the active role for each Quilt deployment and lets users with multiple roles switch directly in the app. The selected role takes effect on the next read or write.
+- **Switch Roles in QuiltSync:** Settings > Auth now shows the active role for each Quilt catalog login and lets users with multiple roles switch directly in the app. The selected role takes effect on the next read or write.
 - **Clearer Permission Guidance:** When the active role cannot access a bucket, QuiltSync identifies the role and offers an opportunity to switch instead of showing a raw storage error or asking the user to sign in again. Commit is disabled before the operation starts, and Autosync pauses until the role changes.
 
 ### Safer Pulls and Clearer Revisions
@@ -38,7 +38,7 @@ The registry now recycles its request-handling workers gracefully, using stagger
 - **Preserve Non-Conflicting Local Work:** Pull now keeps local edits that do not conflict with incoming remote changes. QuiltSync identifies conflicts before pulling and directs users to commit and resolve only when the same files changed locally and remotely. Autosync uses the same behavior.
 - **Readable Revision Details:** Version-mismatch banners now show the revision's commit message instead of its top hash, with the full hash available on hover.
 
-Download [QuiltSync v0.20.0](https://github.com/quiltdata/quilt-rs/releases/tag/QuiltSync/v0.20.0).
+Download [QuiltSync v0.20.0](https://www.quilt.bio/quiltsync).
 
 ## Stack Admin Improvements
 
