@@ -1,11 +1,15 @@
+<!--
+  templateType: email
+  isAvailableForNewContent: true
+  label: Quilt Platform Release Notes
+-->
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{PAGE_TITLE}}</title>
-  <meta name="description" content="{{PAGE_DESCRIPTION}}">
-  <style>
+  <title>{% if content.html_title and content.html_title != '' %}{{ content.html_title }}{% else %}{{ content.body.subject }}{% endif %}</title>
+  {% if content.meta_description %}<meta name="description" content="{{ content.meta_description }}">{% endif %}
+  <style type="text/css" id="hs-inline-css">
+    /*<![CDATA[*/
     :root {
       color-scheme: dark;
       --background: #2a2765;
@@ -52,39 +56,52 @@
     @media (max-width: 480px) {
       main, footer { width: min(100% - 24px, 600px); }
     }
+    /*]]>*/
   </style>
 </head>
 <body>
+  <div id="preview_text" style="display:none!important">{% text "preview_text" label="Preview Text <span class=help-text>This will be used as the preview text that displays in some email clients</span>", value="[[PAGE_DESCRIPTION]]", no_wrapper=True %}</div>
+  {% if content.create_page %}
+  <p style="margin: 0; padding: 8px; text-align: center; font: 12px Arial, sans-serif;">
+    Not displaying correctly? <a class="hubspot-mergetag" data-viewaswebpage="true" href="{{ view_as_page_url }}">View this email in your browser</a>.
+  </p>
+  {% endif %}
+  {% module_block module "email_template_main_email_body" path="@hubspot/email_body", label="Main Email Body" %}
+  {% module_attribute "html" %}
   <main>
     <header>
-      <img class="logo" src="{{LOGO_URL}}" alt="{{ORGANIZATION_NAME}}">
-      <h1>{{RELEASE_TITLE}}</h1>
-      <p class="summary">{{RELEASE_SUMMARY}}</p>
+      <img class="logo" src="[[LOGO_URL]]" alt="[[ORGANIZATION_NAME]]">
+      <h1>[[RELEASE_TITLE]]</h1>
+      <p class="summary">[[RELEASE_SUMMARY]]</p>
     </header>
 
     <section>
-      <h2>{{SECTION_TITLE}}</h2>
+      <h2>[[SECTION_TITLE]]</h2>
 
       <!-- Repeat this article for each feature. -->
       <article class="card">
-        <h3>{{FEATURE_TITLE}}</h3>
-        <p>{{FEATURE_DESCRIPTION}}</p>
+        <h3>[[FEATURE_TITLE]]</h3>
+        <p>[[FEATURE_DESCRIPTION]]</p>
         <ul>
-          <li>{{OPTIONAL_DETAIL}}</li>
+          <li>[[OPTIONAL_DETAIL]]</li>
         </ul>
       </article>
 
       <!-- Optional supporting image. -->
-      <img src="{{IMAGE_URL}}" alt="{{IMAGE_DESCRIPTION}}">
+      <img src="[[IMAGE_URL]]" alt="[[IMAGE_DESCRIPTION]]">
     </section>
 
     <!-- Optional call to action. -->
-    <p><a class="button" href="{{CTA_URL}}">{{CTA_LABEL}}</a></p>
+    <p><a class="button" href="[[CTA_URL]]">[[CTA_LABEL]]</a></p>
   </main>
+  {% end_module_attribute %}
+  {% end_module_block %}
 
   <footer>
-    <p>{{ORGANIZATION_NAME}}, {{ADDRESS}}</p>
-    <p><a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a></p>
+    <p>{{ site_settings.company_name }}, {{ site_settings.company_street_address_1 }}{% if site_settings.company_street_address_2 %}, {{ site_settings.company_street_address_2 }}{% endif %}, {{ site_settings.company_city }}, {{ site_settings.company_state }} {{ site_settings.company_zip }}, {{ site_settings.company_country }}</p>
+    <p>You received this email because you are subscribed to {{ subscription_name }} from {{ site_settings.company_name }}.</p>
+    <p><a class="hubspot-mergetag" data-unsubscribe="true" href="{{ unsubscribe_link }}">Manage email preferences</a> · <a class="hubspot-mergetag" data-unsubscribe="true" href="{{ unsubscribe_link_all }}">Unsubscribe from all emails</a></p>
+    <p><a href="mailto:[[SUPPORT_EMAIL]]">[[SUPPORT_EMAIL]]</a></p>
   </footer>
 </body>
 </html>
