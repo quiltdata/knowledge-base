@@ -45,7 +45,7 @@ Note all three — the endpoint and VPC are used below; include the engine versi
 
 ## Step 3 — Export CloudWatch metrics
 
-This step needs no VPC access — run it in a standard CloudShell (or any shell with the AWS CLI), **not** in the VPC environment you'll create in Step 4, which may have no route to the CloudWatch API. Fill in the two variables at the top:
+This step needs no VPC access — run it in a standard CloudShell (or any shell with the AWS CLI). Fill in the two variables at the top:
 
 ```bash
 REGION=<REGION>
