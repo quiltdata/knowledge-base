@@ -83,7 +83,7 @@ for m in CPUUtilization SearchLatency IndexingLatency SearchRate IndexingRate \
 done
 ```
 
-This exports the last 7 days at 10-minute resolution (support may ask for a different window). Each file should contain a `Datapoints` array with roughly a thousand entries — an empty array means a wrong `DOMAIN`, `ACCOUNT`, or region (exception: `CoordinatingWriteRejected`, `PrimaryWriteRejected`, and `ReplicaWriteRejected` only exist on engine versions 7.1+, so empty files for those are normal on older domains).
+This exports the last 7 days at 10-minute resolution (support may ask for a different window). Each file should contain a `Datapoints` array with roughly a thousand entries. Empty arrays in **every** file mean a wrong `DOMAIN`, `ACCOUNT`, or region; a few empty files are normal (not every metric exists on every engine version).
 
 In a standard CloudShell you can download the files directly: **Actions → Download file**. (Or `aws s3 cp` them to the same bucket you'll use in Step 6.)
 
@@ -185,7 +185,7 @@ Delete the CloudShell VPC environment when you're done — it otherwise keeps ne
 
 ## Troubleshooting
 
-- **A `cw_*.json` file has an empty `Datapoints` array** (Step 3) — wrong `DOMAIN`, `ACCOUNT`, or region in the variables.
+- **Every `cw_*.json` file has an empty `Datapoints` array** (Step 3) — wrong `DOMAIN`, `ACCOUNT`, or region in the variables (a few empty files are normal).
 - **`cannot reach …` (`ConnectTimeoutError`, `NewConnectionError`), `Max retries exceeded`, or a silent hang** (Step 5) — the shell has no network path to the domain: you're not in the VPC environment from Step 4, or it's missing the accessor security group. This is a network-placement problem, not a script bug — modifying the script won't help; fix the environment and rerun the script unmodified.
 - **`HTTP 403`** (Step 5) — the credentials lack `es:ESHttpGet` on the domain (Step 1).
 - **`HTTP 401` with `"Your request … is not allowed"`** (Step 5) — the URL path isn't on AWS's supported-operations allowlist for managed domains; use the script exactly as given above.
