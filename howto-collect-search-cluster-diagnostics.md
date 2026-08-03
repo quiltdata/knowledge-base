@@ -16,7 +16,7 @@ You'll work in two shells: a **standard CloudShell** for the performance metrics
 
 Performance history — one JSON file per CloudWatch metric (CPU, search/indexing latency and rates, queues and rejections, JVM pressure, storage):
 
-- `cw_<MetricName>.json` (12 files)
+- `cw_<MetricName>.json` (15 files)
 
 Cluster state — four files describing shard layout, index sizes, disk allocation, and index settings:
 
@@ -35,7 +35,7 @@ The credentials you'll use — in CloudShell, the console role you're signed in 
 
 - `es:ListDomainNames` and `es:DescribeDomain` — for Step 2
 - `cloudwatch:GetMetricStatistics` — for Step 3
-- permission to create and use CloudShell VPC environments ([AWS's required IAM permissions](https://docs.aws.amazon.com/cloudshell/latest/userguide/sec-auth-with-identities.html)) — for Step 4
+- permission to create and use CloudShell VPC environments ([AWS's required IAM permissions](https://docs.aws.amazon.com/cloudshell/latest/userguide/sec-auth-with-identities.html)) — for Step 4 (this creates no infrastructure — see the note there)
 - `es:ESHttpGet` on the domain — the cluster-state requests (Step 5) are all read-only GETs
 - write access to some S3 bucket — for copying the results out (Step 6)
 
@@ -58,11 +58,11 @@ aws opensearch describe-domain --domain-name <DOMAIN_NAME> --region <REGION> \
 
 Note all three — the endpoint and VPC are used below; include the engine version in what you send to support. If you run several Quilt stacks, the `vpc` value tells you which stack's VPC a domain belongs to.
 
-(A null `endpoint` means the domain has a public endpoint instead — `DomainStatus.Endpoint`. Then skip Step 4, run the Step 5 script from any shell with that endpoint as `HOST`, and skip Step 6 — the files land wherever you ran the script.)
+**If `endpoint` is null**, your domain has a public endpoint instead — read it from `DomainStatus.Endpoint`. Public-endpoint deployments skip Steps 4 and 6: run the Step 5 script from any shell, with the public endpoint as `HOST` — the files land wherever you run it.
 
 ## Step 3 — Export CloudWatch metrics
 
-This step needs no VPC access — run it in a standard CloudShell (or any shell with the AWS CLI; Linux and macOS both work), **not** in the VPC environment you'll create in Step 4, which has no route to the CloudWatch API. Fill in the two variables at the top:
+This step needs no VPC access — run it in a standard CloudShell (or any shell with the AWS CLI; Linux and macOS both work), **not** in the VPC environment you'll create in Step 4, which may have no route to the CloudWatch API. Fill in the two variables at the top:
 
 ```bash
 REGION=<REGION>
@@ -73,7 +73,8 @@ END=$(date +%s)
 
 for m in CPUUtilization SearchLatency IndexingLatency SearchRate IndexingRate \
          JVMMemoryPressure ThreadpoolSearchQueue ThreadpoolSearchRejected \
-         ThreadpoolWriteQueue ThreadpoolWriteRejected ClusterIndexWritesBlocked FreeStorageSpace; do
+         ThreadpoolWriteQueue ThreadpoolWriteRejected CoordinatingWriteRejected \
+         PrimaryWriteRejected ReplicaWriteRejected ClusterIndexWritesBlocked FreeStorageSpace; do
   aws cloudwatch get-metric-statistics --region $REGION --namespace AWS/ES \
     --metric-name $m --dimensions Name=DomainName,Value=$DOMAIN Name=ClientId,Value=$ACCOUNT \
     --start-time $START --end-time $END --period 600 --statistics Average Maximum \
@@ -82,13 +83,13 @@ for m in CPUUtilization SearchLatency IndexingLatency SearchRate IndexingRate \
 done
 ```
 
-This exports the last 7 days at 10-minute resolution (support may ask for a different window). Each file should contain a `Datapoints` array with several hundred entries — an empty array means a wrong `DOMAIN`, `ACCOUNT`, or region.
+This exports the last 7 days at 10-minute resolution (support may ask for a different window). Each file should contain a `Datapoints` array with roughly a thousand entries — an empty array means a wrong `DOMAIN`, `ACCOUNT`, or region (exception: `CoordinatingWriteRejected`, `PrimaryWriteRejected`, and `ReplicaWriteRejected` only exist on engine versions 7.1+, so empty files for those are normal on older domains).
 
 In a standard CloudShell you can download the files directly: **Actions → Download file**. (Or `aws s3 cp` them to the same bucket you'll use in Step 6.)
 
 ## Step 4 — Open a shell inside the stack VPC
 
-The domain only accepts connections from members of one security group in your Quilt deployment. Find it in the EC2 console by its description — *"For resources that need access to search cluster"* — or by name: depending on how your deployment was created it contains `search-accessor` or `SearchClusterAccessorSecurityGroup`. Or from any shell (`<VPC_ID>` is the `vpc` value from Step 2):
+The domain only accepts connections from members of one security group in your Quilt deployment — the **accessor security group**. Find it in the EC2 console by its description — *"For resources that need access to search cluster"* — or by name (it contains `SearchClusterAccessorSecurityGroup`). Or from any shell (`<VPC_ID>` is the `vpc` value from Step 2):
 
 ```bash
 aws ec2 describe-security-groups --region <REGION> \
@@ -97,11 +98,13 @@ aws ec2 describe-security-groups --region <REGION> \
   --output text
 ```
 
-In **CloudShell** (in your stack's region), create a new **VPC environment** ([AWS walkthrough](https://docs.aws.amazon.com/cloudshell/latest/userguide/creating-vpc-environment.html)). Despite the "create", this is not new infrastructure — not a VPC endpoint, not an instance: a VPC environment is an ordinary CloudShell session whose network interface sits inside your VPC. It changes nothing in your Quilt deployment, costs nothing, and deleting it (see Cleanup) removes everything it made. Before creating, know: at most **two** VPC environments per user (delete one if you're at the limit), and network settings are fixed at creation — delete and recreate to change them. Fill in:
+In **CloudShell** (in your stack's region), create a new **VPC environment** ([AWS walkthrough](https://docs.aws.amazon.com/cloudshell/latest/userguide/creating-vpc-environment.html)). Despite the "create", this is not new infrastructure — not a VPC endpoint, not an instance: a VPC environment is an ordinary CloudShell session whose network interface sits inside your VPC. It changes nothing in your Quilt deployment, costs nothing, and deleting it (see Cleanup) removes everything it made.
+
+Before creating, know two constraints: at most **two** VPC environments per IAM principal — shared with anyone else using the same role — so delete one if you're at the limit; and network settings are fixed at creation, so to change them you delete and recreate. Fill in:
 
 - **VPC**: the `vpc` value from Step 2.
-- **Subnet**: any subnet in the VPC can reach the domain (access is gated by the security group), but Step 6 copies the files out via S3, so pick a subnet that can also reach S3. **Don't assume the domain's own subnets qualify** — in newer deployments they're deliberately isolated, with no route to S3. A subnet the Quilt services run on always works: in a Quilt-created VPC that's a subnet named `<stack>-private-…`; if you supplied your own VPC, use one of the stack's `Subnets` parameter values. The worst a wrong pick does is make Step 6 hang; recreating the environment with another subnet fixes it.
-- **Security group**: the one from above.
+- **Subnet**: pick a subnet the Quilt services run on — in a Quilt-created VPC, one named `<stack>-private-…`; if you supplied your own VPC, one of the stack's `Subnets` parameter values. Any subnet can reach the domain (access is gated by the security group), but Step 6 copies the files out via S3, and **the domain's own subnets often can't reach S3** — in newer deployments they're deliberately isolated. The worst a wrong pick does is make Step 6 hang; recreating the environment with another subnet fixes it.
+- **Security group**: the accessor security group from above.
 
 Provisioning takes a minute or two; you're ready when the new environment opens with a shell prompt.
 
@@ -113,8 +116,8 @@ Fill in the two placeholders — `<VPC_ENDPOINT>` is the `endpoint` value from S
 
 ```bash
 python3 << 'EOF'
-# Run this ONLY in the CloudShell VPC environment from Step 4 —
-# from any other shell the domain is unreachable and every request fails.
+# A VPC-internal domain is reachable ONLY from the CloudShell VPC environment
+# from Step 4 — anywhere else, every request fails. (Public endpoint: any shell.)
 import boto3, urllib3
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
@@ -139,8 +142,9 @@ for fname, path in FILES.items():
     except urllib3.exceptions.HTTPError as e:
         raise SystemExit(
             f"{type(e).__name__}: cannot reach {HOST} from this shell.\n"
-            "Not a script problem - run the script, unmodified, in the "
-            "CloudShell VPC environment from Step 4."
+            "Not a script problem. VPC-internal domain: run this, unmodified, "
+            "in the CloudShell VPC environment from Step 4. "
+            "Public endpoint: check the HOST value."
         )
     open(fname, "wb").write(r.data)
     print(fname, "HTTP", r.status)
@@ -160,7 +164,7 @@ Any other status means that request failed and its file contains the error messa
 
 ## Step 6 — Copy the cluster-state files out
 
-CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends** — so move the files to S3 right away:
+CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends** — idle sessions end after 20–30 minutes (10 in GovCloud) — so move the files to S3 right away:
 
 ```bash
 aws s3 cp cat_shards.txt s3://<BUCKET>/search-diagnostics/
@@ -177,12 +181,12 @@ Attach everything — the `cw_*.json` metric exports, the four cluster-state fil
 
 ## Cleanup
 
-Delete the CloudShell VPC environment when you're done — it otherwise keeps network interfaces in your VPC.
+Delete the CloudShell VPC environment when you're done — it otherwise keeps network interfaces in your VPC. If the delete leaves a network interface behind (your role lacks `ec2:DeleteNetworkInterface`), remove it in the EC2 console. Once support confirms it has the files, you can also delete the `search-diagnostics/` copies from your bucket.
 
 ## Troubleshooting
 
 - **A `cw_*.json` file has an empty `Datapoints` array** (Step 3) — wrong `DOMAIN`, `ACCOUNT`, or region in the variables.
-- **`cannot reach …` / `ConnectTimeoutError` / `Max retries exceeded` — or a silent hang** (Step 5) — the shell has no network path to the domain: you're not in the VPC environment from Step 4, or it's missing the accessor security group. This is a network-placement problem, not a script bug — modifying the script won't help; fix the environment and rerun the script unmodified.
+- **`cannot reach …` (`ConnectTimeoutError`, `NewConnectionError`), `Max retries exceeded`, or a silent hang** (Step 5) — the shell has no network path to the domain: you're not in the VPC environment from Step 4, or it's missing the accessor security group. This is a network-placement problem, not a script bug — modifying the script won't help; fix the environment and rerun the script unmodified.
 - **`HTTP 403`** (Step 5) — the credentials lack `es:ESHttpGet` on the domain (Step 1).
 - **`HTTP 401` with `"Your request … is not allowed"`** (Step 5) — the URL path isn't on AWS's supported-operations allowlist for managed domains; use the script exactly as given above.
 - **`aws s3 cp` hangs or fails** (Step 6) — the subnet has no route to S3 (the domain's own subnets often don't); delete the environment and recreate it in a subnet that has one — see the subnet guidance in Step 4.
