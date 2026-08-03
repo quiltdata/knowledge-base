@@ -100,7 +100,7 @@ aws ec2 describe-security-groups --region <REGION> \
 In **CloudShell** (in your stack's region), create a new **VPC environment** ([AWS walkthrough](https://docs.aws.amazon.com/cloudshell/latest/userguide/creating-vpc-environment.html)). Despite the "create", this is not new infrastructure — not a VPC endpoint, not an instance: a VPC environment is an ordinary CloudShell session whose network interface sits inside your VPC. It changes nothing in your Quilt deployment, costs nothing, and deleting it (see Cleanup) removes everything it made. Before creating, know: at most **two** VPC environments per user (delete one if you're at the limit), and network settings are fixed at creation — delete and recreate to change them. Fill in:
 
 - **VPC**: the `vpc` value from Step 2.
-- **Subnet**: any subnet reaches the domain, but Step 6 copies the files out via S3, which needs an S3 route — an S3 gateway endpoint in the subnet's route table, NAT, or your usual egress path (e.g. Transit Gateway). This is about *picking* a subnet whose route already exists, not creating one: in Quilt-created VPCs every subnet typically qualifies, and if none does, Step 6 has a fallback that needs no S3 at all.
+- **Subnet**: any subnet in the VPC can reach the domain (access is gated by the security group), but Step 6 copies the files out via S3, so pick a subnet that can also reach S3. **Don't assume the domain's own subnets qualify** — in newer deployments they're deliberately isolated, with no route to S3. A subnet the Quilt services run on always works: in a Quilt-created VPC that's a subnet named `<stack>-private-…` (older layouts: `<stack>-a`/`<stack>-b`); if you supplied your own VPC, use one of the stack's `Subnets` parameter values. To verify a candidate, check its route table (VPC console → Subnets → Route table tab) for an S3 gateway endpoint (`vpce-…`) or a default route to NAT/your usual egress path. This is about *picking* a subnet — never create routes or endpoints for this.
 - **Security group**: the one from above.
 
 Provisioning takes a minute or two; you're ready when the new environment opens with a shell prompt.
@@ -171,8 +171,6 @@ aws s3 cp settings.json s3://<BUCKET>/search-diagnostics/
 
 Use any bucket you can write to, then download the files from the S3 console.
 
-If no subnet with an S3 route was available in Step 4, skip S3 entirely — the files are small enough to move as text. In the VPC environment run `tar czf - cat_*.txt settings.json | base64`, copy the output from the terminal, and on your machine paste it into `base64 -d | tar xzf -` (finish with Ctrl-D).
-
 ## Step 7 — Send the files
 
 Attach everything — the `cw_*.json` metric exports, the four cluster-state files, and the engine version from Step 2 — to your support thread or email them to support@quilt.bio.
@@ -187,4 +185,4 @@ Delete the CloudShell VPC environment when you're done — it otherwise keeps ne
 - **`cannot reach …` / `ConnectTimeoutError` / `Max retries exceeded` — or a silent hang** (Step 5) — the shell has no network path to the domain: you're not in the VPC environment from Step 4, or it's missing the accessor security group. This is a network-placement problem, not a script bug — modifying the script won't help; fix the environment and rerun the script unmodified.
 - **`HTTP 403`** (Step 5) — the credentials lack `es:ESHttpGet` on the domain (Step 1).
 - **`HTTP 401` with `"Your request … is not allowed"`** (Step 5) — the URL path isn't on AWS's supported-operations allowlist for managed domains; use the script exactly as given above.
-- **`aws s3 cp` hangs or fails** (Step 6) — the subnet has no route to S3; recreate the environment in a subnet that has one (see the subnet guidance in Step 4), or use Step 6's no-S3 fallback.
+- **`aws s3 cp` hangs or fails** (Step 6) — the subnet has no route to S3 (the domain's own subnets often don't); delete the environment and recreate it in a subnet that has one — see the subnet guidance in Step 4.
