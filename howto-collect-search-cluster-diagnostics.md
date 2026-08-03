@@ -41,7 +41,7 @@ aws opensearch describe-domain --domain-name <DOMAIN_NAME> --region <REGION> \
 
 Note all three — the endpoint and VPC are used below; include the engine version in what you send to support. If you run several Quilt stacks, the `vpc` value tells you which stack's VPC a domain belongs to.
 
-**If `endpoint` is null**, your domain has a public endpoint instead — read it from `DomainStatus.Endpoint`. Public-endpoint deployments skip Steps 4 and 6: run the Step 5 script from any shell, with the public endpoint as `HOST` — the files land wherever you run it.
+**If `endpoint` is null**, your domain has a public endpoint instead — read it from `DomainStatus.Endpoint`. Public-endpoint deployments skip Steps 4 and 6: run the Step 5 script from any shell with Python and boto3 (a standard CloudShell has both), with the public endpoint as `HOST` — the files land wherever you run it.
 
 ## Step 3 — Export CloudWatch metrics
 
@@ -99,8 +99,9 @@ Fill in the two placeholders — `<VPC_ENDPOINT>` is the `endpoint` value from S
 
 ```bash
 python3 << 'EOF'
-# A VPC-internal domain is reachable ONLY from the CloudShell VPC environment
-# from Step 4 — anywhere else, every request fails. (Public endpoint: any shell.)
+# A VPC-internal domain is reachable only from inside the stack VPC — use the
+# CloudShell VPC environment from Step 4; elsewhere every request fails.
+# (Public endpoint: any shell.)
 import boto3, urllib3
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
