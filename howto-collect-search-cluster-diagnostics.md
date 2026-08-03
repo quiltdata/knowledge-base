@@ -147,7 +147,7 @@ Any other status means that request failed and its file contains the error messa
 
 ## Step 6 — Copy the cluster-state files out
 
-CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends**, and an idle session can end in as little as 10 minutes — so move the files to S3 right away:
+CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends** (an idle session can end in as little as 10 minutes) — so move the files to S3 right away:
 
 ```bash
 aws s3 cp cat_shards.txt s3://<BUCKET>/search-diagnostics/
