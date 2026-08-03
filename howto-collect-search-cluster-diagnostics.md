@@ -93,7 +93,7 @@ Provisioning takes a minute or two; you're ready when the new environment opens 
 
 ## Step 5 — Collect the cluster state
 
-Back in the **VPC environment** from Step 4: requests to the domain must be SigV4-signed, and the script below signs them with your session's credentials using CloudShell's preinstalled Python and boto3. The request paths are fixed — AWS-managed domains accept only an allowlisted subset of the domain's REST API.
+Back in the **VPC environment** from Step 4: requests to the domain must be SigV4-signed, and the script below signs them with your session's credentials using CloudShell's preinstalled Python and boto3.
 
 Fill in the two placeholders — `<VPC_ENDPOINT>` is the `endpoint` value from Step 2 (no `https://` prefix); `<REGION>` as before — then paste the whole block:
 
@@ -147,7 +147,7 @@ Any other status means that request failed and its file contains the error messa
 
 ## Step 6 — Copy the cluster-state files out
 
-CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends**, and idle sessions end after 20–30 minutes (10 in GovCloud) — so move the files to S3 right away:
+CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends**, and an idle session can end in as little as 10 minutes — so move the files to S3 right away:
 
 ```bash
 aws s3 cp cat_shards.txt s3://<BUCKET>/search-diagnostics/
