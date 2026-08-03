@@ -62,7 +62,7 @@ Note all three — the endpoint and VPC are used below; include the engine versi
 
 ## Step 3 — Export CloudWatch metrics
 
-This step needs no VPC access — run it in a standard CloudShell (or any shell with the AWS CLI; Linux and macOS both work), **not** in the VPC environment you'll create in Step 4, which may have no route to the CloudWatch API. Fill in the two variables at the top:
+This step needs no VPC access — run it in a standard CloudShell (or any shell with the AWS CLI), **not** in the VPC environment you'll create in Step 4, which may have no route to the CloudWatch API. Fill in the two variables at the top:
 
 ```bash
 REGION=<REGION>
@@ -164,7 +164,7 @@ Any other status means that request failed and its file contains the error messa
 
 ## Step 6 — Copy the cluster-state files out
 
-CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends** — idle sessions end after 20–30 minutes (10 in GovCloud) — so move the files to S3 right away:
+CloudShell VPC environments can't use the console's upload/download menu, and their storage is **deleted when the session ends**, and idle sessions end after 20–30 minutes (10 in GovCloud) — so move the files to S3 right away:
 
 ```bash
 aws s3 cp cat_shards.txt s3://<BUCKET>/search-diagnostics/
