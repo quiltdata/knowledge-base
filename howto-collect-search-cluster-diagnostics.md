@@ -6,28 +6,11 @@
 
 ## Summary
 
-When you report search-related issues (slow or failing searches, incomplete results, high cluster CPU), Quilt support may ask for diagnostics from your deployment's Elasticsearch/OpenSearch domain: CloudWatch performance metrics, plus cluster-state files collected from inside the stack's VPC (the domain is VPC-internal in most deployments). This article shows how to do both with AWS CloudShell and a short read-only script — no software installation required.
+When you report search-related issues (slow or failing searches, incomplete results, high cluster CPU), Quilt support may ask for diagnostics from your deployment's Elasticsearch/OpenSearch domain: CloudWatch performance metrics, plus cluster-state files collected from inside the stack's VPC (the domain is VPC-internal in most deployments). This article shows how to do both with AWS CloudShell and a short read-only script — no software installation required. You'll work in two shells: a **standard CloudShell** for the performance metrics (Step 3), and a **CloudShell VPC environment** for the cluster state (Steps 4–6).
+
+The collected files disclose your registered bucket names (as index names), but no object contents, document data, or credentials.
 
 ---
-
-## What you'll collect
-
-You'll work in two shells: a **standard CloudShell** for the performance metrics (Step 3), and a **CloudShell VPC environment** for the cluster state (Steps 4–6).
-
-Performance history — one JSON file per CloudWatch metric (CPU, search/indexing latency and rates, queues and rejections, JVM pressure, storage):
-
-- `cw_<MetricName>.json` (15 files)
-
-Cluster state — four files describing shard layout, index sizes, disk allocation, and index settings:
-
-- `cat_shards.txt`
-- `cat_indices.txt`
-- `cat_allocation.txt`
-- `settings.json`
-
-Plus one line of text: the domain's engine version (from Step 2).
-
-The files disclose your registered bucket names (as index names in the cluster-state files), but no object contents, document data, or credentials.
 
 ## Step 1 — Check your credentials
 
