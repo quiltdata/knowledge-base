@@ -6,9 +6,9 @@
 
 ## Summary
 
-Some Quilt deployments run their search domain on Elasticsearch 6.8 even though the deployed CloudFormation template declares 7.10. This happens when the engine upgrade fired during a stack update fails on a transient condition — most commonly an automated snapshot running at that moment — and CloudFormation records the stack update as successful anyway. CloudFormation compares templates against templates, not against the live domain, so later deploys never retry the upgrade: the domain stays behind until someone upgrades it directly.
+Some Quilt deployments run their search domain on Elasticsearch 6.8 even though the deployed CloudFormation template declares 7.10: an engine upgrade fired during a stack update can fail on a transient condition — most commonly an automated snapshot running at that moment — while CloudFormation records the stack update as successful. Because CloudFormation compares templates against templates, not against the live domain, later deploys never retry; the domain stays behind until someone upgrades it directly.
 
-This article is the direct path: an in-place engine upgrade via the AWS CLI. It is a short sequence in which **every command is read-only except one** — the upgrade trigger itself. Search keeps serving throughout (performance may dip while nodes are replaced; Kibana may be unavailable). Typical duration is minutes to hours depending on data size — plan for the possibility of most of a day on large domains.
+This article is the direct path: an in-place engine upgrade via the AWS CLI, in a short sequence where **every command is read-only except one** — the upgrade trigger itself. Search keeps serving throughout (performance may dip while nodes are replaced; Kibana may be unavailable). Expect minutes to hours depending on data size; plan for the possibility of most of a day on large domains.
 
 To check whether this applies to you: compare the live engine version with what your template declares.
 
@@ -32,7 +32,7 @@ aws es describe-elasticsearch-domain --domain-name $DOMAIN --region $REGION \
 
 - **Freeze the Quilt stack for the window**: no deploys, no CloudFormation changes, no admin "Re-index and repair" actions while the upgrade runs. The domain must be the only thing changing.
 
-- **Know your escalation path** (insurance only): check which AWS support plan is on the account (the Support Center page shows it) and who could open a technical case. In the rare case an upgrade stalls, the domain keeps serving search — it just refuses further configuration changes until AWS support unsticks it, and Business-or-above support is the channel for that. If the account is on Basic, note that Business support can be enabled in minutes and takes effect immediately, so the practical preparation is knowing who has the authority to approve it if ever needed.
+- **Know your escalation path** (insurance only): which AWS support plan is on the account (the Support Center page shows it), and who could open a technical case. In the rare case an upgrade stalls, the domain keeps serving search — it just refuses further changes until AWS support unsticks it, and Business-or-above support is the channel for that. Basic is workable too: Business support enables in minutes with immediate effect, so the real preparation is knowing who can approve it.
 
 ## Step 1 — Confirm the target version is a legal hop
 
