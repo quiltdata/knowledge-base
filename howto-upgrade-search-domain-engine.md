@@ -13,7 +13,7 @@ Normally you never upgrade the search engine yourself — it rides Quilt's templ
 This article is the direct path: an in-place engine upgrade via the AWS CLI. Only one command in the sequence changes the domain. Two things to know before starting:
 
 - **The upgrade is irreversible** — AWS states it "can't be paused or cancelled," and there is no downgrade. See the rollback options below before running Step 5.
-- With Quilt's standard configuration (dedicated master nodes), search keeps serving through the upgrade, though performance may dip while nodes are replaced and Kibana may be unavailable. Masterless cost-sensitive configurations may additionally see a brief unresponsive period after the upgrade. AWS's guidance: the upgrade takes [15 minutes to several hours](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/version-migration.html); large domains can take longer.
+- With Quilt's standard configuration (dedicated master nodes), search keeps serving through the upgrade, though performance may dip while nodes are replaced and Kibana may be unavailable. Masterless cost-sensitive configurations may additionally see a brief unresponsive period after the upgrade. AWS's guidance is [15 minutes to several hours](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/version-migration.html); in our test, a fresh *empty* domain took about 50 minutes end-to-end — data size scales that up, so plan for the possibility of most of a day on large domains.
 
 The commands use the legacy `aws es` namespace, which matches these domains and takes plain version strings (`7.10`). The newer `aws opensearch` namespace works too, but expects `Elasticsearch_7.10`-style strings.
 
@@ -80,10 +80,19 @@ aws es upgrade-elasticsearch-domain --domain-name $DOMAIN --region $REGION \
   --target-version $TARGET --perform-check-only
 ```
 
-The check runs asynchronously, usually a few minutes. Fetch the verdict with Step 1's command — the new entry appears with a fresh timestamp and a name like "Pre-Upgrade Check for Elasticsearch 7.10":
+The check runs asynchronously, usually a minute or two. Fetch the verdict with Step 1's command — a new entry appears with a fresh timestamp:
 
 ```
 aws es get-upgrade-history --domain-name $DOMAIN --region $REGION
+```
+
+```json
+{
+    "UpgradeName": "Pre-Upgrade Check from 6.8 to 7.10",
+    "StartTimestamp": "2026-08-05T10:19:29+00:00",
+    "UpgradeStatus": "SUCCEEDED",
+    "StepsList": [ { "UpgradeStep": "PRE_UPGRADE_CHECK", "UpgradeStepStatus": "SUCCEEDED", ... } ]
+}
 ```
 
 - **`SUCCEEDED`** → proceed to Step 5 promptly: a passing check also means no automated snapshot is running right now (AWS takes them hourly, and they block upgrades), so you're in the gap. No need to rush beyond ordinary promptness — if the gap closes, the worst case is a harmless failed attempt and a retry.
@@ -104,7 +113,7 @@ It returns immediately with a JSON echo of the request. If it errors instead (fo
 
 ## Step 6 — Watch it
 
-Re-run the Step 1 history command occasionally (it shows the current attempt's steps and `ProgressPercent`), or watch the domain page in the console. The upgrade proceeds `PRE_UPGRADE_CHECK` → `SNAPSHOT` → `UPGRADE`. If the upgrade's own early steps fail (the snapshot gap can close), the domain is unharmed and still on 6.8 — return to Step 4.
+Re-run the Step 1 history command occasionally (it shows the current attempt's steps and `ProgressPercent` — e.g. `"UpgradeStep": "UPGRADE", "UpgradeStepStatus": "IN_PROGRESS", "ProgressPercent": 55.0` mid-flight), or watch the domain page in the console. The upgrade proceeds `PRE_UPGRADE_CHECK` → `SNAPSHOT` → `UPGRADE`. If the upgrade's own early steps fail (the snapshot gap can close), the domain is unharmed and still on 6.8 — return to Step 4.
 
 **Done** means: `aws es describe-elasticsearch-domain` shows `ElasticsearchVersion: "7.10"` and `Processing: false`.
 
