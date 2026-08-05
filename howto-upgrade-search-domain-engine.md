@@ -1,4 +1,4 @@
-# How do I upgrade my Quilt deployment's search domain engine (Elasticsearch 6.8 → 7.10)?
+# Why is my Quilt deployment's search domain still on Elasticsearch 6.8, and how do I upgrade it?
 
 ## Tags
 
@@ -8,7 +8,7 @@
 
 ## Summary
 
-Some Quilt deployments run their search domain on Elasticsearch 6.8 even though the deployed CloudFormation template declares 7.10: an engine upgrade fired during a stack update can fail on a transient condition (such as an automated snapshot running at that moment) while CloudFormation records the stack update as successful. Because CloudFormation's normal update flow compares templates against templates, not against the live domain, later deploys never retry; the domain stays behind until someone upgrades it directly.
+Normally you never upgrade the search engine yourself — it rides Quilt's template upgrades. This article covers the exception. Some Quilt deployments run their search domain on Elasticsearch 6.8 even though the deployed CloudFormation template declares 7.10: an engine upgrade fired during a stack update can fail on a transient condition (such as an automated snapshot running at that moment) while CloudFormation records the stack update as successful. Because CloudFormation's normal update flow compares templates against templates, not against the live domain, later deploys never retry; the domain stays behind until someone upgrades it directly.
 
 This article is the direct path: an in-place engine upgrade via the AWS CLI. Only one command in the sequence changes the domain. Two things to know before starting:
 
@@ -45,9 +45,9 @@ The commands use the legacy `aws es` namespace, which matches these domains and 
 
 - **If you run your own clients, dashboards, or saved Kibana objects against the domain** (most deployments don't), review the [Elasticsearch 7 breaking changes](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/version-migration.html) before deciding to upgrade — Quilt's own software and indices are validated on 7.10.
 
-- **Freeze the Quilt stack for the window**: no deploys, no CloudFormation changes, no admin "Re-index and repair" actions while the upgrade runs. Note that a stalled upgrade extends this freeze — the domain refuses configuration changes until the upgrade finishes.
+- **Freeze the Quilt stack for the window**: no deploys, no CloudFormation changes, no admin "Re-index and repair" actions while the upgrade runs. If the upgrade were ever to stall — stop making progress for hours; rare, and Step 6 covers the response — the freeze extends until it's resolved, because a domain mid-upgrade refuses further configuration changes.
 
-- **Know your escalation path** (insurance only): technical AWS support cases require a paid support plan — Basic can't open them; as of late 2025 the purchasable tier is Business Support+ (in AWS Organizations, support plans are often managed from the payer account — check with whoever owns that). If an upgrade stalls, self-service triage covers most cases (Step 6), with an AWS case as the final step.
+- **Know your escalation path** (insurance only): technical AWS support cases require a paid support plan — Basic can't open them; as of late 2025 the purchasable tier is Business Support+ (in AWS Organizations, support plans are often managed from the payer account — check with whoever owns that). For a stalled upgrade, self-service triage covers most cases (Step 6), with an AWS case as the final step.
 
 ## Step 1 — Read the domain's upgrade history
 
