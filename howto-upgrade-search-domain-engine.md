@@ -4,7 +4,7 @@
 
 `aws`, `elasticsearch`, `opensearch`, `search`, `upgrade`, `cli`, `cloudformation`
 
-*Applies to Quilt releases whose template declares Elasticsearch 7.10 (all current releases).*
+*Applies to CloudFormation-based Quilt deployments running releases whose template declares Elasticsearch 7.10 (all current releases). If your release still declares 6.8, upgrade Quilt first — never move the domain ahead of its template. Terraform-based deployments manage the domain through Terraform — contact Quilt support instead of following this article.*
 
 ## Summary
 
@@ -41,7 +41,9 @@ The commands use the legacy `aws es` namespace, which matches these domains and 
 
 - **Permissions**: `es:DescribeElasticsearchDomain`, `es:GetCompatibleElasticsearchVersions`, `es:GetUpgradeHistory`, `es:GetUpgradeStatus`, and — for the upgrade itself — `es:UpgradeElasticsearchDomain` (grant the newer spellings too if writing a fresh policy: `es:DescribeDomain`, `es:GetCompatibleVersions`, `es:UpgradeDomain`), plus `cloudformation:DescribeStackResources` for the lookup above.
 
-- **Rollback story, before the one-way door**: AWS's own procedure recommends [taking a manual snapshot first](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/starting-upgrades.html) — it can be restored onto a *new* domain if you ever want the prior version back (automated snapshots can't do this). For a Quilt deployment there is a second, slower backstop: the search index is derived data, rebuildable from S3 via a full re-index — days, not minutes, but no data is ever lost. Decide which insurance you want; for extra caution AWS also suggests restoring a snapshot onto a test domain first.
+- **Rollback story, before the one-way door**: for a Quilt deployment, the honest backstop is that the search index is derived data, rebuildable from S3 via a full re-index — days, not minutes, but nothing is ever lost. AWS's generic advice is [a manual snapshot first](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/starting-upgrades.html); know its limits here: it can only be restored onto a *new* domain your stack isn't wired to, and it goes stale as soon as indexing continues — useful for extra caution (or a test-domain dry run), not a practical undo.
+
+- **If you run your own clients, dashboards, or saved Kibana objects against the domain** (most deployments don't), review the [Elasticsearch 7 breaking changes](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/version-migration.html) before deciding to upgrade — Quilt's own software and indices are validated on 7.10.
 
 - **Freeze the Quilt stack for the window**: no deploys, no CloudFormation changes, no admin "Re-index and repair" actions while the upgrade runs. Note that a stalled upgrade extends this freeze — the domain refuses configuration changes until the upgrade finishes.
 
@@ -108,16 +110,14 @@ Re-run the Step 1 history command occasionally (it shows the current attempt's s
 
 If `ProgressPercent` sits unchanged for several hours: the domain typically keeps serving search meanwhile, and AWS's [stuck-upgrade guidance](https://repost.aws/knowledge-center/opensearch-stuck-failed-upgrade) prescribes self-service triage first — check `FreeStorageSpace`, cluster status, and JVM pressure in CloudWatch, free disk if it's low — and an AWS technical support case if none of that resolves it. Quilt support can help assemble the details AWS will ask for.
 
-One cost note: the upgrade is a blue/green deployment, so AWS bills both node fleets for the first hour — a one-time blip, not a rate change.
+One cost note: the upgrade is a blue/green deployment; [AWS charges for the largest cluster during the first hour only](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-configuration-changes.html), then for a single cluster even while the deployment continues — a one-time blip, not a rate change.
 
 ## Step 7 — Confirm and clean up
 
 1. Re-run the version check (see **Done** above) — this is the fact you came for.
 2. Upload a small test file to a registered bucket you're comfortable writing to, and confirm it appears in catalog search. Right after an upgrade the indexing backlog may need time — give it up to ~15 minutes before reading anything into a delay. Delete the test file when done. (Read-only alternative: run a search whose results you know.)
 3. Nothing else is needed: S3 event notifications queue and retry, so objects uploaded during the window get indexed without any re-index step, and there is nothing to re-enable.
-4. Tell Quilt support the upgrade completed — your stack's standard telemetry reports daily index metrics, so we can confirm indexing health from those and plan any follow-up work with you.
-
-If you run your own clients, dashboards, or saved Kibana objects against the domain (most deployments don't), review the [Elasticsearch 7 breaking changes](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/version-migration.html) — Quilt's own software and indices are validated on 7.10.
+4. Tell Quilt support the upgrade completed — a copy of the version-check output is perfect — so we can plan any follow-up work with you.
 
 ## Related
 
