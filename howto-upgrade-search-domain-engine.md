@@ -22,13 +22,13 @@ The commands use the legacy `aws es` namespace, which matches these domains and 
 - **Find your domain and set the variables** every command uses. The search domain belongs to your Quilt CloudFormation stack, logical resource `Search`:
 
   ```
-  aws cloudformation describe-stack-resources --stack-name <your Quilt stack> \
+  aws cloudformation describe-stack-resources --stack-name "your-quilt-stack-name" \
     --query "StackResources[?LogicalResourceId=='Search'].PhysicalResourceId" --output text
   ```
 
   ```
-  DOMAIN=<the domain name from above>
-  REGION=<your stack's region>
+  DOMAIN="the-domain-name-from-above"
+  REGION="your-stack-region"
   TARGET=7.10
   ```
 
