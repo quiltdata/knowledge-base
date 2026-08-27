@@ -1,0 +1,209 @@
+<!--
+  templateType: email
+  isAvailableForNewContent: true
+  label: Quilt Platform Release 26.7
+-->
+<!doctype html>
+<html>
+<head>
+  <title>{% if content.html_title and content.html_title != '' %}{{ content.html_title }}{% else %}{{ content.body.subject }}{% endif %}</title>
+  {% if content.meta_description %}<meta name="description" content="{{ content.meta_description }}">{% endif %}
+  <style type="text/css" id="hs-inline-css">
+    /*<![CDATA[*/
+    :root {
+      color-scheme: dark;
+      --background: #2a2765;
+      --panel: rgba(31, 19, 65, 0.3);
+      --text: #fff;
+      --muted: #d8d5ef;
+      --accent: #ff9902;
+      --link: #7ce0d9;
+      --button: #e359e3;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font: 15px/1.75 "Trebuchet MS", Arial, sans-serif;
+    }
+    main, footer { width: min(100% - 40px, 600px); margin-inline: auto; }
+    .deployment-section { width: min(100% - 40px, 600px); margin-inline: auto; }
+    main { padding: 30px 0 20px; }
+    header { margin-bottom: 24px; }
+    h1 { margin: 20px 0; font-size: 36px; line-height: 1; }
+    h2 { margin: 28px 0 12px; font-size: 24px; line-height: 1.25; }
+    h3 { margin: 0 0 10px; color: var(--muted); font-size: 20px; line-height: 1.25; }
+    p { margin: 0 0 14px; }
+    ul { margin: 0; padding-left: 24px; }
+    li + li { margin-top: 8px; }
+    a { color: var(--link); }
+    code { font-family: "Courier New", monospace; }
+    img { display: block; width: 100%; height: auto; margin: 16px 0 24px; }
+    .logo { width: 164px; margin: 0 0 32px; }
+    .summary, .card { padding: 20px; border-radius: 8px; background: var(--panel); }
+    .card { margin-bottom: 14px; border-top: 3px solid var(--accent); }
+    .button {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 5px;
+      background: var(--button);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .deployment { display: block; width: 100%; }
+    .deployment div { display: block; width: 100%; margin-bottom: 12px; overflow: hidden; border-radius: 8px; background: #59499a; }
+    .deployment h3 { margin: 0; padding: 12px 14px; }
+    .deployment p { display: block; width: 100%; margin: 0; padding: 12px 14px; background: #fff; color: #33475b; overflow-wrap: anywhere; }
+    footer { padding: 18px 0 30px; border-top: 3px solid var(--accent); font-size: 13px; }
+
+    @media (max-width: 480px) {
+      main, footer, .deployment-section { width: min(100% - 24px, 600px); }
+    }
+    /*]]>*/
+  </style>
+</head>
+<body>
+  <div id="preview_text" style="display:none!important">{% text "preview_text" label="Preview Text <span class=help-text>This will be used as the preview text that displays in some email clients</span>", value="Security and reliability improvements, safer Catalog file deletion, clearer search errors, steadier registry memory use, and QuiltSync v0.20.0.", no_wrapper=True %}</div>
+  {% if content.create_page %}
+  <p style="margin: 0; padding: 8px; text-align: center; font: 12px Arial, sans-serif;">
+    Not displaying correctly? <a class="hubspot-mergetag" data-viewaswebpage="true" href="{{ view_as_page_url }}">View this email in your browser</a>.
+  </p>
+  {% endif %}
+  {% module_block module "email_template_main_email_body" path="@hubspot/email_body", label="Main Email Body" %}
+  {% module_attribute "html" %}
+  <main>
+    <header>
+      <img class="logo" src="https://www.quilt.bio/hs-fs/hubfs/AB_CompTableAsset%201.png?width=328&amp;upscale=true&amp;name=AB_CompTableAsset%201.png" alt="Quilt">
+      <h1>Platform Update 26.7</h1>
+      <p class="summary">This release combines a broad batch of security and reliability improvements across the stack with QuiltSync v0.20.0, which adds role switching, safer pulls, and clearer revision details. It also brings safer file deletion in the Catalog, clearer errors for malformed searches, steadier registry memory use under sustained load, and a new date-based numbering scheme for Quilt Platform releases.</p>
+    </header>
+
+    <section>
+      <h2>A Note on Version Numbering</h2>
+      <article class="card">
+        <h3>Date-Based Releases</h3>
+        <p>Starting with this release, Quilt Platform version numbers are date-based: <strong>26.7</strong> is the release for July 2026. The previous release was 1.71.</p>
+        <p>Existing minimum-version constraints such as “1.70.0 or higher,” along with tooling that compares release versions, continue to work because 26.7 sorts after every 1.x release.</p>
+        <p>This changes what the numbers mean, not the platform. It is not a jump of twenty-five major versions, and compatibility and the upgrade path are unchanged. Version tags retain the same three-part form (<code>26.7.0</code>), with the third number identifying patch releases such as <code>26.7.1</code> and <code>26.7.2</code>.</p>
+      </article>
+    </section>
+
+    <section>
+      <h2>Quilt Platform Changes</h2>
+      <article class="card">
+        <h3>Deleting a File Now Preserves Earlier Versions</h3>
+        <p>Deleting a file from the Catalog on a versioning-enabled bucket now adds an S3 delete marker instead of erasing that version of the object. The file leaves the bucket listing as before, while earlier versions remain browsable and packages pinning them continue to resolve. On buckets without versioning, deletion still removes the object permanently.</p>
+        <p>Deleting a specific object version requires <code>s3:DeleteObjectVersion</code>, which Quilt read-write roles do not grant by default. Ask a Quilt admin to attach a custom policy granting this action to your role; otherwise <code>delete_object</code> calls, including through <code>quilt3</code>, fail with <code>AccessDenied</code>. No action is required if nothing in your workflows deletes specific object versions.</p>
+      </article>
+      <article class="card">
+        <h3>Clear Errors for Malformed Searches</h3>
+        <p>A search query that cannot be parsed—such as an unparseable numeric term, invalid regular expression, or malformed Lucene syntax—now returns a validation error instead of a server error.</p>
+      </article>
+      <article class="card">
+        <h3>Steadier Registry Memory Use</h3>
+        <p>The registry now recycles request-handling workers gracefully, using staggered worker lifetimes and a per-worker memory cap. Gradual memory growth no longer ends in abrupt out-of-memory kills that can interrupt requests and surface as gateway or full-page Catalog errors.</p>
+      </article>
+    </section>
+
+    <section>
+      <h2>QuiltSync v0.20.0</h2>
+      <article class="card">
+        <h3>Role Switching</h3>
+        <ul>
+          <li><strong>Switch Roles in QuiltSync:</strong> Settings &gt; Auth now shows the active role for each Quilt Catalog login and lets users with multiple roles switch directly in the app. The selected role takes effect on the next read or write.</li>
+          <li><strong>Clearer Permission Guidance:</strong> When the active role cannot access a bucket, QuiltSync identifies the role and offers an opportunity to switch. Commit is disabled before the operation begins, and Autosync pauses until the role changes.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Safer Pulls and Clearer Revisions</h3>
+        <ul>
+          <li><strong>Preserve Non-Conflicting Local Work:</strong> Pull now keeps local edits that do not conflict with incoming remote changes. QuiltSync identifies conflicts before pulling and asks users to resolve only files changed both locally and remotely. Autosync uses the same behavior.</li>
+          <li><strong>Readable Revision Details:</strong> Version-mismatch banners now show the revision's commit message instead of its top hash, with the full hash available on hover.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section>
+      <h2>Stack Admin Improvements</h2>
+      <article class="card">
+        <h3>Encryption and Transport</h3>
+        <ul>
+          <li>All HTTPS listeners now use AWS's current recommended TLS policy, retaining TLS 1.3 and 1.2 with forward-secret ciphers and adding post-quantum key exchange.</li>
+          <li>Both load balancers now drop incoming HTTP headers containing characters that are invalid under the HTTP specification.</li>
+          <li>Every SQS queue now explicitly requires TLS for sending and receiving messages.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Storage and Key Configuration</h3>
+        <ul>
+          <li>Internal service buckets now explicitly declare S3 Block Public Access and enforced bucket-owner object ownership.</li>
+          <li>The SNS notification encryption key now has automatic key rotation enabled.</li>
+          <li>The unused analytics bucket CORS configuration has been removed.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Least-Privilege Roles</h3>
+        <ul>
+          <li>The package-events Lambda role now grants only its required EventBridge action on the account's default event bus.</li>
+          <li>The access-counts Lambda role now scopes Athena and Glue permissions to stack-owned resources.</li>
+          <li>Roles trusted by ECS or EventBridge now require the calling service to act for the current account.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Athena Workgroups</h3>
+        <ul>
+          <li>The Iceberg and audit-trail workgroups now enforce their workgroup configuration, preventing client-side query settings from overriding it.</li>
+          <li>The access-counts Lambda now runs hourly queries in a dedicated, stack-owned Athena workgroup instead of the shared <code>primary</code> workgroup.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Logging and Service Configuration</h3>
+        <ul>
+          <li>Registry, nginx, and platform Lambda CloudWatch log groups now retain logs for 365 days instead of 90 days.</li>
+          <li>All security-group rules now include a description naming the traffic they permit.</li>
+          <li>Fargate services now state their platform version explicitly.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section>
+      <h2>Other Improvements</h2>
+      <article class="card">
+        <h3>S3 Notification Reliability</h3>
+        <ul>
+          <li>The S3-notification forwarding Lambda no longer writes the full event payload to CloudWatch on every invocation. It now logs only failures, including the record that failed.</li>
+          <li>The Lambda now ignores the test event S3 sends when a bucket notification configuration is created, preventing unnecessary retries and dead-letter queue entries.</li>
+        </ul>
+      </article>
+    </section>
+
+    <p><a class="button" href="https://www.quilt.bio/quiltsync">Download QuiltSync v0.20.0</a></p>
+  </main>
+  {% end_module_attribute %}
+  {% end_module_block %}
+
+  <!-- Keep deployment tokens outside rich-text modules so HubL evaluates them. -->
+  <section class="deployment-section">
+    <h2>Your CloudFormation Template</h2>
+    <p>Find the CloudFormation YAML file available via the link below:</p>
+    <div class="deployment">
+      <div><h3>Catalog URL</h3><p>{{ personalization_token('p24310949_deployments.quilt_stack_url', 'No URL Found') }}</p></div>
+      <div><h3>Template URL</h3><p>{{ personalization_token('p24310949_deployments.template_variant_url', 'No Template Variant Found') }}</p></div>
+      <div><h3>Deployment Style</h3><p>{{ personalization_token('p24310949_deployments.cf_tf', 'CF') }}</p></div>
+      <div><h3>Network Version</h3><p>{{ personalization_token('p24310949_deployments.network_version', '2') }}</p></div>
+    </div>
+    <p>For more information on how to apply this release for CloudFormation (CF), refer to our <a href="https://docs.quiltdata.com/advanced/technical-reference#routine-maintenance-and-upgrades">upgrade documentation</a> or full <a href="https://docs.quiltdata.com/advanced/technical-reference">installation guide</a>.</p>
+    <p>Terraform users (TF) can use the public <a href="https://github.com/quiltdata/iac">quilt module</a>.</p>
+    <p>Please contact <a href="mailto:support@quilt.bio">support@quilt.bio</a> if you have any questions.</p>
+  </section>
+
+  <footer>
+    <p>{{ site_settings.company_name }}, {{ site_settings.company_street_address_1 }}{% if site_settings.company_street_address_2 %}, {{ site_settings.company_street_address_2 }}{% endif %}, {{ site_settings.company_city }}, {{ site_settings.company_state }} {{ site_settings.company_zip }}, {{ site_settings.company_country }}</p>
+    <p>You received this email because you are subscribed to {{ subscription_name }} from {{ site_settings.company_name }}.</p>
+    <p><a class="hubspot-mergetag" data-unsubscribe="true" href="{{ unsubscribe_link }}">Manage email preferences</a> · <a class="hubspot-mergetag" data-unsubscribe="true" href="{{ unsubscribe_link_all }}">Unsubscribe from all emails</a></p>
+    <p><a href="mailto:support@quilt.bio">support@quilt.bio</a></p>
+  </footer>
+</body>
+</html>

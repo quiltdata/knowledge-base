@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quilt Platform Release 1.71</title>
+  <meta name="description" content="Connect for Databricks, ChatGPT and Codex; per-bucket package index; QuiltSync Autosync; quilt-cli on crates.io">
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #2a2765;
+      --panel: rgba(31, 19, 65, 0.3);
+      --text: #fff;
+      --muted: #d8d5ef;
+      --accent: #ff9902;
+      --link: #7ce0d9;
+      --button: #e359e3;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font: 15px/1.75 "Trebuchet MS", Arial, sans-serif;
+    }
+    main, footer { width: min(100% - 40px, 600px); margin-inline: auto; }
+    main { padding: 30px 0 20px; }
+    header { margin-bottom: 24px; }
+    h1 { margin: 20px 0; font-size: 36px; line-height: 1; }
+    h2 { margin: 28px 0 12px; color: var(--text); font-size: 24px; line-height: 1.25; }
+    h3 { margin: 0 0 10px; color: var(--muted); font-size: 20px; line-height: 1.25; }
+    p { margin: 0 0 14px; }
+    ul { margin: 0; padding-left: 24px; }
+    li + li { margin-top: 8px; }
+    a { color: var(--link); }
+    code { font-family: "Courier New", monospace; }
+    img { display: block; width: 100%; height: auto; margin: 16px 0 24px; }
+    .logo { width: 164px; margin: 0 0 32px; }
+    .browser-link { float: right; font: 12px Arial, sans-serif; }
+    .summary, .card {
+      padding: 20px;
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .card { margin: 0 0 14px; border-top: 3px solid var(--accent); }
+    .button {
+      display: inline-block;
+      margin: 4px 0 16px;
+      padding: 10px 18px;
+      border-radius: 5px;
+      background: var(--button);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .deployment { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .deployment div { padding: 14px; border-radius: 8px; background: var(--panel); }
+    .deployment h3, .deployment p { margin: 0; }
+    footer { padding: 18px 0 30px; border-top: 3px solid var(--accent); font-size: 13px; }
+
+    @media (max-width: 480px) {
+      main, footer { width: min(100% - 24px, 600px); }
+      .browser-link { float: none; display: block; margin-bottom: 24px; }
+      .deployment { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <a class="browser-link" href="https://www.quilt.bio/quilt-platform-release-personalization_tokencontact.user_variant-quilt-variant-1.71">View in browser</a>
+      <img class="logo" src="https://www.quilt.bio/hs-fs/hubfs/AB_CompTableAsset%201.png?width=328&amp;upscale=true&amp;name=AB_CompTableAsset%201.png" alt="Quilt">
+      <h1>Platform Update 1.71</h1>
+      <p class="summary">Quilt Connect now also works on private stacks, and adds support for Databricks, ChatGPT, and Codex as MCP clients. This release also moves package metadata to per-bucket Iceberg tables for faster and cheaper querying, especially from Tabulator, and adds Glacier rehydration from file preview. Benchling entries gain referenced-entity search and multi-bucket search, while QuiltSync adds a CLI, background Autosync and workflows.</p>
+    </header>
+
+    <section>
+      <h2>New Quilt Platform Features</h2>
+
+      <article class="card">
+        <h3>Private Quilt Connect</h3>
+        <p>Quilt Connect now uses the same network configuration as the rest of your Quilt stack. This allows OAuth sign-in to Quilt's Platform MCP Server from local MCP clients such as Claude Code, even if you don't have a public endpoint or are using a web-application firewall.</p>
+      </article>
+
+      <article class="card">
+        <h3>MCP Support for Databricks, ChatGPT, and Codex</h3>
+        <p>Quilt Connect now supports <a href="https://docs.quilt.bio/quilt-platform-catalog-user/mcp-server">Databricks, ChatGPT, and Codex</a> as MCP clients. Stack admins can specify Databricks and ChatGPT hosts in <code>ConnectAllowedHosts</code>, or use <code>localhost</code> for access by Codex.</p>
+      </article>
+      <img src="https://www.quilt.bio/hs-fs/hubfs/codex-mcp.png?width=1120&amp;upscale=true&amp;name=codex-mcp.png" alt="Codex MCP configuration">
+
+      <article class="card">
+        <h3>Benchling Entities and Cross-Bucket Search</h3>
+        <p>This release bundles v0.19 of the Benchling Webhook:</p>
+        <ul>
+          <li>Each auto-generated entry package contains the full list of referenced objects, as both package metadata and a <code>links.json</code> file. This includes both the unique identifier and human-readable names, so you can search or query to find every experiment that references plasmid <code>QB-2743.1</code>.</li>
+          <li>You can disable automatic package creation by <strong>not</strong> setting a default bucket. Instead, the App Canvas uses the new Iceberg catalog to search every bucket for packages with metadata that reference the notebook name (for example, <code>experiment_id = EXP00012345</code>) and displays those instead.</li>
+        </ul>
+      </article>
+      <img src="https://www.quilt.bio/hs-fs/hubfs/benchling-links.png?width=1120&amp;upscale=true&amp;name=benchling-links.png" alt="Benchling referenced entities">
+      <img src="https://www.quilt.bio/hs-fs/hubfs/benchling-bucketless.png?width=1120&amp;upscale=true&amp;name=benchling-bucketless.png" alt="Benchling cross-bucket search">
+
+      <article class="card">
+        <h3>Iceberg Package Metadata</h3>
+        <p>Quilt users can now query package metadata directly as Iceberg tables in Athena—package revisions, tags, manifests, and entries—instead of relying on Athena to crawl individual JSONL manifests on every query. If you can read a bucket in the catalog, you can query its Iceberg tables using your existing session credentials.</p>
+        <p>This uses per-bucket tables of the form <code>{bucket}_package_{revision,tag,manifest,entry}</code>.</p>
+        <p>Tabulator and in-catalog package surfaces use the new layout transparently. Tabulator queries now hit this index instead of doing a full S3 scan through Glue/Athena SerDe tables, making queries cheaper and faster with unchanged permissions. External consumers of the old global tables must migrate to the per-bucket names and use <code>UNION ALL</code> for cross-bucket queries.</p>
+      </article>
+      <img src="https://www.quilt.bio/hs-fs/hubfs/iceberg_database.png?width=1120&amp;upscale=true&amp;name=iceberg_database.png" alt="Iceberg database">
+
+      <article class="card">
+        <h3>Glacier Rehydration from File Preview</h3>
+        <p>Archived S3 objects in Glacier or Deep Archive can now be restored directly from file preview in the Quilt Catalog. Choose restore tier and duration; Quilt tracks restore state from S3 metadata, and managed read/write roles get <code>s3:RestoreObject</code>.</p>
+      </article>
+      <img src="https://www.quilt.bio/hs-fs/hubfs/glacier.png?width=1120&amp;upscale=true&amp;name=glacier.png" alt="Glacier restore controls">
+    </section>
+
+    <section>
+      <h2>QuiltSync &amp; CLI</h2>
+      <article class="card">
+        <h3>Background Autosync</h3>
+        <p>QuiltSync adds an opt-in Autosync loop with independent Pull and Push toggles. Auto-pull refreshes latest for installed remote packages when the working tree is clean; auto-push can commit and publish quiet local changes using your publish settings, while pausing on pending changes or divergence.</p>
+        <p>A tray-resident shell keeps Autosync running with the main window closed. The optional <strong>Close to tray</strong> setting hides the window instead of quitting, and the tray shows idle, syncing, paused, or error status with Open Quilt and Quit actions.</p>
+        <p>A per-mapping filesystem watcher refreshes local package status when files change on disk, so status badges and entry lists update within about 500 ms without a reload. The watcher is guarded against feedback loops and only repaints when computed status changes.</p>
+        <a class="button" href="https://www.quilt.bio/quiltsync">Get QuiltSync</a>
+      </article>
+      <img src="https://www.quilt.bio/hs-fs/hubfs/quiltsync-autosync.png?width=1120&amp;upscale=true&amp;name=quiltsync-autosync.png" alt="QuiltSync Autosync settings">
+
+      <article class="card">
+        <h3>Workflow Configuration</h3>
+        <p>QuiltSync now enables you to specify per-bucket workflows, which is particularly useful with locally created packages.</p>
+      </article>
+      <article class="card">
+        <h3>Clearer Merge Actions</h3>
+        <p>The merge page now labels actions by direction: <strong>Promote my commit</strong> pushes the local commit and tags it latest, while <strong>Overwrite local with remote</strong> resets local state and discards uncommitted edits.</p>
+      </article>
+      <article class="card">
+        <h3>quilt-cli on crates.io</h3>
+        <p>The new QuiltSync-based <code>quilt</code> CLI is now published to <a href="https://crates.io/crates/quilt-cli">crates.io</a> with prebuilt binaries for macOS and Linux, installable via <code>cargo binstall quilt-cli</code>. It is tightly integrated with QuiltSync's data directory so you can use either the CLI or the GUI to manage your packages.</p>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Robust Image Previewing</h2>
+      <ul>
+        <li>Multi-channel images render ~12–25% faster, and large floating-point multi-channel images near the memory limit now render reliably.</li>
+        <li>A channel containing <code>NaN</code> or infinite pixel values no longer blanks the entire thumbnail.</li>
+        <li>Color CZI images stored in BGR pixel formats (for example, <code>Bgr24</code> or <code>Bgr48</code>) now preview with correct colors.</li>
+        <li>Signed and wider-than-16-bit integer images (<code>uint32</code>, <code>uint64</code>, <code>int8</code>, <code>int64</code>, and 32-bit-integer color) now preview contrast-stretched instead of failing or rendering dark.</li>
+        <li><code>.jpeg</code>/<code>.webp</code> thumbnails, float and 16-bit-color images, and 16-bit greyscale now render correctly.</li>
+        <li>Previews are now 8-bit everywhere, producing smaller PNGs with no loss of meaningful detail.</li>
+        <li>The source image streams to disk during rendering instead of buffering fully in memory, lowering peak memory on large images.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Other Catalog Improvements</h2>
+      <ul>
+        <li>Landing page bucket cards now show configured bucket icons, matching the navbar selector.</li>
+        <li>An expired or rejected session now reliably redirects to sign-in instead of showing a generic error page.</li>
+        <li>The Admin &gt; Theme logo preview no longer breaks the editor when the configured S3 URL is malformed.</li>
+        <li>Markdown file previews now use standard <a href="https://github.github.com/gfm/">GitHub-Flavored Markdown</a> (a superset of <a href="https://spec.commonmark.org/0.31.2/">CommonMark</a>). This means idiosyncratic Pandoc/PHP-Markdown-Extra shortcuts are no longer supported.</li>
+        <li>Syntax highlighting now loads language grammars on demand instead of all up front; code in an unsupported or unrecognized language is no longer highlighted.</li>
+        <li>The Athena Queries tab no longer errors for accounts with more than 50 Athena workgroups.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Stack Admin Improvements</h2>
+      <h3>Lake Formation Grants (Opt-In)</h3>
+      <p>A new <code>EnableLakeFormationGrants</code> stack parameter emits PrincipalPermissions grants from stack service roles to the data lake. If your AWS account enforces Lake Formation on the data lake, you must enable this parameter; otherwise Lake Formation denies the stack's roles and per-bucket Iceberg access, among other things, breaks. It is opt-in and off by default; leave it off only on accounts that do not enforce Lake Formation.</p>
+    </section>
+
+    <section class="card">
+      <h2>Other Stack Improvements</h2>
+      <ul>
+        <li>The Quilt Platform MCP server now returns the full package revision hash, avoiding errors due to truncated hashes. Registry errors are also properly surfaced by the tool. The <code>package_create</code> tool avoids overwriting existing packages, steering clients to <code>package_patch</code> unless overridden, in which case it reports the diff.</li>
+        <li>The registry now uses the <code>mimalloc</code> allocator instead of <code>pymalloc</code>, lowering per-worker memory and eliminating intermittent out-of-memory worker kills that surfaced as a catalog “Unexpected Error.”</li>
+        <li>Obsolete global Iceberg package tables are now cleaned up via S3 lifecycle expiration instead of a synchronous Athena <code>DROP TABLE</code> that could time out on large stacks; the Iceberg Glue database name is now exposed as the <code>IcebergDatabaseName</code> stack output.</li>
+        <li>The CloudWatch Synthetics canary runtime is now Node 22 / Synthetics 15.1, replacing the previous v10 runtime that is on AWS's deprecation path.</li>
+        <li>Customers still on Network 1.0 can easily migrate to Network 2.0 for improved security and configurability.</li>
+      </ul>
+      <p><em>These already shipped as part of the 1.69.4 security update, but are included here for completeness.</em></p>
+      <ul>
+        <li>Postgres engine upgraded to 15.18 for CloudFormation deployments.</li>
+        <li>s3-proxy: nginx upgraded 1.24.0 → 1.30.2 with a refreshed Amazon Linux base image.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Your CloudFormation Template</h2>
+      <p>Find the CloudFormation YAML file available via the link below:</p>
+      <div class="deployment">
+        <div><h3>Catalog URL</h3><p>{{ personalization_token('p24310949_deployments.quilt_stack_url', 'No URL Found') }}</p></div>
+        <div><h3>Template URL</h3><p>{{ personalization_token('p24310949_deployments.template_variant_url', 'No Template Variant Found') }}</p></div>
+        <div><h3>Deployment Style</h3><p>{{ personalization_token('p24310949_deployments.cf_tf', 'CF') }}</p></div>
+        <div><h3>Network Version</h3><p>{{ personalization_token('p24310949_deployments.network_version', '2') }}</p></div>
+      </div>
+      <p>For more information on how to apply this release for CloudFormation (CF), refer to our <a href="https://docs.quiltdata.com/advanced/technical-reference#routine-maintenance-and-upgrades">upgrade documentation</a> or full <a href="https://docs.quiltdata.com/advanced/technical-reference">installation guide</a>.</p>
+      <p>Terraform users (TF) can use the public <a href="https://github.com/quiltdata/iac">quilt module</a>.</p>
+      <p>Please contact <a href="mailto:support@quilt.bio">support@quilt.bio</a> if you have any questions.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Quilt Data, 595 Pacific Avenue, Floor 4, San Francisco, California, 94133, United States</p>
+    <p>781-277-2255</p>
+    <p><a href="#">Unsubscribe</a> · <a href="#">Manage Preferences</a></p>
+  </footer>
+</body>
+</html>
