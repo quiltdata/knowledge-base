@@ -96,10 +96,10 @@ https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?READM
 - Destination: bucket and name
 
 ### From the file editor
-Saving a file in the file editor opens the revise dialog with that file at its logical key.
+Saving a file in the file editor writes it to S3, then opens the revise dialog with that file at its logical key. Cancelling the dialog does not undo the write.
 
-- **Edit:** open a text file under the package's `latest` tag (`/tree/latest/<path>`), click **Edit**, change the file and save it.
-- **Create file:** choose **Create file** in the package's revision menu, enter a name, write the file and save it.
+- **Edit:** open a JSON, Markdown, YAML, CSV or `.txt` file under the package's `latest` tag (`/tree/latest/<path>`), click **Edit**, change the file and save it.
+- **Create file:** choose **Create file** in the package's revision menu, enter a name with one of those extensions, write the file and save it.
 
 **Input:**
 - Source: bucket, name and hash of the current package
