@@ -86,45 +86,27 @@ https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat
 - Source: bucket, name and hash of the current package
 - Destination: bucket and name
 
-### URL parameters on a package page
-`/package/add?logicalKey=s3://file-url.ext&logicalPrefix=s3://directory-url/` on package root page
+### Package `/add` URL
+`/b/<bucket>/packages/<name>/add` opens the revise dialog on the package page. It adds no files: the query string is ignored.
 
-https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?README.md=s3://quilt-example/README.md
-
-![URL parameters](catalog-2-adding-package/url-parameters.png)
+https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add
 
 **Input:**
 - Source: bucket, name and hash of the current package
 - Destination: bucket and name
-- File/directory mapping:
-  - Individual files: logical key → S3 file URL
-  - Directories: logical prefix → S3 directory URL (each file in the S3 directory gets a logical key by joining the logical prefix with the file's relative path from the S3 directory)
 
-**Test query string URL:**
+**Test:** open https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?README.md=s3://quilt-example/README.md. The dialog opens with the package's current entries only; nothing from the query string is added.
 
-Taking into account the files tree from "From selected S3 files in a Bucket":
+### From the file editor
+Saving a file in the file editor opens the revise dialog with that file at its logical key.
 
-```ts
+- **Edit:** on a file page of the package's latest revision, click **Edit**, change the file and save it.
+- **Create file:** choose **Create file** in the package's revision menu, enter a name, write the file and save it.
 
-const lkNested = ['nested', ' # logical ! ', 'key.txt'].map(encodeURIComponent).join('/')
-const lkRoot = encodeURIComponent('becomes-root.txt')
-const lkPrefix = ['change', 'prefix'].map(encodeURIComponent).join('/')
-
-const pkNested = 's3://fiskus-us-east-1/' + ['test-selection', 'root-file.txt'].map(encodeURIComponent).join('/')
-const pkRoot = 's3://fiskus-us-east-1/' + ['test-selection', 'test', ' with ', ' # complex ! ', 'path.txt'].map(encodeURIComponent).join('/')
-const pkPrefix = 's3://fiskus-us-east-1/' + ['test-selection', 'nested', 'deep/'].map(encodeURIComponent).join('/')
-
-`add?
-   ${lkNested}=${encodeURI(pkNested)}&
-   ${lkRoot}=${encodeURI(pkRoot)}&
-   ${lkPrefix}=${encodeURI(pkPrefix)}`
-```
-
-Practical example:
-
-```
-https://nightly.quilttest.com/b/fiskus-us-east-1/packages/fiskus/test-selection-2025-10-27/add?nested/%20%23%20logical%20!%20/key.txt=s3://fiskus-us-east-1/test-selection/root-file.txt&becomes-root.txt=s3://fiskus-us-east-1/test-selection/test/%2520with%2520/%2520%2523%2520complex%2520!%2520/path.txt&change/prefix=s3://fiskus-us-east-1/test-selection/nested/deep/
-```
+**Input:**
+- Source: bucket, name and hash of the current package
+- Destination: bucket and name
+- The saved file: logical key → its new S3 version
 
 ### Package revisions page
 Revise existing package (similar to package view page)
