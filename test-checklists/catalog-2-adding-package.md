@@ -89,13 +89,11 @@ https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat
 ### Package `/add` URL
 `/b/<bucket>/packages/<name>/add` opens the revise dialog on the package page. It adds no files: the query string is ignored.
 
-https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add
+https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?README.md=s3://quilt-example/README.md
 
 **Input:**
 - Source: bucket, name and hash of the current package
 - Destination: bucket and name
-
-**Test:** open https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?README.md=s3://quilt-example/README.md. The dialog opens with the package's current entries only; nothing from the query string is added.
 
 ### From the file editor
 Saving a file in the file editor opens the revise dialog with that file at its logical key.
