@@ -98,13 +98,13 @@ https://nightly.quilttest.com/b/quilt-example/packages/examples/hurdat/add?READM
 ### From the file editor
 Saving a file in the file editor opens the revise dialog with that file at its logical key.
 
-- **Edit:** on a file page of the package's latest revision, click **Edit**, change the file and save it.
+- **Edit:** open a text file under the package's `latest` tag (`/tree/latest/<path>`), click **Edit**, change the file and save it.
 - **Create file:** choose **Create file** in the package's revision menu, enter a name, write the file and save it.
 
 **Input:**
 - Source: bucket, name and hash of the current package
 - Destination: bucket and name
-- The saved file: logical key → its new S3 version
+- The saved file: logical key → its saved S3 object
 
 ### Package revisions page
 Revise existing package (similar to package view page)
