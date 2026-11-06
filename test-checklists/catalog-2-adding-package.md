@@ -102,7 +102,7 @@ Saving a file that the editor opened from a package writes it to S3, then opens 
 - **Create file:** choose **Create file** in the package's revision menu, enter a name with one of those extensions, write the file and save it.
 
 **Input:**
-- Source: bucket, name and hash of the current package
+- Source: bucket, name and hash of the package's latest revision
 - Destination: bucket and name
 - The saved file: logical key → its saved S3 object
 
