@@ -30,7 +30,7 @@
 Test that when you add a new user, it triggers a password reset email.
 
 1. Go to your Quilt URL and log in
-2. Click your user id (upper right) → Admin → Users and Roles → Users
+2. Click Admin (left sidebar) → Users and Roles → Users
 3. Click "+" to add test user:
    - **Email:** `your-email+test@yourcompany.com`
 4. ✅ **Success:** You receive the invitation email
@@ -44,8 +44,9 @@ Test that you can add a bucket (easier if it is in the same account and region a
 3. **Title:** `Smoke Test Bucket`
 4. Click "Add"
 5. Verify the Bucket add succeeded. If not, check the browser console.
-6. Click Q logo (upper left) → Select the new bucket
-7. ✅ **Success:** Overview page loads, tabs are clickable
+6. Click Volumes (left sidebar) → Select the new bucket
+7. ✅ **Success:** Overview page loads, tabs are clickable (Overview, Files,
+   Packages, Workflows)
 
 NOTE: You can optionally skip this step and reuse an existing bucket for testing.
 
@@ -84,14 +85,15 @@ the example files in order to create a new package revisions.
 
 ### 4. Search Validation (1 min)
 
-1. Click Search button (top bar)
+1. Click Search (left sidebar)
 1. Enter `SMP001` in the search bar
 1. ✅ **Success:** Your package `test/smoke` appears in results, along with that metadata
 1. Click (card view) or scroll (table view) to find that metadata field
 
 ### 5. Query Test (30 sec)
 
-1. Queries tab → Enter and run:
+1. Queries (left sidebar; the global `/queries` page, Athena tab) → Enter and
+   run:
 
    ```sql
    SHOW TABLES
