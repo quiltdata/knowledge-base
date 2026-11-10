@@ -28,7 +28,7 @@ If sign-ins already fail, force the redeploy (step 3) now.
 
 Rotate the secret with both values valid at the identity provider for a while, so sign-in keeps working until the registry has restarted:
 
-1. If your identity provider can hold two client secrets at once, create the new one alongside the old one; if it replaces the secret immediately, do steps 2 and 3 right away.
+1. If your identity provider can hold two client secrets at once, create the new one alongside the old one; if it replaces the secret immediately, do steps 2 and 3 right away: sign-ins fail until the deployment has finished.
 2. Update the stack's client secret parameter with the new value: in CloudFormation, or, for a stack deployed with Terraform, in the module's `parameters` followed by `terraform apply`, and wait until the stack update has completed.
 3. Force a new deployment of the registry service, as below.
 4. Wait until the deployment has finished, as below, then confirm that SSO sign-in works and delete the old secret at the identity provider.
@@ -59,6 +59,8 @@ aws ecs wait services-stable \
 ```
 
 The wait also returns without an error if the deployment fails and ECS rolls the registry back to its previous tasks, which keep the old secret. Before deleting the old secret, check on the service's **Deployments** tab in the ECS console that the new deployment completed and was not rolled back.
+
+If it was rolled back, keep the old secret, find the cause in the service's events, and force the deployment again once it is fixed.
 
 If the wait times out, run it again.
 
