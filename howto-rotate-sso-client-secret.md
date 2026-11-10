@@ -14,20 +14,22 @@ From Quilt 26.9.6, the stack keeps SSO client secrets in AWS Secrets Manager, an
 
 - You rotated the client secret of the catalog's app registration in your identity provider (Microsoft Entra ID, Okta, OneLogin or Google) and updated the stack's client secret parameter.
 - The stack update completed, but SSO sign-ins fail once the old secret expires or is deleted at the identity provider.
-- Users who were already signed in are not affected.
+- Users who were already signed in are affected too, once their identity provider access token expires: their session ends, and signing in again fails.
 
 ## Root Cause
 
 On stacks running Quilt 26.9.6 or later, each SSO client secret parameter (`AzureClientSecret`, `GoogleClientSecret`, `OktaClientSecret`, `OneLoginClientSecret` or `SingleSignOnClientSecret`) seeds a Secrets Manager secret, and the registry's ECS task definition references that secret instead of holding the value itself. ECS reads a secret only when a task starts and does not pick up later changes ([AWS documentation](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/secrets-envvar-secrets-manager.html)).
 
-A stack update that changes only the secret's parameter leaves the task definition unchanged, so ECS does not replace the running registry tasks. An update that also changes the task definition, such as an upgrade to a new Quilt release, restarts them and needs no extra step.
+A stack update that changes only the secret's parameter leaves the task definition unchanged, so ECS does not replace the running registry tasks. Forcing a new deployment when the tasks have already restarted is harmless, so do it after any change to the client secret.
 
 ## Recommendation
 
+If sign-ins already fail, force the redeploy (step 3) now.
+
 Rotate the secret with both values valid at the identity provider for a while, so sign-in keeps working until the registry has restarted:
 
-1. Create the new client secret at the identity provider, keeping the old one.
-2. Update the stack's client secret parameter with the new value: in CloudFormation, or, for a stack deployed with Terraform, in the module's `parameters` followed by `terraform apply`.
+1. If your identity provider can hold two client secrets at once, create the new one alongside the old one; if it replaces the secret immediately, do steps 2 and 3 right away.
+2. Update the stack's client secret parameter with the new value: in CloudFormation, or, for a stack deployed with Terraform, in the module's `parameters` followed by `terraform apply`, and wait until the stack update has completed.
 3. Force a new deployment of the registry service, as below.
 4. Wait until the deployment has finished, as below, then confirm that SSO sign-in works and delete the old secret at the identity provider.
 
@@ -56,6 +58,8 @@ aws ecs wait services-stable \
   --region <region>
 ```
 
-The wait returns once the old registry tasks have been replaced.
+The wait also returns without an error if the deployment fails and ECS rolls the registry back to its previous tasks, which keep the old secret. Before deleting the old secret, check on the service's **Deployments** tab in the ECS console that the new deployment completed and was not rolled back.
+
+If the wait times out, run it again.
 
 ECS replaces the registry tasks with a rolling deployment; the new tasks read the current secret.
