@@ -29,7 +29,7 @@ Rotate the secret with both values valid at the identity provider for a while, s
 1. Create the new client secret at the identity provider, keeping the old one.
 2. Update the stack's client secret parameter with the new value: in CloudFormation, or, for a stack deployed with Terraform, in the module's `parameters` followed by `terraform apply`.
 3. Force a new deployment of the registry service, as below.
-4. Confirm that SSO sign-in works, then delete the old secret at the identity provider.
+4. Wait until the deployment has finished, as below, then confirm that SSO sign-in works and delete the old secret at the identity provider.
 
 ### AWS Console
 
@@ -37,6 +37,7 @@ Rotate the secret with both values valid at the identity provider for a while, s
 2. Open the cluster named after the stack.
 3. Select the service `<stack-name>-registry` and choose **Update**.
 4. Select **Force new deployment** and choose **Update**.
+5. On the service's **Deployments** tab, wait until the new deployment is completed and no tasks of the previous one remain.
 
 ### AWS CLI
 
@@ -47,5 +48,14 @@ aws ecs update-service \
   --force-new-deployment \
   --region <region>
 ```
+
+```bash
+aws ecs wait services-stable \
+  --cluster <stack-name> \
+  --services <stack-name>-registry \
+  --region <region>
+```
+
+The wait returns once the old registry tasks have been replaced.
 
 ECS replaces the registry tasks with a rolling deployment; the new tasks read the current secret.
