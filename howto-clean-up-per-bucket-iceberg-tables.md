@@ -12,7 +12,7 @@ Since Quilt 1.70.0, every stack keeps four Apache Iceberg tables per bucket (`<b
 
 ## Who needs this
 
-Every stack on Quilt 1.70.0 or later has these tables, and none of them is ever compacted, so every such stack benefits from one cleanup. The check in Step 2 tells you whether to run it now or at a convenient time.
+Every stack on Quilt 1.70.0 or later has these tables, and none of them is ever compacted, so every such stack benefits from one cleanup. Quilt 26.11.0 deprecates them in favor of [stack-wide package tables](https://docs.quilt.bio/quilt-platform/advanced/iceberg-tables#stack-wide-package-tables), which it compacts on a schedule, but still writes and reads the per-bucket tables, so a stack on 26.11.0 needs the cleanup too. The check in Step 2 tells you whether to run it now or at a convenient time.
 
 ## Symptoms
 
