@@ -53,14 +53,14 @@ The tables start to grow again after the cleanup. If your stack stays on its cur
 
 [Install uv](https://docs.astral.sh/uv/getting-started/installation/).
 
-The commands below run the script straight from this article's repository at a fixed commit, so every command runs the same code. Read it there before you run it: [quilt_iceberg_cleanup.py](https://github.com/quiltdata/knowledge-base/blob/__COMMIT__/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py). Each command prints the script's version first.
+The commands below run the script straight from this article's repository at a fixed commit, so every command runs the same code. Read it there before you run it: [quilt_iceberg_cleanup.py](https://github.com/quiltdata/knowledge-base/blob/b085b442e45d301929e99784c5fc2e8f02fe2b8b/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py). Each command prints the script's version first.
 
 ## Step 2 — Check how urgent it is
 
 The check only reads. Use your Quilt stack's own CloudFormation name (not a parent stack's) and its region:
 
 ```bash
-uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/__COMMIT__/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
+uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/b085b442e45d301929e99784c5fc2e8f02fe2b8b/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
   check --stack <STACK_NAME> --region <REGION>
 ```
 
@@ -77,7 +77,7 @@ Even when the check finds no timeouts and no dead-lettered messages, some rows m
 ## Step 3 — Run the cleanup
 
 ```bash
-uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/__COMMIT__/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
+uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/b085b442e45d301929e99784c5fc2e8f02fe2b8b/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
   run --stack <STACK_NAME> --region <REGION>
 ```
 
@@ -94,7 +94,7 @@ When it prints `Done`, the Lambda is enabled again and works through its queue; 
 Five days later, run the check again with `--since` set to the day after the cleanup (a date in UTC):
 
 ```bash
-uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/__COMMIT__/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
+uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/b085b442e45d301929e99784c5fc2e8f02fe2b8b/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
   check --stack <STACK_NAME> --region <REGION> --since <YYYY-MM-DD>
 ```
 
@@ -108,7 +108,7 @@ If the script stops early (for example, after an error, a closed session or Ctrl
 - give up with `abort`, which waits for statements still running, removes the short retention from every table and re-enables the Lambda:
 
 ```bash
-uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/__COMMIT__/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
+uv run https://raw.githubusercontent.com/quiltdata/knowledge-base/b085b442e45d301929e99784c5fc2e8f02fe2b8b/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py \
   abort --stack <STACK_NAME> --region <REGION>
 ```
 
