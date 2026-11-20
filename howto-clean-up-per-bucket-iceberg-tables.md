@@ -46,11 +46,7 @@ The cleanup is one-time: the tables grow again afterwards. If your stack stays o
 
 ## Step 1 — Install uv and read the script
 
-[Install uv](https://docs.astral.sh/uv/getting-started/installation/); in CloudShell:
-
-```bash
-pip3 install --user uv
-```
+[Install uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 The commands below run the script straight from this article's repository at a fixed commit, so every command runs the same code. Read it there before you run it: [quilt_iceberg_cleanup.py](https://github.com/quiltdata/knowledge-base/blob/__COMMIT__/howto-clean-up-per-bucket-iceberg-tables/quilt_iceberg_cleanup.py). Each command prints the script's version first.
 
